@@ -1,0 +1,14 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="240dp"
+    android:height="40dp"
+    android:viewportWidth="240"
+    android:viewportHeight="40">
+    
+    <!-- GIRARD-PERREGAUX text -->
+    <path
+        android:pathData="M20,10 L220,10 L220,15 L20,15 Z"
+        android:fillColor="#E0E0E0"/>
+    <path
+        android:pathData="M40,25 L200,25 L200,30 L40,30 Z"
+        android:fillColor="#E0E0E0"/>
+</vector>
