@@ -1,11 +1,9 @@
-package com.coroutines.swisstime
+package com.coroutines.swisstime.watchfaces
 
 import android.graphics.Paint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -15,6 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
@@ -22,19 +21,14 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.coroutines.swisstime.ui.theme.SwissTimeTheme
 import kotlinx.coroutines.delay
-import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Locale
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
+import kotlin.math.sqrt
 
 // Colors inspired by Girard-Perregaux Laureato
 private val ClockFaceColor = Color(0xFF2F4F4F) // Dark slate gray dial (hobnail pattern)
@@ -153,7 +147,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
             val y = center.y - patternRadius + j * squareSize
             
             // Skip squares outside the circle
-            val distanceFromCenter = kotlin.math.sqrt(
+            val distanceFromCenter = sqrt(
                 (x + squareSize/2 - center.x).pow(2) + 
                 (y + squareSize/2 - center.y).pow(2)
             )
@@ -244,12 +238,12 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
     drawRect(
         color = Color.White,
         topLeft = Offset(dateX - radius * 0.08f, dateY - radius * 0.06f),
-        size = androidx.compose.ui.geometry.Size(radius * 0.16f, radius * 0.12f)
+        size = Size(radius * 0.16f, radius * 0.12f)
     )
     drawRect(
         color = Color.Black,
         topLeft = Offset(dateX - radius * 0.08f, dateY - radius * 0.06f),
-        size = androidx.compose.ui.geometry.Size(radius * 0.16f, radius * 0.12f),
+        size = Size(radius * 0.16f, radius * 0.12f),
         style = Stroke(width = 1f)
     )
     
@@ -293,14 +287,14 @@ private fun DrawScope.drawHourMarkersAndNumbers(center: Offset, radius: Float) {
             drawRect(
                 color = MarkersColor,
                 topLeft = Offset(markerX - markerWidth / 2, markerY - markerLength / 2),
-                size = androidx.compose.ui.geometry.Size(markerWidth, markerLength)
+                size = Size(markerWidth, markerLength)
             )
             
             // Highlight for 3D effect
             drawRect(
                 color = Color.White,
                 topLeft = Offset(markerX - markerWidth / 2 + 1f, markerY - markerLength / 2 + 1f),
-                size = androidx.compose.ui.geometry.Size(markerWidth / 2, markerLength - 2f)
+                size = Size(markerWidth / 2, markerLength - 2f)
             )
         }
     }
@@ -317,14 +311,14 @@ private fun DrawScope.drawHourMarkersAndNumbers(center: Offset, radius: Float) {
     drawRect(
         color = MarkersColor,
         topLeft = Offset(marker12X - markerWidth * 1.5f - markerGap/2, marker12Y - markerLength / 2),
-        size = androidx.compose.ui.geometry.Size(markerWidth, markerLength)
+        size = Size(markerWidth, markerLength)
     )
     
     // Right marker at 12
     drawRect(
         color = MarkersColor,
         topLeft = Offset(marker12X + markerGap/2, marker12Y - markerLength / 2),
-        size = androidx.compose.ui.geometry.Size(markerWidth, markerLength)
+        size = Size(markerWidth, markerLength)
     )
 }
 

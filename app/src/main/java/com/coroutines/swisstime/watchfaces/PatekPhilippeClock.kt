@@ -1,10 +1,9 @@
-package com.coroutines.swisstime
+package com.coroutines.swisstime.watchfaces
 
 import android.graphics.Paint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,7 +23,6 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.coroutines.swisstime.ui.theme.SwissTimeTheme
 import kotlinx.coroutines.delay
@@ -35,18 +33,19 @@ import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
 
-// Colors inspired by Vacheron Constantin Patrimony
-private val ClockFaceColor = Color(0xFFF8F5E6) // Ivory/cream dial
-private val ClockBorderColor = Color(0xFFB27D4B) // Rose gold border
-private val HourHandColor = Color(0xFFB27D4B) // Rose gold hour hand
-private val MinuteHandColor = Color(0xFFB27D4B) // Rose gold minute hand
-private val SecondHandColor = Color(0xFF8B4513) // Brown second hand
-private val MarkersColor = Color(0xFFB27D4B) // Rose gold markers
-private val NumbersColor = Color(0xFFB27D4B) // Rose gold numbers
-private val CenterDotColor = Color(0xFFB27D4B) // Rose gold center dot
+// Colors inspired by Patek Philippe Grand Complications 5208r-001
+private val ClockFaceColor = Color(0xFF0A0A0A) // Black dial
+private val ClockBorderColor = Color(0xFFB87333) // Rose gold border
+private val HourHandColor = Color(0xFFB87333) // Rose gold hour hand
+private val MinuteHandColor = Color(0xFFB87333) // Rose gold minute hand
+private val SecondHandColor = Color(0xFFE0E0E0) // Silver second hand
+private val MarkersColor = Color(0xFFB87333) // Rose gold markers
+private val NumbersColor = Color(0xFFB87333) // Rose gold numbers
+private val CenterDotColor = Color(0xFFB87333) // Rose gold center dot
+private val DigitalTimeColor = Color(0xFFB87333) // Rose gold digital time
 
 @Composable
-fun VacheronConstantinClock(modifier: Modifier = Modifier) {
+fun PatekPhilippeClock(modifier: Modifier = Modifier) {
     var currentTime by remember { mutableStateOf(Calendar.getInstance()) }
 
     // Update time every second
@@ -83,10 +82,20 @@ fun VacheronConstantinClock(modifier: Modifier = Modifier) {
             // Draw center dot
             drawCircle(
                 color = CenterDotColor,
-                radius = radius * 0.03f,
+                radius = radius * 0.05f,
                 center = center
             )
         }
+
+        // Display digital time in the center
+        Text(
+            text = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(currentTime.time),
+            style = TextStyle(
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = DigitalTimeColor
+            )
+        )
     }
 }
 
@@ -96,68 +105,50 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
         color = ClockBorderColor,
         radius = radius,
         center = center,
-        style = Stroke(width = 6f)
+        style = Stroke(width = 8f)
     )
 
     // Draw inner circle (face)
     drawCircle(
         color = ClockFaceColor,
-        radius = radius - 3f,
+        radius = radius - 4f,
         center = center
     )
-    
-    // Draw subtle concentric circles for texture (guilloche pattern)
-    for (i in 1..5) {
-        drawCircle(
-            color = ClockBorderColor.copy(alpha = 0.05f),
-            radius = radius * (0.9f - i * 0.1f),
-            center = center,
-            style = Stroke(width = 1f)
-        )
-    }
 }
 
 private fun DrawScope.drawHourMarkersAndNumbers(center: Offset, radius: Float) {
-    // Vacheron Constantin Patrimony typically uses slim hour markers and Roman numerals
-    
-    // Draw hour markers (slim lines)
-    for (i in 1..60) {
-        val angle = Math.PI / 30 * (i - 15)
-        val markerLength = if (i % 5 == 0) radius * 0.08f else radius * 0.03f
-        val strokeWidth = if (i % 5 == 0) 2f else 1f
-        
+    val textPaint = Paint().apply {
+        color = NumbersColor.hashCode()
+        textSize = radius * 0.15f
+        textAlign = Paint.Align.CENTER
+        isFakeBoldText = true
+        isAntiAlias = true
+    }
+
+    for (i in 1..12) {
+        val angle = Math.PI / 6 * (i - 3)
+        val markerLength = if (i % 3 == 0) radius * 0.1f else radius * 0.05f
         val startX = center.x + cos(angle).toFloat() * (radius - markerLength)
         val startY = center.y + sin(angle).toFloat() * (radius - markerLength)
         val endX = center.x + cos(angle).toFloat() * radius * 0.9f
         val endY = center.y + sin(angle).toFloat() * radius * 0.9f
 
+        // Draw hour markers
         drawLine(
             color = MarkersColor,
             start = Offset(startX, startY),
             end = Offset(endX, endY),
-            strokeWidth = strokeWidth,
+            strokeWidth = if (i % 3 == 0) 3f else 1.5f,
             cap = StrokeCap.Round
         )
-    }
-    
-    // Draw Roman numerals at 12, 3, 6, 9
-    val romanNumerals = listOf("XII", "III", "VI", "IX")
-    val textPaint = Paint().apply {
-        color = NumbersColor.hashCode()
-        textSize = radius * 0.12f
-        textAlign = Paint.Align.CENTER
-        isFakeBoldText = false // Slim font for elegance
-        isAntiAlias = true
-    }
-    
-    for (i in 0..3) {
-        val angle = Math.PI / 2 * i
+
+        // Draw hour numbers
         val numberRadius = radius * 0.75f
         val numberX = center.x + cos(angle).toFloat() * numberRadius
         val numberY = center.y + sin(angle).toFloat() * numberRadius + textPaint.textSize / 3
 
         drawContext.canvas.nativeCanvas.drawText(
-            romanNumerals[i],
+            i.toString(),
             numberX,
             numberY,
             textPaint
@@ -172,48 +163,38 @@ private fun DrawScope.drawClockHands(
     minute: Int,
     second: Int
 ) {
-    // Hour hand - slim and elegant
+    // Hour hand
     val hourAngle = (hour * 30 + minute * 0.5f)
     rotate(hourAngle) {
         drawLine(
             color = HourHandColor,
             start = center,
             end = Offset(center.x, center.y - radius * 0.5f),
-            strokeWidth = 4f,
+            strokeWidth = 8f,
             cap = StrokeCap.Round
         )
     }
 
-    // Minute hand - slim and elegant
+    // Minute hand
     val minuteAngle = minute * 6f
     rotate(minuteAngle) {
         drawLine(
             color = MinuteHandColor,
             start = center,
             end = Offset(center.x, center.y - radius * 0.7f),
-            strokeWidth = 3f,
+            strokeWidth = 4f,
             cap = StrokeCap.Round
         )
     }
 
-    // Second hand - very thin with a distinctive counterbalance
+    // Second hand
     val secondAngle = second * 6f
     rotate(secondAngle) {
-        // Main second hand
         drawLine(
             color = SecondHandColor,
             start = center,
             end = Offset(center.x, center.y - radius * 0.8f),
-            strokeWidth = 1.5f,
-            cap = StrokeCap.Round
-        )
-        
-        // Counterbalance
-        drawLine(
-            color = SecondHandColor,
-            start = center,
-            end = Offset(center.x, center.y + radius * 0.2f),
-            strokeWidth = 1.5f,
+            strokeWidth = 2f,
             cap = StrokeCap.Round
         )
     }
@@ -221,8 +202,8 @@ private fun DrawScope.drawClockHands(
 
 @Preview(showBackground = true)
 @Composable
-fun VacheronConstantinClockPreview() {
+fun PatekPhilippeClockPreview() {
     SwissTimeTheme {
-        VacheronConstantinClock()
+        PatekPhilippeClock()
     }
 }

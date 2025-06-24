@@ -1,11 +1,9 @@
-package com.coroutines.swisstime
+package com.coroutines.swisstime.watchfaces
 
 import android.graphics.Paint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -14,8 +12,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
@@ -23,16 +22,10 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.coroutines.swisstime.ui.theme.SwissTimeTheme
 import kotlinx.coroutines.delay
-import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Locale
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
@@ -101,8 +94,8 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
     drawRoundRect(
         color = ClockBorderColor,
         topLeft = Offset(center.x - rectWidth / 2, center.y - rectHeight / 2),
-        size = androidx.compose.ui.geometry.Size(rectWidth, rectHeight),
-        cornerRadius = androidx.compose.ui.geometry.CornerRadius(radius * 0.1f),
+        size = Size(rectWidth, rectHeight),
+        cornerRadius = CornerRadius(radius * 0.1f),
         style = Stroke(width = 8f)
     )
 
@@ -110,8 +103,8 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
     drawRoundRect(
         color = ClockFaceColor,
         topLeft = Offset(center.x - rectWidth / 2 + 4f, center.y - rectHeight / 2 + 4f),
-        size = androidx.compose.ui.geometry.Size(rectWidth - 8f, rectHeight - 8f),
-        cornerRadius = androidx.compose.ui.geometry.CornerRadius(radius * 0.09f)
+        size = Size(rectWidth - 8f, rectHeight - 8f),
+        cornerRadius = CornerRadius(radius * 0.09f)
     )
     
     // Draw Art Deco style decorative lines at the corners
@@ -197,7 +190,7 @@ private fun DrawScope.drawHourMarkersAndNumbers(center: Offset, radius: Float) {
             drawRect(
                 color = MarkersColor,
                 topLeft = Offset(markerX - markerWidth / 2, markerY - markerLength / 2),
-                size = androidx.compose.ui.geometry.Size(markerWidth, markerLength)
+                size = Size(markerWidth, markerLength)
             )
         }
     }

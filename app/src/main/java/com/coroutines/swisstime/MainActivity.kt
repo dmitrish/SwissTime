@@ -1,7 +1,6 @@
 package com.coroutines.swisstime
 
 import android.app.Activity
-import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -36,7 +35,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -59,8 +57,27 @@ import com.coroutines.swisstime.widget.WatchWidget
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.luminance
+import com.coroutines.swisstime.watchfaces.AhoiNeomatic38DateAtlantic
+import com.coroutines.swisstime.watchfaces.AutobahnNeomatic41DateSportsGray
+import com.coroutines.swisstime.watchfaces.BlancpainFiftyFathoms
+import com.coroutines.swisstime.watchfaces.BreguetClassique
+import com.coroutines.swisstime.watchfaces.BreitlingNavitimer
+import com.coroutines.swisstime.watchfaces.CarlFBuchererManero
+import com.coroutines.swisstime.watchfaces.ChopardLUC
+import com.coroutines.swisstime.watchfaces.FranckMullerVanguard
+import com.coroutines.swisstime.watchfaces.GirardPerregauxLaureato
+import com.coroutines.swisstime.watchfaces.HMoserEndeavour
+import com.coroutines.swisstime.watchfaces.IWCPortugieser
+import com.coroutines.swisstime.watchfaces.JaegerLeCoultreReverso
+import com.coroutines.swisstime.watchfaces.LonginesMasterCollection
+import com.coroutines.swisstime.watchfaces.ParmigianiFTonda
+import com.coroutines.swisstime.watchfaces.PiagetAltiplano
+import com.coroutines.swisstime.watchfaces.TAGHeuerCarrera
+import com.coroutines.swisstime.watchfaces.UlysseNardinMarineChronometer
+import com.coroutines.swisstime.watchfaces.VacheronConstantinClock
+import com.coroutines.swisstime.watchfaces.VacheronConstantinPatrimony
+import com.coroutines.swisstime.watchfaces.ZenithElPrimero
 import kotlinx.coroutines.launch
-import kotlin.math.max
 
 // Data class to hold watch information
 data class WatchInfo(
@@ -72,6 +89,7 @@ data class WatchInfo(
 // Function to get the watch face color based on the watch name
 fun getWatchFaceColor(watchName: String): Color {
     return when {
+        watchName.contains("Autobahn Neomatic 41") -> Color(0xFF4A4A4A) // Sports gray dial
         watchName.contains("Zenith El Primero") -> Color(0xFFF0F0F0) // Silver-white dial
         watchName.contains("Omega Seamaster") -> Color(0xFF0A4D8C) // Deep blue dial
         watchName.contains("Rolex Submariner") -> Color(0xFF000000) // Black dial
@@ -97,6 +115,7 @@ fun getWatchFaceColor(watchName: String): Color {
         watchName.contains("Alpina") -> Color(0xFF000000) // Black dial
         watchName.contains("Mondaine") -> Color(0xFFFFFFFF) // White dial
         watchName.contains("Swatch") -> Color(0xFFFFFFFF) // White dial
+        watchName.contains("Ahoi Neomatic") -> Color(0xFF1A3A5A) // Deep Atlantic blue dial
         else -> Color(0xFF2F4F4F) // Default to the current background color
     }
 }
@@ -153,6 +172,11 @@ fun WatchApp(watchPreferencesRepository: WatchPreferencesRepository) {
     // List of watches with their details
     val watches = listOf(
         WatchInfo(
+            name = "Autobahn Neomatic 41 Date Sports Gray",
+            description = "The Nomos Autobahn Neomatic 41 Date Sports Gray features a distinctive sports gray dial with a curved blue inner ring. This modern timepiece combines minimalist design with functional elements, including a date window at 6 o'clock and the signature red second hand.",
+            composable = { modifier -> AutobahnNeomatic41DateSportsGray(modifier = modifier) }
+        ),
+       /* WatchInfo(
             name = "Patek Philippe Perpetual Calendar",
             description = "The Patek Philippe Perpetual Calendar London Edition features a light cream dial with gold accents and a sophisticated perpetual calendar complication. This timepiece represents the pinnacle of Swiss watchmaking with its elegant design and mechanical precision.",
             composable = { modifier -> AnalogClock(modifier = modifier) }
@@ -176,7 +200,7 @@ fun WatchApp(watchPreferencesRepository: WatchPreferencesRepository) {
             name = "Rolex Submariner",
             description = "The Rolex Submariner is an iconic luxury dive watch with a black dial, gold accents, and a distinctive blue rotating bezel. Known for its Mercedes-style hands and date window at 3 o'clock, it combines timeless elegance with professional diving capabilities.",
             composable = { modifier -> RolexSubmarinerClock(modifier = modifier) }
-        ),
+        ),*/
         // Additional Swiss watch brands
         WatchInfo(
             name = "Vacheron Constantin Patrimony",
@@ -328,6 +352,11 @@ fun WatchApp(watchPreferencesRepository: WatchPreferencesRepository) {
             name = "Zenith El Primero",
             description = "The Zenith El Primero, introduced in 1969, was one of the world's first automatic chronograph movements. Known for its high-frequency 36,000 vibrations per hour and distinctive tri-color subdials, it represents Zenith's technical innovation and has become an icon of Swiss watchmaking excellence.",
             composable = { modifier -> ZenithElPrimero(modifier = modifier) }
+        ),
+        WatchInfo(
+            name = "Nomos Ahoi Neomatic 38 date Atlantic",
+            description = "The Nomos Ahoi Neomatic 38 date Atlantic features a deep blue dial inspired by the Atlantic Ocean. This German-made timepiece combines Bauhaus minimalism with dive watch functionality, featuring a waterproof design, luminous markers, and the distinctive red seconds hand that is a signature of Nomos Glashütte watches.",
+            composable = { modifier -> AhoiNeomatic38DateAtlantic(modifier = modifier) }
         )
     )
 

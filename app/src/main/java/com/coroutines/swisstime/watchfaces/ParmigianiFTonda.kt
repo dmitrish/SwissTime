@@ -1,6 +1,7 @@
-package com.coroutines.swisstime
+package com.coroutines.swisstime.watchfaces
 
 import android.graphics.Paint
+import android.graphics.Typeface
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
@@ -22,11 +24,14 @@ import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.tooling.preview.Preview
 import com.coroutines.swisstime.ui.theme.SwissTimeTheme
+//import com.coroutines.swisstime.watchfaces.setTypeface
 import kotlinx.coroutines.delay
 import java.util.Calendar
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
+
+//private var Unit.setTypeface: Typeface
 
 // Colors inspired by Parmigiani Fleurier Tonda
 private val ClockFaceColor = Color(0xFF1E2C4A) // Deep blue dial
@@ -242,7 +247,7 @@ private fun DrawScope.drawDateWindow(center: Offset, radius: Float) {
             dateWindowX - dateWindowWidth / 2,
             dateWindowY - dateWindowHeight / 2
         ),
-        size = androidx.compose.ui.geometry.Size(
+        size = Size(
             dateWindowWidth,
             dateWindowHeight
         )
@@ -255,7 +260,7 @@ private fun DrawScope.drawDateWindow(center: Offset, radius: Float) {
             dateWindowX - dateWindowWidth / 2,
             dateWindowY - dateWindowHeight / 2
         ),
-        size = androidx.compose.ui.geometry.Size(
+        size = Size(
             dateWindowWidth,
             dateWindowHeight
         ),
@@ -268,7 +273,7 @@ private fun DrawScope.drawDateWindow(center: Offset, radius: Float) {
         textSize = radius * 0.06f
         textAlign = Paint.Align.CENTER
         isAntiAlias = true
-        typeface = android.graphics.Typeface.create(android.graphics.Typeface.DEFAULT, android.graphics.Typeface.BOLD)
+       // Paint.setTypeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
     }
     
     // Get current date
@@ -370,7 +375,7 @@ private fun DrawScope.drawLogo(center: Offset, radius: Float) {
         textSize = radius * 0.07f
         textAlign = Paint.Align.CENTER
         isAntiAlias = true
-        typeface = android.graphics.Typeface.create(android.graphics.Typeface.SERIF, android.graphics.Typeface.NORMAL)
+      //  Paint.setTypeface = Typeface.create(Typeface.SERIF, Typeface.NORMAL)
     }
     
     drawContext.canvas.nativeCanvas.drawText(
@@ -385,7 +390,7 @@ private fun DrawScope.drawLogo(center: Offset, radius: Float) {
         textSize = radius * 0.05f
         textAlign = Paint.Align.CENTER
         isAntiAlias = true
-        typeface = android.graphics.Typeface.create(android.graphics.Typeface.SERIF, android.graphics.Typeface.ITALIC)
+      //  Paint.setTypeface = Typeface.create(Typeface.SERIF, Typeface.ITALIC)
     }
     
     drawContext.canvas.nativeCanvas.drawText(

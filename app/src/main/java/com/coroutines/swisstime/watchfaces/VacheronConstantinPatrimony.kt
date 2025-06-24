@@ -1,6 +1,7 @@
-package com.coroutines.swisstime
+package com.coroutines.swisstime.watchfaces
 
 import android.graphics.Paint
+import android.graphics.Typeface
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -82,7 +83,7 @@ fun VacheronConstantinPatrimony(modifier: Modifier = Modifier) {
                 radius = radius * 0.02f,
                 center = center
             )
-            
+
             // Draw Vacheron Constantin logo and Maltese cross
             drawLogo(center, radius)
         }
@@ -97,14 +98,14 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
         center = center,
         style = Stroke(width = radius * 0.03f)
     )
-    
+
     // Draw the main face
     drawCircle(
         color = ClockFaceColor,
         radius = radius * 0.97f,
         center = center
     )
-    
+
     // Draw a subtle inner ring
     drawCircle(
         color = ClockBorderColor,
@@ -119,10 +120,10 @@ private fun DrawScope.drawHourMarkers(center: Offset, radius: Float) {
     for (i in 0 until 12) {
         val angle = Math.PI / 6 * i - Math.PI / 2 // Start at 12 o'clock
         val markerRadius = radius * 0.85f
-        
+
         val markerX = center.x + cos(angle).toFloat() * markerRadius
         val markerY = center.y + sin(angle).toFloat() * markerRadius
-        
+
         // Draw applied gold markers
         if (i % 3 == 0) {
             // Double marker for 12, 3, 6, 9
@@ -147,16 +148,16 @@ private fun DrawScope.drawHourMarkers(center: Offset, radius: Float) {
                 center = Offset(markerX, markerY)
             )
         }
-        
+
         // Draw minute markers
         if (i < 11) {
             for (j in 1 until 5) {
                 val minuteAngle = Math.PI / 30 * (i * 5 + j) - Math.PI / 2
                 val minuteMarkerRadius = radius * 0.88f
-                
+
                 val minuteX = center.x + cos(minuteAngle).toFloat() * minuteMarkerRadius
                 val minuteY = center.y + sin(minuteAngle).toFloat() * minuteMarkerRadius
-                
+
                 drawCircle(
                     color = MarkersColor,
                     radius = radius * 0.003f,
@@ -170,7 +171,7 @@ private fun DrawScope.drawHourMarkers(center: Offset, radius: Float) {
 private fun DrawScope.drawSubtlePattern(center: Offset, radius: Float) {
     // Vacheron Constantin watches often have subtle, elegant patterns
     val patternRadius = radius * 0.5f
-    
+
     // Draw a subtle sunburst pattern
     for (angle in 0 until 360 step 6) {
         val radians = angle * Math.PI / 180
@@ -178,7 +179,7 @@ private fun DrawScope.drawSubtlePattern(center: Offset, radius: Float) {
         val startY = center.y + sin(radians).toFloat() * (radius * 0.1f)
         val endX = center.x + cos(radians).toFloat() * patternRadius
         val endY = center.y + sin(radians).toFloat() * patternRadius
-        
+
         drawLine(
             color = Color(0xFFF5F0E0),
             start = Offset(startX, startY),
@@ -234,7 +235,7 @@ private fun DrawScope.drawClockHands(
             strokeWidth = 1f,
             cap = StrokeCap.Round
         )
-        
+
         // Counterbalance
         drawCircle(
             color = SecondHandColor,
@@ -263,28 +264,28 @@ private fun DrawScope.drawLogo(center: Offset, radius: Float) {
         lineTo(center.x - crossSize * 0.3f, center.y - radius * 0.3f - crossSize * 0.7f)
         close()
     }
-    
+
     drawPath(
         path = crossPath,
         color = AccentColor
     )
-    
+
     // Draw brand name
     val brandPaint = Paint().apply {
         color = NumbersColor.hashCode()
         textSize = radius * 0.08f
         textAlign = Paint.Align.CENTER
         isAntiAlias = true
-        typeface = android.graphics.Typeface.create(android.graphics.Typeface.SERIF, android.graphics.Typeface.NORMAL)
+        typeface = Typeface.create(Typeface.SERIF, Typeface.NORMAL)
     }
-    
+
     drawContext.canvas.nativeCanvas.drawText(
         "VACHERON CONSTANTIN",
         center.x,
         center.y - radius * 0.15f,
         brandPaint
     )
-    
+
     // Draw "GENEVE" text
     val genevePaint = Paint().apply {
         color = NumbersColor.hashCode()
@@ -292,14 +293,14 @@ private fun DrawScope.drawLogo(center: Offset, radius: Float) {
         textAlign = Paint.Align.CENTER
         isAntiAlias = true
     }
-    
+
     drawContext.canvas.nativeCanvas.drawText(
         "GENÈVE",
         center.x,
         center.y + radius * 0.4f,
         genevePaint
     )
-    
+
     // Draw "SWISS MADE" text
     val swissMadePaint = Paint().apply {
         color = NumbersColor.hashCode()
@@ -307,7 +308,7 @@ private fun DrawScope.drawLogo(center: Offset, radius: Float) {
         textAlign = Paint.Align.CENTER
         isAntiAlias = true
     }
-    
+
     drawContext.canvas.nativeCanvas.drawText(
         "SWISS MADE",
         center.x,

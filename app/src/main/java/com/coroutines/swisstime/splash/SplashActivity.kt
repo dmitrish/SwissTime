@@ -1,4 +1,4 @@
-package com.coroutines.swisstime
+package com.coroutines.swisstime.splash
 
 import android.content.Intent
 import android.graphics.drawable.AnimatedVectorDrawable
@@ -9,6 +9,8 @@ import android.view.WindowManager
 import android.widget.ImageView
 import androidx.activity.ComponentActivity
 import androidx.core.view.WindowCompat
+import com.coroutines.swisstime.MainActivity
+import com.coroutines.swisstime.R
 
 class SplashActivity : ComponentActivity() {
 

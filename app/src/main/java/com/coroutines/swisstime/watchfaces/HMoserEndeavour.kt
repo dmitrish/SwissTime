@@ -1,4 +1,4 @@
-package com.coroutines.swisstime
+package com.coroutines.swisstime.watchfaces
 
 import android.graphics.Paint
 import androidx.compose.foundation.Canvas

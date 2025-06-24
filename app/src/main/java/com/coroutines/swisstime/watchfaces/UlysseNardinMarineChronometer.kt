@@ -1,11 +1,9 @@
-package com.coroutines.swisstime
+package com.coroutines.swisstime.watchfaces
 
 import android.graphics.Paint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -14,23 +12,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.coroutines.swisstime.ui.theme.SwissTimeTheme
 import kotlinx.coroutines.delay
-import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Locale
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
@@ -132,7 +128,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
     val armHeight = anchorSize / 3
     
     // Left arm
-    val leftArmPath = androidx.compose.ui.graphics.Path().apply {
+    val leftArmPath = Path().apply {
         moveTo(center.x, anchorY + anchorSize / 4)
         quadraticBezierTo(
             center.x - armWidth / 2, anchorY + anchorSize / 4, // Control point
@@ -142,7 +138,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
     drawPath(leftArmPath, ClockBorderColor, style = Stroke(width = anchorSize / 10))
     
     // Right arm
-    val rightArmPath = androidx.compose.ui.graphics.Path().apply {
+    val rightArmPath = Path().apply {
         moveTo(center.x, anchorY + anchorSize / 4)
         quadraticBezierTo(
             center.x + armWidth / 2, anchorY + anchorSize / 4, // Control point
@@ -189,10 +185,10 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
     val powerReserveHeight = radius * 0.1f
     
     // Power reserve background (semi-circular)
-    val powerReservePath = androidx.compose.ui.graphics.Path().apply {
+    val powerReservePath = Path().apply {
         // Draw semi-circle
         arcTo(
-            androidx.compose.ui.geometry.Rect(
+            Rect(
                 left = center.x - powerReserveWidth / 2,
                 top = powerReserveY - powerReserveHeight,
                 right = center.x + powerReserveWidth / 2,
@@ -248,10 +244,10 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
     
     // Power reserve indicator (simulated at 60% full)
     val indicatorAngle = Math.PI * 0.6
-    val indicatorPath = androidx.compose.ui.graphics.Path().apply {
+    val indicatorPath = Path().apply {
         // Draw partial semi-circle
         arcTo(
-            androidx.compose.ui.geometry.Rect(
+            Rect(
                 left = center.x - powerReserveWidth / 2,
                 top = powerReserveY - powerReserveHeight,
                 right = center.x + powerReserveWidth / 2,
@@ -276,14 +272,14 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
     drawRoundRect(
         color = Color.White,
         topLeft = Offset(center.x - radius * 0.15f, dateY - radius * 0.08f),
-        size = androidx.compose.ui.geometry.Size(radius * 0.3f, radius * 0.16f),
-        cornerRadius = androidx.compose.ui.geometry.CornerRadius(radius * 0.02f)
+        size = Size(radius * 0.3f, radius * 0.16f),
+        cornerRadius = CornerRadius(radius * 0.02f)
     )
     drawRoundRect(
         color = ClockBorderColor,
         topLeft = Offset(center.x - radius * 0.15f, dateY - radius * 0.08f),
-        size = androidx.compose.ui.geometry.Size(radius * 0.3f, radius * 0.16f),
-        cornerRadius = androidx.compose.ui.geometry.CornerRadius(radius * 0.02f),
+        size = Size(radius * 0.3f, radius * 0.16f),
+        cornerRadius = CornerRadius(radius * 0.02f),
         style = Stroke(width = 2f)
     )
     
@@ -392,7 +388,7 @@ private fun DrawScope.drawClockHands(
     // Hour hand - pear-shaped (characteristic of marine chronometers)
     val hourAngle = (hour * 30 + minute * 0.5f)
     rotate(hourAngle) {
-        val hourHandPath = androidx.compose.ui.graphics.Path().apply {
+        val hourHandPath = Path().apply {
             moveTo(center.x, center.y - radius * 0.5f) // Tip
             quadraticBezierTo(
                 center.x + radius * 0.04f, center.y - radius * 0.25f, // Control point
@@ -414,7 +410,7 @@ private fun DrawScope.drawClockHands(
     // Minute hand - longer pear-shaped
     val minuteAngle = minute * 6f
     rotate(minuteAngle) {
-        val minuteHandPath = androidx.compose.ui.graphics.Path().apply {
+        val minuteHandPath = Path().apply {
             moveTo(center.x, center.y - radius * 0.7f) // Tip
             quadraticBezierTo(
                 center.x + radius * 0.03f, center.y - radius * 0.35f, // Control point
@@ -447,7 +443,7 @@ private fun DrawScope.drawClockHands(
         
         // Arrow tip
         val arrowSize = radius * 0.05f
-        val arrowPath = androidx.compose.ui.graphics.Path().apply {
+        val arrowPath = Path().apply {
             moveTo(center.x, center.y - radius * 0.75f - arrowSize) // Tip
             lineTo(center.x + arrowSize / 2, center.y - radius * 0.75f) // Right corner
             lineTo(center.x - arrowSize / 2, center.y - radius * 0.75f) // Left corner

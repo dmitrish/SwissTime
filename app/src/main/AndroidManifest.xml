@@ -15,7 +15,7 @@
 
         <!-- Splash Screen Activity -->
         <activity
-                android:name=".SplashActivity"
+                android:name=".splash.SplashActivity"
                 android:exported="true"
                 android:theme="@style/Theme.SwissTime.SplashScreen">
             <intent-filter>
