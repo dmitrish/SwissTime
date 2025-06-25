@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "com.coroutines.swisstime"
-    compileSdk = 35
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.coroutines.swisstime"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -54,6 +54,9 @@ dependencies {
 
     // DataStore for preferences
     implementation(libs.androidx.datastore.preferences)
+
+    // Splash Screen API
+    implementation(libs.androidx.core.splashscreen)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
