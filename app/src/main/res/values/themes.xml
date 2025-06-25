@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.SwissTime" parent="android:Theme.Material.Light.NoActionBar"/>
 
-    <!-- Splash screen theme -->
-    <style name="Theme.SwissTime.SplashScreen" parent="Theme.SwissTime">
-        <item name="android:windowBackground">@color/splash_background</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
-        <item name="android:windowTranslucentStatus">false</item>
-        <item name="android:windowTranslucentNavigation">false</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+    <style name="Theme.SwissTime" parent="android:Theme.Material.Light.NoActionBar"/>
+    <style name="Theme.SplashScreen" parent="android:Theme.Material.Light.NoActionBar"/>
+
+    <style name="Theme.PostSplash" parent="android:Theme.Material.Light.NoActionBar" >
+        <item name="android:windowActionBar">true</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <!-- Set the splash screen background color. -->
+        <item name="windowSplashScreenBackground">@color/dark_navy</item>
+
+        <!-- Use our splash screen icon as the drawable. -->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/avd_splash_screen</item>
+
+        <!-- Set the theme of the Activity that follows the splash screen. -->
+        <item name="postSplashScreenTheme">@style/Theme.PostSplash</item>
+
+        <item name="windowSplashScreenAnimationDuration">2000</item>
     </style>
 </resources>
