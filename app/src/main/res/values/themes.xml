@@ -1,17 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.SwissTime" parent="android:Theme.Material.Light.NoActionBar"/>
+    <style name="Theme.SwissTime" parent="android:Theme.Material.Light.NoActionBar">
+
+        <item name="android:windowBackground">@color/nyc_red</item>
+
+        <item name="android:windowActionBar">false</item>
+    </style>
     <style name="Theme.SplashScreen" parent="android:Theme.Material.Light.NoActionBar"/>
 
     <style name="Theme.PostSplash" parent="android:Theme.Material.Light.NoActionBar" >
-        <item name="android:windowActionBar">true</item>
+        <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
     </style>
 
     <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="android:statusBarColor">#FF2F4F4F</item>
+        <item name="android:navigationBarColor">#FF2F4F4F</item>
         <!-- Set the splash screen background color. -->
         <item name="windowSplashScreenBackground">@color/dark_navy</item>
+
+        <item name="android:windowBackground">@color/dark_navy</item>
+
+        <item name="android:windowActionBar">false</item>
 
         <!-- Use our splash screen icon as the drawable. -->
         <item name="windowSplashScreenAnimatedIcon">@drawable/avd_splash_screen</item>
