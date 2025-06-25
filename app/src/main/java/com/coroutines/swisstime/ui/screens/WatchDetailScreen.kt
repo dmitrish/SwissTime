@@ -17,13 +17,18 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -34,6 +39,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -122,6 +137,33 @@ fun WatchDetailScreen(
     }
 
 
+    // Animate the scale of the watch
+    val watchScale by animateFloatAsState(
+        targetValue = if (isExpanded) 1.5f else 1f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioLowBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "watchScale"
+    )
+
+    // Animate the alpha of the details (name, description)
+    val detailsAlpha by animateFloatAsState(
+        targetValue = if (isExpanded) 0f else 1f,
+        animationSpec = tween(durationMillis = 300),
+        label = "detailsAlpha"
+    )
+
+    // Animate the position of the watch
+    val watchPositionFactor by animateFloatAsState(
+        targetValue = if (isExpanded) 0.5f else 0.25f, // 0.5 = center, 0.25 = top quarter
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "watchPosition"
+    )
+
     // Use a Surface that fills the entire screen including the status bar area
     Surface(
         color = darkenedWatchFaceColor,
@@ -129,28 +171,11 @@ fun WatchDetailScreen(
         contentColor = textColor,
         modifier = modifier.fillMaxSize()
     ) {
-        if (isExpanded) {
-            // Expanded view - only show the watch centered
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    // Apply padding for status bars to avoid content being hidden behind them
-                    .windowInsetsPadding(WindowInsets.statusBars)
-                    .clickable { isExpanded = false }, // Click to collapse
-                contentAlignment = Alignment.Center
-            ) {
-                // Make the watch as large as possible while maintaining aspect ratio
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        // Use padding only for horizontal edges and bottom, not for top to allow content to extend into status bar
-                        .padding(start = 32.dp, end = 32.dp, bottom = 32.dp, top = 0.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    watch.composable(Modifier.fillMaxSize())
-                }
-            }
-        } else {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable(enabled = isExpanded) { isExpanded = false } // Click to collapse when expanded
+        ) {
             // Normal view - show all elements
             Column(
                 modifier = Modifier
@@ -163,6 +188,7 @@ fun WatchDetailScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .alpha(detailsAlpha) // Fade out when expanded
                         // Apply padding for status bars to avoid content being hidden behind them
                         .windowInsetsPadding(WindowInsets.statusBars),
                     horizontalArrangement = Arrangement.Start
@@ -179,38 +205,108 @@ fun WatchDetailScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Watch at the top - clickable to expand
+                // Watch - positioned based on animation
                 Box(
                     modifier = Modifier
-                        .size(240.dp)
-                        .padding(16.dp)
-                        .clickable { isExpanded = true },
+                        .fillMaxWidth()
+                        .fillMaxHeight(watchPositionFactor * 2) // Animate position
+                        .padding(16.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    watch.composable(Modifier.fillMaxSize())
+                    // Use different shape for Jaeger-LeCoultre Reverso which is rectangular
+                    val clipShape = if (watch.name.contains("Jaeger-LeCoultre Reverso")) {
+                        RoundedCornerShape(20.dp) // Rounded rectangle for Reverso
+                    } else {
+                        CircleShape // Circle for all other watches
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .size(240.dp)
+                            .scale(watchScale) // Animate scale first
+                            .clip(clipShape) // Then clip to appropriate shape
+                            .clickable { isExpanded = !isExpanded }, // Toggle expanded state on click
+                        contentAlignment = Alignment.Center
+                    ) {
+                        watch.composable(Modifier.fillMaxSize())
+                    }
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                // Details section - fades out when expanded
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .alpha(detailsAlpha), // Fade out when expanded
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Spacer(modifier = Modifier.height(24.dp))
 
-                // Name below
-                Text(
-                    text = watch.name,
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                    color = textColor
-                )
+                    // Name below
+                    Text(
+                        text = watch.name,
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                        color = textColor
+                    )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                // Description below name
-                Text(
-                    text = watch.description,
-                    style = MaterialTheme.typography.bodyLarge,
-                    textAlign = TextAlign.Center,
-                    color = textColor.copy(alpha = 0.9f),
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
+                    // Description below name - scrollable with visible scrollbar
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f) // Take remaining space
+                            .padding(horizontal = 16.dp)
+                    ) {
+                        val scrollState = rememberScrollState()
+
+                        // Main text content
+                        Text(
+                            text = watch.description,
+                            style = MaterialTheme.typography.bodyLarge,
+                            textAlign = TextAlign.Center,
+                            color = textColor.copy(alpha = 0.9f),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .verticalScroll(scrollState)
+                        )
+
+                        // Custom scrollbar
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.CenterEnd)
+                                .fillMaxHeight()
+                                .width(8.dp)
+                                .padding(1.dp)
+                        ) {
+                            // Background track
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .width(6.dp)
+                                    .background(
+                                        color = textColor.copy(alpha = 0.1f),
+                                        shape = RoundedCornerShape(3.dp)
+                                    )
+                            )
+
+                            // Scrollbar thumb - only visible when content is scrollable
+                            if (scrollState.maxValue > 0) {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxHeight(scrollState.value.toFloat() / scrollState.maxValue.toFloat())
+                                        .width(6.dp)
+                                        .background(
+                                            color = textColor.copy(alpha = 0.5f),
+                                            shape = RoundedCornerShape(3.dp)
+                                        )
+                                        .align(Alignment.TopStart)
+                                )
+                            }
+                        }
+                    }
+                }
             }
         }
     }
