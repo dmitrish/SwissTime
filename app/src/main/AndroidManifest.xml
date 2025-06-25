@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools">
 
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
             android:allowBackup="true"
             android:dataExtractionRules="@xml/data_extraction_rules"
@@ -10,31 +14,24 @@
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
-            android:theme="@style/Theme.SwissTime"
-            tools:targetApi="31">
+            android:theme="@style/Theme.SwissTime">
 
-        <!-- Splash Screen Activity -->
         <activity
-                android:name=".splash.SplashActivity"
+                android:name=".MainActivity"
                 android:exported="true"
-                android:theme="@style/Theme.SwissTime.SplashScreen">
+                android:enabled="true"
+                android:theme="@style/Theme.App.Starting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
-        <!-- Main Activity -->
-        <activity
-                android:name=".MainActivity"
-                android:exported="false"
-                android:label="@string/app_name"
-                android:theme="@style/Theme.SwissTime">
-        </activity>
+
 
         <!-- Widget Receiver -->
         <receiver
-                android:name=".widget.WatchWidgetReceiver"
+                android:name="com.coroutines.swisstime.widget.WatchWidgetReceiver"
                 android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
