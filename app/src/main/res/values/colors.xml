@@ -8,4 +8,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="splash_background">#2F4F4F</color>
+    <color name="nyc_blue">#FF0D47A1</color>
+    <color name="nyc_red">#FFFF0000</color>
+    <color name="dark_navy">#FF2F4F4F</color>
 </resources>
