@@ -7,12 +7,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
@@ -45,24 +48,38 @@ fun WatchListScreen(
     // Capture the background color
     val backgroundColor = MaterialTheme.colorScheme.background
 
+    // Use a Surface that fills the entire screen including the status bar area
     Surface(
         color = backgroundColor,
+        // Don't apply any window insets padding to allow content to extend into status bar area
         modifier = modifier.fillMaxSize()
     ) {
-        LazyColumn(
-            state = listState,
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(16.dp)
+        Column(
+            modifier = Modifier.fillMaxSize()
         ) {
-            items(watches) { watch ->
-                WatchListItem(
-                    watch = watch,
-                    onClick = { onWatchClick(watch) },
-                    isSelectedForWidget = selectedWatchName == watch.name,
-                    onSelectForWidget = { onSelectForWidget(watch) },
-                    modifier = Modifier.fillMaxWidth()
-                )
+            // Add a spacer that matches the status bar height
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .windowInsetsPadding(WindowInsets.statusBars)
+            )
+
+            // Main content
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = PaddingValues(16.dp)
+            ) {
+                items(watches) { watch ->
+                    WatchListItem(
+                        watch = watch,
+                        onClick = { onWatchClick(watch) },
+                        isSelectedForWidget = selectedWatchName == watch.name,
+                        onSelectForWidget = { onSelectForWidget(watch) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
         }
     }

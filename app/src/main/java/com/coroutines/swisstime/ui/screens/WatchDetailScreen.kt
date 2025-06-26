@@ -1,13 +1,9 @@
 package com.coroutines.swisstime.ui.screens
 
-import android.view.Window
+import android.app.Activity
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
-import androidx.activity.SystemBarStyle
 import androidx.activity.compose.BackHandler
-import androidx.activity.enableEdgeToEdge
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -54,6 +50,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -77,6 +74,8 @@ fun WatchDetailScreen(
     val context = LocalContext.current
     val activity = context as? ComponentActivity
 
+    val originalColor = MaterialTheme.colorScheme.background.toArgb()
+
     // Handle back button press
     BackHandler {
         if (isExpanded) {
@@ -84,6 +83,8 @@ fun WatchDetailScreen(
             isExpanded = false
         } else {
             // Otherwise, go back to the list
+          //  activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+
             onBackClick()
         }
     }
@@ -95,47 +96,32 @@ fun WatchDetailScreen(
     // Get appropriate text color for the background
     val textColor = getTextColorForBackground(darkenedWatchFaceColor)
 
-    // Handle system bars (status bar and navigation bar)
-    DisposableEffect(activity) {
-        val window = activity?.window
-        if (window != null) {
-            // Make the content draw behind the system bars
-            WindowCompat.setDecorFitsSystemWindows(window, false)
+    // System bars (status bar and navigation bar) are kept transparent (set in MainActivity)
+    // and the screen's background color extends under them
+    // and it DOES NOT WORK
+    // need additional logic to handle system bars colors
+    //here it is
 
-            // Get the controller to manipulate system bars
-            val controller = WindowInsetsControllerCompat(window, window.decorView)
+    activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+    activity?.window?.setStatusBarColor(darkenedWatchFaceColor.toArgb());
+    activity?.window?.setNavigationBarColor(darkenedWatchFaceColor.toArgb());
 
-            // Set status bar color (instead of hiding it)
-            window.statusBarColor = darkenedWatchFaceColor.toArgb()
 
-            // Set the appropriate appearance for the status bar
-            if (darkenedWatchFaceColor.isDark()) {
-                controller.isAppearanceLightStatusBars = false
-            } else {
-                controller.isAppearanceLightStatusBars = true
-            }
+    // val activity = LocalView.current.context as? Activity
+    DisposableEffect(key1 = activity) {
 
-            // Set navigation bar color
-            window.navigationBarColor = darkenedWatchFaceColor.toArgb()
 
-            // Set the appropriate appearance for the navigation bar
-            if (darkenedWatchFaceColor.isDark()) {
-                controller.isAppearanceLightNavigationBars = false
-            } else {
-                controller.isAppearanceLightNavigationBars = true
-            }
-        }
+   // activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+   // activity?.window?.setStatusBarColor(darkenedWatchFaceColor.toArgb());
+   // activity?.window?.setNavigationBarColor(darkenedWatchFaceColor.toArgb());
 
-        // When leaving the screen, restore the original settings
         onDispose {
-            // Restore the original system bar settings using the same approach as in MainActivity
-            activity?.enableEdgeToEdge(
-                statusBarStyle = SystemBarStyle.dark(Color.Transparent.toArgb()),
-                navigationBarStyle = SystemBarStyle.dark(Color.Transparent.toArgb())
-            )
-        }
-    }
+           // activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+          //  activity?.window?.setStatusBarColor(originalColor);
+          //  activity?.window?.setNavigationBarColor(Color.Transparent.toArgb());
 
+        }
+   }
 
     // Animate the scale of the watch
     val watchScale by animateFloatAsState(
@@ -164,10 +150,12 @@ fun WatchDetailScreen(
         label = "watchPosition"
     )
 
-    // Use a Surface that fills the entire screen including the status bar area
+
+
+    // Use a Surface that fills the entire screen including the status bar and navigation bar areas
     Surface(
         color = darkenedWatchFaceColor,
-        // Don't apply any window insets padding to allow content to extend into status bar area
+        // Don't apply any window insets padding to allow content to extend into system bars
         contentColor = textColor,
         modifier = modifier.fillMaxSize()
     ) {
@@ -180,8 +168,8 @@ fun WatchDetailScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    // Use padding only for horizontal edges and bottom, not for top to allow content to extend into status bar
-                    .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 0.dp),
+                    // Use padding only for horizontal edges, not for top or bottom to allow content to extend into system bars
+                    .padding(start = 16.dp, end = 16.dp, bottom = 0.dp, top = 0.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // Back button
@@ -269,6 +257,7 @@ fun WatchDetailScreen(
                             color = textColor.copy(alpha = 0.9f),
                             modifier = Modifier
                                 .fillMaxWidth()
+                                .padding(start = 16.dp, end = 16.dp, top = 0.dp, bottom = 16.dp)
                                 .verticalScroll(scrollState)
                         )
 
@@ -307,6 +296,13 @@ fun WatchDetailScreen(
                         }
                     }
                 }
+
+                // Add a spacer that matches the navigation bar height
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .windowInsetsPadding(WindowInsets.navigationBars)
+                )
             }
         }
     }
