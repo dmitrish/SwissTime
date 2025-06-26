@@ -40,6 +40,7 @@ import com.coroutines.swisstime.WatchInfo
 fun WatchListScreen(
     watches: List<WatchInfo>,
     onWatchClick: (WatchInfo) -> Unit,
+    onTitleClick: () -> Unit,
     selectedWatchName: String?,
     onSelectForWidget: (WatchInfo) -> Any,
     modifier: Modifier = Modifier,
@@ -75,6 +76,7 @@ fun WatchListScreen(
                     WatchListItem(
                         watch = watch,
                         onClick = { onWatchClick(watch) },
+                        onTitleClick = onTitleClick,
                         isSelectedForWidget = selectedWatchName == watch.name,
                         onSelectForWidget = { onSelectForWidget(watch) },
                         modifier = Modifier.fillMaxWidth()
@@ -89,6 +91,7 @@ fun WatchListScreen(
 fun WatchListItem(
     watch: WatchInfo,
     onClick: () -> Unit,
+    onTitleClick: () -> Unit,
     isSelectedForWidget: Boolean = false,
     onSelectForWidget: () -> Any,
     modifier: Modifier = Modifier
@@ -133,7 +136,9 @@ fun WatchListItem(
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier
+                            .weight(1f)
+                            .clickable(onClick = onTitleClick)
                     )
 
                     // Widget selection icon
