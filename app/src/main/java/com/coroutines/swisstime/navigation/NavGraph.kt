@@ -15,11 +15,13 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.coroutines.swisstime.TimingLogger
 import com.coroutines.swisstime.WatchInfo
 import com.coroutines.swisstime.darken
 import com.coroutines.swisstime.getWatchFaceColor
 import com.coroutines.swisstime.ui.screens.BrandLogosScreen
 import com.coroutines.swisstime.ui.screens.CustomWorldMapScreen
+import com.coroutines.swisstime.ui.screens.OptimizedWorldMapScreen
 import com.coroutines.swisstime.ui.screens.WatchDetailScreen
 import com.coroutines.swisstime.ui.screens.WatchListScreen
 import com.coroutines.swisstime.ui.screens.WorldMapScreen
@@ -93,8 +95,14 @@ fun NavGraph(
 
                     // Check if this is the Piaget Altiplano watch
                     if (watch.name.contains("Piaget Altiplano")) {
-                        // Navigate to the custom world map screen
-                        navController.navigate(Screen.CustomWorldMap.route)
+                        // Log the start time when tapping on the Piaget watch
+                        val startTime = System.currentTimeMillis()
+                        // Store the start time in a static variable to access it later
+                        TimingLogger.startTime = startTime
+                        android.util.Log.d("PerformanceLog", "Tapped on Piaget watch at $startTime ms")
+
+                        // Navigate to the optimized world map screen
+                        navController.navigate(Screen.WorldMap.route)
                     } else {
                         // Navigate to the detail screen
                         navController.navigate(Screen.WatchDetail.createRoute(index))
@@ -198,7 +206,7 @@ fun NavGraph(
             activity?.window?.setNavigationBarColor(originalColor);
 
             // Render the WorldMapScreen
-            WorldMapScreen(
+            OptimizedWorldMapScreen(
                 onBackClick = {
                     // Navigate back to the list screen
                     navController.popBackStack()
