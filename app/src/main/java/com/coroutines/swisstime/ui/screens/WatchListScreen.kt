@@ -76,7 +76,7 @@ fun BrandLogoRowItem(
             painter = painterResource(id = brandLogo.resourceId),
             contentDescription = brandLogo.name,
             modifier = Modifier
-                .width(155.dp)
+                .width(175.dp)
                 .height(110.dp)
                 .padding(16.dp)
         )
