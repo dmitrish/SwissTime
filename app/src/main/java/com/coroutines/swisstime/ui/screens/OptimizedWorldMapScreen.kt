@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import com.coroutines.swisstime.R
 import com.coroutines.swisstime.TimingLogger
+import com.coroutines.swisstime.WatchInfo
 import com.coroutines.swisstime.ui.theme.DarkNavy
 import com.coroutines.swisstime.watchfaces.PiagetAltiplano
 import kotlinx.coroutines.delay
@@ -69,6 +70,7 @@ import kotlin.math.tan
 @Composable
 fun OptimizedWorldMapScreen(
     onBackClick: () -> Unit,
+    selectedWatch: WatchInfo? = null,
     modifier: Modifier = Modifier
 ) {
     var currentTime by remember { mutableStateOf(Calendar.getInstance()) }
@@ -84,7 +86,7 @@ fun OptimizedWorldMapScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Optimized World Map") },
+                title = { Text(selectedWatch?.name ?: "Optimized World Map") },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
@@ -112,16 +114,20 @@ fun OptimizedWorldMapScreen(
                 modifier = Modifier.weight(1f)
             )
 
-            // Piaget Altiplano watch
+            // Display the selected watch or default to Piaget Altiplano
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f), // Square aspect ratio for the watch
                 contentAlignment = Alignment.Center
             ) {
-                PiagetAltiplano(
-                    modifier = Modifier.fillMaxSize(0.8f)
-                )
+                if (selectedWatch != null) {
+                    selectedWatch.composable(Modifier.fillMaxSize(0.8f))
+                } else {
+                    PiagetAltiplano(
+                        modifier = Modifier.fillMaxSize(0.8f)
+                    )
+                }
             }
 
             // Optimized World map with day/night visualization - bottom aligned
@@ -135,6 +141,64 @@ fun OptimizedWorldMapScreen(
     }
 }
 
+
+
+@Composable
+fun SelectedWatchScreen(
+    onBackClick: () -> Unit,
+    selectedWatch: WatchInfo? = null,
+    modifier: Modifier = Modifier
+) {
+    var currentTime by remember { mutableStateOf(Calendar.getInstance()) }
+
+    // Update time every second
+    LaunchedEffect(key1 = true) {
+        while (true) {
+            currentTime = Calendar.getInstance()
+            delay(1000) // Update every second
+        }
+    }
+
+    Scaffold(
+        topBar = {},
+        modifier = modifier.fillMaxSize()
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            // Flexible spacer to push content to the bottom
+            androidx.compose.foundation.layout.Spacer(
+                modifier = Modifier.weight(1f)
+            )
+
+            // Display the selected watch or default to Piaget Altiplano
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f), // Square aspect ratio for the watch
+                contentAlignment = Alignment.Center
+            ) {
+                if (selectedWatch != null) {
+                    selectedWatch.composable(Modifier.fillMaxSize(0.8f))
+                } else {
+                    PiagetAltiplano(
+                        modifier = Modifier.fillMaxSize(0.8f)
+                    )
+                }
+            }
+
+            // Optimized World map with day/night visualization - bottom aligned
+            OptimizedWorldMapWithDayNight(
+                currentTime = currentTime,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(2f) // 2:1 aspect ratio for the world map
+            )
+        }
+    }
+}
 // Data class to hold sun position calculations to avoid recalculating
 data class SunPosition(
     val RA: Float,

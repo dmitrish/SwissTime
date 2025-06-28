@@ -15,15 +15,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.glance.appwidget.updateAll
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.coroutines.swisstime.data.WatchPreferencesRepository
 import com.coroutines.swisstime.navigation.NavGraph
+import com.coroutines.swisstime.navigation.SwissTimeNavigationBar
+import com.coroutines.swisstime.viewmodel.WatchViewModel
 import com.coroutines.swisstime.ui.screens.WatchDetailScreen
 import com.coroutines.swisstime.ui.screens.WatchListScreen
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -76,6 +80,15 @@ fun WatchApp(watchPreferencesRepository: WatchPreferencesRepository) {
     // Create a NavController
     val navController = rememberNavController()
 
+    // Create a WatchViewModel instance
+    val watchViewModel = viewModel<WatchViewModel>(
+        factory = WatchViewModel.Factory(watchPreferencesRepository, watches)
+    )
+
+    // Get the current back stack entry
+    val navBackStackEntry = navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry.value?.destination
+
     // Function to select a watch for the widget
     val selectWatchForWidget = { watch: WatchInfo ->
         coroutineScope.launch {
@@ -113,6 +126,16 @@ fun WatchApp(watchPreferencesRepository: WatchPreferencesRepository) {
                     fontWeight = FontWeight.Bold
                 )
             } */
+        },
+        bottomBar = {
+            // Only show the navigation bar if we're not on the WatchDetailScreen
+            val currentRoute = currentDestination?.route
+            if (currentRoute == null || !currentRoute.startsWith("watchDetail")) {
+                SwissTimeNavigationBar(
+                    navController = navController,
+                    currentDestination = currentDestination
+                )
+            }
         }
     ) { innerPadding ->
         // Use the Navigation 3 library
@@ -125,7 +148,8 @@ fun WatchApp(watchPreferencesRepository: WatchPreferencesRepository) {
                 onSelectForWidget = { watch -> 
                     selectWatchForWidget(watch)
                     Unit // Return Unit to match the expected type
-                }
+                },
+                watchViewModel = watchViewModel
             )
         }
     }
