@@ -104,11 +104,16 @@ fun CustomWorldMapScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            // Top two-thirds - Piaget Altiplano watch
+            // Flexible spacer to push content to the bottom
+            androidx.compose.foundation.layout.Spacer(
+                modifier = Modifier.weight(1f)
+            )
+
+            // Piaget Altiplano watch
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(2f),
+                    .aspectRatio(1f), // Square aspect ratio for the watch
                 contentAlignment = Alignment.Center
             ) {
                 PiagetAltiplano(
@@ -116,12 +121,12 @@ fun CustomWorldMapScreen(
                 )
             }
 
-            // Bottom one-third - Custom World map with day/night visualization
+            // Custom World map with day/night visualization - bottom aligned
             CustomWorldMapWithDayNight(
                 currentTime = currentTime,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f)
+                    .aspectRatio(2f) // 2:1 aspect ratio for the world map
             )
         }
     }
@@ -409,7 +414,7 @@ fun CustomWorldMapWithDayNight(
 
                 // For each pixel in the image (simplified to reduce computation)
                 // Adjust step size based on screen width to ensure consistent visual quality across devices
-                val stepSize = (width / 200).coerceAtLeast(1f).toInt() // Scale step size with screen width
+                val stepSize = (width / 300).coerceAtLeast(1f).toInt() // Scale step size with screen width
                 for (y in 0 until height.toInt() step stepSize) {
                     for (x in 0 until width.toInt() step stepSize) {
                         // Convert x,y to longitude, latitude
@@ -446,7 +451,7 @@ fun CustomWorldMapWithDayNight(
                         } else if (altitude < -blur) {
                             // Night side - very subtle dark tint
                             drawCircle(
-                                color = Color(DarkNavy.toArgb()).copy(alpha = 0.1f),
+                                color = Color(DarkNavy.toArgb()).copy(alpha = 0.13f),
                               //  color = Color(0xFF000033).copy(alpha = 0.05f), // Very subtle dark blue for night
                                 radius = stepSize.toFloat(),
                                 center = Offset(x.toFloat(), y.toFloat())
@@ -457,7 +462,7 @@ fun CustomWorldMapWithDayNight(
                             // Only apply a very subtle dark tint in the terminator region
                             if (alpha < 0.5f) {
                                 drawCircle(
-                                    color = Color(DarkNavy.toArgb()).copy(alpha = 0.1f * (1f - alpha.coerceIn(0f, 1f))),
+                                    color = Color(DarkNavy.toArgb()).copy(alpha = 0.13f * (1f - alpha.coerceIn(0f, 1f))),
                                   //  color = Color(0xFF000033).copy(alpha = 0.03f * (1f - alpha.coerceIn(0f, 1f))),
                                     radius = stepSize.toFloat(),
                                     center = Offset(x.toFloat(), y.toFloat())
