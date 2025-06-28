@@ -22,12 +22,15 @@ import com.coroutines.swisstime.getWatchFaceColor
 import com.coroutines.swisstime.ui.screens.BrandLogosScreen
 import com.coroutines.swisstime.ui.screens.CustomWorldMapScreen
 import com.coroutines.swisstime.ui.screens.OptimizedWorldMapScreen
+import com.coroutines.swisstime.ui.screens.TimeScreen
 import com.coroutines.swisstime.ui.screens.WatchDetailScreen
 import com.coroutines.swisstime.ui.screens.WatchListScreen
 import com.coroutines.swisstime.ui.screens.WorldMapScreen
+import com.coroutines.swisstime.viewmodel.WatchViewModel
 
 // Define the routes for the app
 sealed class Screen(val route: String) {
+    object Time : Screen("time")
     object WatchList : Screen("watchList")
     object WatchDetail : Screen("watchDetail/{watchIndex}") {
         fun createRoute(watchIndex: Int): String = "watchDetail/$watchIndex"
@@ -45,11 +48,12 @@ fun NavGraph(
     navController: NavHostController,
     watches: List<WatchInfo>,
     selectedWatchName: String?,
-    onSelectForWidget: (WatchInfo) -> Unit
+    onSelectForWidget: (WatchInfo) -> Unit,
+    watchViewModel: WatchViewModel
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.WatchList.route,
+        startDestination = Screen.Time.route,
         // Set enter/exit animations for the entire NavHost
         enterTransition = {
             fadeIn(animationSpec = tween(ANIMATION_DURATION))
@@ -64,6 +68,31 @@ fun NavGraph(
             fadeOut(animationSpec = tween(ANIMATION_DURATION))
         }
     ) {
+        composable(
+            route = Screen.Time.route,
+            enterTransition = {
+                fadeIn(animationSpec = tween(ANIMATION_DURATION))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(ANIMATION_DURATION))
+            }
+        ) {
+            // Get the current context to access the activity
+            val context = LocalContext.current
+            val activity = context as? ComponentActivity
+
+            val originalColor = MaterialTheme.colorScheme.background.toArgb()
+
+            activity?.window?.setStatusBarColor(originalColor);
+            activity?.window?.setNavigationBarColor(originalColor);
+
+            // Render the TimeScreen
+            TimeScreen(
+                watchViewModel = watchViewModel
+            )
+        }
+
+
         composable(
             route = Screen.WatchList.route,
             // Add specific animations for this route if needed
@@ -108,9 +137,12 @@ fun NavGraph(
                         navController.navigate(Screen.WatchDetail.createRoute(index))
                     }
                 },
-                onTitleClick = {
-                    // Navigate to the brand logos screen
-                    navController.navigate(Screen.BrandLogos.route)
+                onTitleClick = { watch ->
+                    // Save the selected watch via the ViewModel
+                    watchViewModel.saveSelectedWatch(watch)
+
+                    // Navigate to the Time screen
+                    navController.navigate(Screen.Time.route)
                 },
                 selectedWatchName = selectedWatchName,
                 onSelectForWidget = onSelectForWidget,

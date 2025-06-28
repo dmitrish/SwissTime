@@ -110,7 +110,7 @@ fun BrandLogosRow(
 fun WatchListScreen(
     watches: List<WatchInfo>,
     onWatchClick: (WatchInfo) -> Unit,
-    onTitleClick: () -> Unit,
+    onTitleClick: (WatchInfo) -> Unit,
     selectedWatchName: String?,
     onSelectForWidget: (WatchInfo) -> Any,
     modifier: Modifier = Modifier,
@@ -196,7 +196,7 @@ fun WatchListScreen(
 fun WatchListItem(
     watch: WatchInfo,
     onClick: () -> Unit,
-    onTitleClick: () -> Unit,
+    onTitleClick: (WatchInfo) -> Unit,
     isSelectedForWidget: Boolean = false,
     onSelectForWidget: () -> Any,
     modifier: Modifier = Modifier
@@ -243,7 +243,7 @@ fun WatchListItem(
                         color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier
                             .weight(1f)
-                            .clickable(onClick = onTitleClick)
+                            .clickable(onClick = { onTitleClick(watch) })
                     )
 
                     // Widget selection icon
