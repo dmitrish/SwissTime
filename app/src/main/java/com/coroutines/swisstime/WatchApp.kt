@@ -25,6 +25,8 @@ import androidx.glance.appwidget.updateAll
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.coroutines.swisstime.data.ThemePreferencesRepository
+import com.coroutines.swisstime.data.TimeZoneRepository
+import com.coroutines.swisstime.data.TimeZoneService
 import com.coroutines.swisstime.data.WatchPreferencesRepository
 import com.coroutines.swisstime.navigation.NavGraph
 import com.coroutines.swisstime.navigation.SwissTimeNavigationBar
@@ -96,9 +98,13 @@ fun WatchApp(watchPreferencesRepository: WatchPreferencesRepository) {
     // Create a NavController
     val navController = rememberNavController()
 
+    // Create TimeZoneService and TimeZoneRepository instances
+    val timeZoneService = remember { TimeZoneService() }
+    val timeZoneRepository = remember { TimeZoneRepository(timeZoneService, watchPreferencesRepository) }
+
     // Create a WatchViewModel instance
     val watchViewModel = viewModel<WatchViewModel>(
-        factory = WatchViewModel.Factory(watchPreferencesRepository, watches)
+        factory = WatchViewModel.Factory(watchPreferencesRepository, timeZoneRepository, watches)
     )
 
     // Get the current back stack entry

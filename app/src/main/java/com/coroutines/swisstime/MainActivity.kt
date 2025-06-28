@@ -92,6 +92,8 @@ import com.coroutines.swisstime.watchfaces.VacheronConstantinPatrimony
 import com.coroutines.swisstime.watchfaces.ZenithElPrimero
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.delay
+import java.util.Calendar
+import java.util.TimeZone
 
 // Data class to hold watch information
 data class WatchInfo(

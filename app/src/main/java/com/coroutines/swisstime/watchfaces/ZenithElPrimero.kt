@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.coroutines.swisstime.ui.theme.SwissTimeTheme
 import kotlinx.coroutines.delay
 import java.util.Calendar
+import java.util.TimeZone
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
@@ -46,13 +47,17 @@ private val CenterDotColor = Color(0xFF000000) // Black center dot
 private val TachymeterColor = Color(0xFF000000) // Black tachymeter scale
 
 @Composable
-fun ZenithElPrimero(modifier: Modifier = Modifier) {
-    var currentTime by remember { mutableStateOf(Calendar.getInstance()) }
+fun ZenithElPrimero(
+    modifier: Modifier = Modifier,
+    timeZone: TimeZone = TimeZone.getDefault()
+) {
+    // Use the provided time zone to get the current time
+    var currentTime by remember(timeZone) { mutableStateOf(Calendar.getInstance(timeZone)) }
 
-    // Update time every second
-    LaunchedEffect(key1 = true) {
+    // Update time every second using the provided time zone
+    LaunchedEffect(key1 = timeZone) {
         while (true) {
-            currentTime = Calendar.getInstance()
+            currentTime = Calendar.getInstance(timeZone)
             delay(1000) // Update every second
         }
     }
@@ -105,23 +110,23 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
         radius = radius - 3f,
         center = center
     )
-    
+
     // Draw Zenith star logo
     val starSize = radius * 0.15f
     val starY = center.y - radius * 0.25f
-    
+
     // Draw simplified star (5 points)
     val starPoints = 5
     val outerRadius = starSize
     val innerRadius = starSize * 0.4f
-    
+
     val path = Path()
     for (i in 0 until starPoints * 2) {
         val radius = if (i % 2 == 0) outerRadius else innerRadius
         val angle = Math.PI * i / starPoints - Math.PI / 2
         val x = center.x + cos(angle).toFloat() * radius
         val y = starY + sin(angle).toFloat() * radius
-        
+
         if (i == 0) {
             path.moveTo(x, y)
         } else {
@@ -129,12 +134,12 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
         }
     }
     path.close()
-    
+
     drawPath(
         path = path,
         color = Color(0xFFFFD700) // Gold star
     )
-    
+
     // Draw "ZENITH" text
     val logoPaint = Paint().apply {
         color = Color.Black.hashCode()
@@ -143,14 +148,14 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
         isFakeBoldText = true
         isAntiAlias = true
     }
-    
+
     drawContext.canvas.nativeCanvas.drawText(
         "ZENITH",
         center.x,
         center.y - radius * 0.1f,
         logoPaint
     )
-    
+
     // Draw "EL PRIMERO" text
     val modelPaint = Paint().apply {
         color = Color.Black.hashCode()
@@ -159,18 +164,18 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
         isFakeBoldText = false
         isAntiAlias = true
     }
-    
+
     drawContext.canvas.nativeCanvas.drawText(
         "EL PRIMERO",
         center.x,
         center.y + radius * 0.1f,
         modelPaint
     )
-    
+
     // Draw three overlapping subdials (characteristic of El Primero)
     val subdialRadius = radius * 0.2f
     val subdialDistance = radius * 0.3f
-    
+
     // Left subdial (9 o'clock position - running seconds) - Blue
     val leftSubdialCenter = Offset(center.x - subdialDistance, center.y)
     drawCircle(
@@ -184,7 +189,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
         center = leftSubdialCenter,
         style = Stroke(width = 2f)
     )
-    
+
     // Right subdial (3 o'clock position - chronograph minutes) - Gray
     val rightSubdialCenter = Offset(center.x + subdialDistance, center.y)
     drawCircle(
@@ -198,7 +203,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
         center = rightSubdialCenter,
         style = Stroke(width = 2f)
     )
-    
+
     // Bottom subdial (6 o'clock position - chronograph hours) - Dark Gray
     val bottomSubdialCenter = Offset(center.x, center.y + subdialDistance)
     drawCircle(
@@ -212,7 +217,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
         center = bottomSubdialCenter,
         style = Stroke(width = 2f)
     )
-    
+
     // Draw subdial markers
     for (subdialCenter in listOf(leftSubdialCenter, rightSubdialCenter, bottomSubdialCenter)) {
         for (i in 0 until 12) {
@@ -222,7 +227,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
             val startY = subdialCenter.y + sin(angle).toFloat() * (subdialRadius - markerLength)
             val endX = subdialCenter.x + cos(angle).toFloat() * subdialRadius * 0.9f
             val endY = subdialCenter.y + sin(angle).toFloat() * subdialRadius * 0.9f
-            
+
             drawLine(
                 color = Color.White,
                 start = Offset(startX, startY),
@@ -231,11 +236,11 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
             )
         }
     }
-    
+
     // Draw running seconds hand in left subdial
     val second = Calendar.getInstance().get(Calendar.SECOND)
     val secondAngle = second * 6f
-    
+
     rotate(secondAngle, pivot = leftSubdialCenter) {
         drawLine(
             color = SubdialHandColor,
@@ -245,12 +250,12 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
             cap = StrokeCap.Round
         )
     }
-    
+
     // Draw date window at 4:30 position
     val dateAngle = Math.PI / 6 * 4.5 // Between 4 and 5
     val dateX = center.x + cos(dateAngle).toFloat() * radius * 0.6f
     val dateY = center.y + sin(dateAngle).toFloat() * radius * 0.6f
-    
+
     // Date window
     drawRect(
         color = Color.White,
@@ -263,7 +268,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
         size = Size(radius * 0.16f, radius * 0.12f),
         style = Stroke(width = 1f)
     )
-    
+
     // Date text
     val datePaint = Paint().apply {
         color = Color.Black.hashCode()
@@ -272,7 +277,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
         isFakeBoldText = true
         isAntiAlias = true
     }
-    
+
     val day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH).toString()
     drawContext.canvas.nativeCanvas.drawText(
         day,
@@ -284,19 +289,19 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
 
 private fun DrawScope.drawHourMarkersAndNumbers(center: Offset, radius: Float) {
     // El Primero uses applied hour markers
-    
+
     // Draw hour markers (applied baton style)
     for (i in 1..12) {
         val angle = Math.PI / 6 * (i - 3)
         val markerLength = radius * 0.08f
         val markerWidth = radius * 0.02f
-        
+
         val markerX = center.x + cos(angle).toFloat() * radius * 0.75f
         val markerY = center.y + sin(angle).toFloat() * radius * 0.75f
-        
+
         // Skip markers where subdials are
         if (i == 3 || i == 6 || i == 9) continue
-        
+
         // Draw rectangular marker with 3D effect
         rotate(
             degrees = (i - 3) * 30f,
@@ -308,7 +313,7 @@ private fun DrawScope.drawHourMarkersAndNumbers(center: Offset, radius: Float) {
                 topLeft = Offset(markerX - markerWidth / 2, markerY - markerLength / 2),
                 size = Size(markerWidth, markerLength)
             )
-            
+
             // Shadow/highlight for 3D effect
             drawRect(
                 color = Color.LightGray,
@@ -317,19 +322,19 @@ private fun DrawScope.drawHourMarkersAndNumbers(center: Offset, radius: Float) {
             )
         }
     }
-    
+
     // Draw small minute markers
     for (i in 0 until 60) {
         if (i % 5 == 0) continue // Skip where hour markers are
-        
+
         val angle = Math.PI * 2 * i / 60
         val markerLength = radius * 0.03f
-        
+
         val startX = center.x + cos(angle).toFloat() * radius * 0.85f
         val startY = center.y + sin(angle).toFloat() * radius * 0.85f
         val endX = center.x + cos(angle).toFloat() * (radius * 0.85f - markerLength)
         val endY = center.y + sin(angle).toFloat() * (radius * 0.85f - markerLength)
-        
+
         drawLine(
             color = MarkersColor,
             start = Offset(startX, startY),
@@ -358,7 +363,7 @@ private fun DrawScope.drawClockHands(
             close()
         }
         drawPath(hourHandPath, HourHandColor)
-        
+
         // Polished edge effect
         val hourHandHighlightPath = Path().apply {
             moveTo(center.x, center.y - radius * 0.5f) // Tip
@@ -381,7 +386,7 @@ private fun DrawScope.drawClockHands(
             close()
         }
         drawPath(minuteHandPath, MinuteHandColor)
-        
+
         // Polished edge effect
         val minuteHandHighlightPath = Path().apply {
             moveTo(center.x, center.y - radius * 0.7f) // Tip
@@ -403,7 +408,7 @@ private fun DrawScope.drawClockHands(
             strokeWidth = 2f,
             cap = StrokeCap.Round
         )
-        
+
         // Arrow tip
         val arrowSize = radius * 0.05f
         val arrowPath = Path().apply {
@@ -413,7 +418,7 @@ private fun DrawScope.drawClockHands(
             close()
         }
         drawPath(arrowPath, SecondHandColor)
-        
+
         // Counterbalance
         drawCircle(
             color = SecondHandColor,
