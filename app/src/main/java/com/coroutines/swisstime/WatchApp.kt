@@ -24,9 +24,13 @@ import androidx.compose.ui.unit.dp
 import androidx.glance.appwidget.updateAll
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.coroutines.swisstime.data.ThemePreferencesRepository
 import com.coroutines.swisstime.data.WatchPreferencesRepository
 import com.coroutines.swisstime.navigation.NavGraph
 import com.coroutines.swisstime.navigation.SwissTimeNavigationBar
+import com.coroutines.swisstime.ui.theme.SwissTimeTheme
+import com.coroutines.swisstime.ui.theme.ThemeMode
+import com.coroutines.swisstime.viewmodel.ThemeViewModel
 import com.coroutines.swisstime.viewmodel.WatchViewModel
 import com.coroutines.swisstime.ui.screens.WatchDetailScreen
 import com.coroutines.swisstime.ui.screens.WatchListScreen
@@ -71,6 +75,18 @@ fun WatchApp(watchPreferencesRepository: WatchPreferencesRepository) {
         splashScreenSelector.useSplashScreenApi()
     }*/
 
+    // Create a ThemePreferencesRepository instance
+    val themePreferencesRepository = remember { ThemePreferencesRepository(context) }
+
+    // Create a ThemeViewModel instance
+    val themeViewModel = viewModel<ThemeViewModel>(
+        factory = ThemeViewModel.Factory(themePreferencesRepository)
+    )
+
+    // Collect theme preferences from the ThemeViewModel
+    val themeMode by themeViewModel.themeMode.collectAsState()
+    val darkMode by themeViewModel.darkMode.collectAsState()
+
     // Collect the currently selected watch name
     val selectedWatchName by watchPreferencesRepository.selectedWatchName.collectAsState(initial = null)
 
@@ -107,50 +123,57 @@ fun WatchApp(watchPreferencesRepository: WatchPreferencesRepository) {
         }
     }
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        containerColor = MaterialTheme.colorScheme.background,
-        topBar = {
-            // Simple app title bar (splash screen toggle removed as per requirements)
-           /* Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start
-            ) {
-                // App title
-                Text(
-                    text = "Swiss Time",
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
-                )
-            } */
-        },
-        bottomBar = {
-            // Only show the navigation bar if we're not on the WatchDetailScreen
-            val currentRoute = currentDestination?.route
-            if (currentRoute == null || !currentRoute.startsWith("watchDetail")) {
-                SwissTimeNavigationBar(
+    // Apply the theme based on the user's preferences
+    SwissTimeTheme(
+        themeMode = themeMode,
+        dynamicColor = false
+    ) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            containerColor = MaterialTheme.colorScheme.background,
+            topBar = {
+                // Simple app title bar (splash screen toggle removed as per requirements)
+               /* Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    // App title
+                    Text(
+                        text = "Swiss Time",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                } */
+            },
+            bottomBar = {
+                // Only show the navigation bar if we're not on the WatchDetailScreen
+                val currentRoute = currentDestination?.route
+                if (currentRoute == null || !currentRoute.startsWith("watchDetail")) {
+                    SwissTimeNavigationBar(
+                        navController = navController,
+                        currentDestination = currentDestination
+                    )
+                }
+            }
+        ) { innerPadding ->
+            // Use the Navigation 3 library
+            // Apply the innerPadding to the content
+            androidx.compose.foundation.layout.Box(modifier = Modifier.padding(innerPadding)) {
+                NavGraph(
                     navController = navController,
-                    currentDestination = currentDestination
+                    watches = watches,
+                    selectedWatchName = selectedWatchName,
+                    onSelectForWidget = { watch -> 
+                        selectWatchForWidget(watch)
+                        Unit // Return Unit to match the expected type
+                    },
+                    watchViewModel = watchViewModel,
+                    themeViewModel = themeViewModel
                 )
             }
-        }
-    ) { innerPadding ->
-        // Use the Navigation 3 library
-        // Apply the innerPadding to the content
-        androidx.compose.foundation.layout.Box(modifier = Modifier.padding(innerPadding)) {
-            NavGraph(
-                navController = navController,
-                watches = watches,
-                selectedWatchName = selectedWatchName,
-                onSelectForWidget = { watch -> 
-                    selectWatchForWidget(watch)
-                    Unit // Return Unit to match the expected type
-                },
-                watchViewModel = watchViewModel
-            )
         }
     }
 }

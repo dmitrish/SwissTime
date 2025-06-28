@@ -22,10 +22,12 @@ import com.coroutines.swisstime.getWatchFaceColor
 import com.coroutines.swisstime.ui.screens.BrandLogosScreen
 import com.coroutines.swisstime.ui.screens.CustomWorldMapScreen
 import com.coroutines.swisstime.ui.screens.OptimizedWorldMapScreen
+import com.coroutines.swisstime.ui.screens.SettingsScreen
 import com.coroutines.swisstime.ui.screens.TimeScreen
 import com.coroutines.swisstime.ui.screens.WatchDetailScreen
 import com.coroutines.swisstime.ui.screens.WatchListScreen
 import com.coroutines.swisstime.ui.screens.WorldMapScreen
+import com.coroutines.swisstime.viewmodel.ThemeViewModel
 import com.coroutines.swisstime.viewmodel.WatchViewModel
 
 // Define the routes for the app
@@ -38,6 +40,7 @@ sealed class Screen(val route: String) {
     object BrandLogos : Screen("brandLogos")
     object WorldMap : Screen("worldMap")
     object CustomWorldMap : Screen("customWorldMap")
+    object Settings : Screen("settings")
 }
 
 // Animation duration for transitions - extremely short duration for immediate UI updates
@@ -49,7 +52,8 @@ fun NavGraph(
     watches: List<WatchInfo>,
     selectedWatchName: String?,
     onSelectForWidget: (WatchInfo) -> Unit,
-    watchViewModel: WatchViewModel
+    watchViewModel: WatchViewModel,
+    themeViewModel: ThemeViewModel
 ) {
     NavHost(
         navController = navController,
@@ -270,6 +274,30 @@ fun NavGraph(
                     // Navigate back to the list screen
                     navController.popBackStack()
                 }
+            )
+        }
+
+        composable(
+            route = Screen.Settings.route,
+            enterTransition = {
+                fadeIn(animationSpec = tween(ANIMATION_DURATION))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(ANIMATION_DURATION))
+            }
+        ) {
+            // Get the current context to access the activity
+            val context = LocalContext.current
+            val activity = context as? ComponentActivity
+
+            val originalColor = MaterialTheme.colorScheme.background.toArgb()
+
+            activity?.window?.setStatusBarColor(originalColor);
+            activity?.window?.setNavigationBarColor(originalColor);
+
+            // Render the SettingsScreen
+            SettingsScreen(
+                themeViewModel = themeViewModel
             )
         }
     }
