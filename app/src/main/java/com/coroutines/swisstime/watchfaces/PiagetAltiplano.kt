@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.coroutines.swisstime.ui.theme.SwissTimeTheme
 import kotlinx.coroutines.delay
 import java.util.Calendar
+import java.util.TimeZone
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.min
@@ -38,13 +39,18 @@ private val MarkersColor = Color(0xFFFFFFFF) // White markers
 private val LogoColor = Color(0xFFFFFFFF) // White logo
 
 @Composable
-fun PiagetAltiplano(modifier: Modifier = Modifier) {
-    var currentTime by remember { mutableStateOf(Calendar.getInstance()) }
+fun PiagetAltiplano(
+    modifier: Modifier = Modifier,
+    currentTime: Calendar = Calendar.getInstance(),
+    timeZone: TimeZone = TimeZone.getDefault()
+) {
+    // Use the provided time zone to get the current time
+    var internalTime by remember { mutableStateOf(Calendar.getInstance(timeZone)) }
 
-    // Update time every second
-    LaunchedEffect(key1 = true) {
+    // Update time every second using the provided time zone
+    LaunchedEffect(key1 = timeZone) {
         while (true) {
-            currentTime = Calendar.getInstance()
+            internalTime = Calendar.getInstance(timeZone)
             delay(1000) // Update every second
         }
     }
@@ -62,10 +68,10 @@ fun PiagetAltiplano(modifier: Modifier = Modifier) {
             drawClockFace(center, radius)
 
             // Get current time values
-            val hour = currentTime.get(Calendar.HOUR)
-            val minute = currentTime.get(Calendar.MINUTE)
-            val second = currentTime.get(Calendar.SECOND)
-            
+            val hour = internalTime.get(Calendar.HOUR)
+            val minute = internalTime.get(Calendar.MINUTE)
+            val second = internalTime.get(Calendar.SECOND)
+
             // Draw hour markers
             drawHourMarkers(center, radius)
 
@@ -78,7 +84,7 @@ fun PiagetAltiplano(modifier: Modifier = Modifier) {
                 radius = radius * 0.01f,
                 center = center
             )
-            
+
             // Draw Piaget logo
             drawLogo(center, radius)
         }
@@ -93,7 +99,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
         center = center,
         style = Stroke(width = 4f)
     )
-    
+
     // Draw inner circle (face)
     drawCircle(
         color = ClockFaceColor,
@@ -105,19 +111,19 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
 private fun DrawScope.drawHourMarkers(center: Offset, radius: Float) {
     // Piaget Altiplano typically has very minimalist hour markers
     // Often just simple thin lines or small dots
-    
+
     for (i in 0 until 12) {
         val angle = PI / 6 * i
-        
+
         // For 3, 6, 9, and 12 o'clock, use slightly longer markers
         val markerLength = if (i % 3 == 0) radius * 0.05f else radius * 0.03f
         val markerWidth = if (i % 3 == 0) 1.5f else 1f
-        
+
         val startX = center.x + cos(angle).toFloat() * (radius * 0.85f)
         val startY = center.y + sin(angle).toFloat() * (radius * 0.85f)
         val endX = center.x + cos(angle).toFloat() * (radius * 0.85f - markerLength)
         val endY = center.y + sin(angle).toFloat() * (radius * 0.85f - markerLength)
-        
+
         // Draw minimalist markers
         drawLine(
             color = MarkersColor,
@@ -127,15 +133,15 @@ private fun DrawScope.drawHourMarkers(center: Offset, radius: Float) {
             cap = StrokeCap.Round
         )
     }
-    
+
     // Add small dots at each hour position for a more refined look
     for (i in 0 until 12) {
         val angle = PI / 6 * i
         val dotRadius = if (i % 3 == 0) 1.5f else 1f
-        
+
         val dotX = center.x + cos(angle).toFloat() * (radius * 0.9f)
         val dotY = center.y + sin(angle).toFloat() * (radius * 0.9f)
-        
+
         drawCircle(
             color = MarkersColor,
             radius = dotRadius,
@@ -199,7 +205,7 @@ private fun DrawScope.drawLogo(center: Offset, radius: Float) {
         isFakeBoldText = false // Piaget logo is typically thin and elegant
         isAntiAlias = true
     }
-    
+
     // Draw "PIAGET" text
     drawContext.canvas.nativeCanvas.drawText(
         "PIAGET",
@@ -207,7 +213,7 @@ private fun DrawScope.drawLogo(center: Offset, radius: Float) {
         center.y - radius * 0.3f,
         logoPaint
     )
-    
+
     // Draw "ALTIPLANO" text
     val modelPaint = Paint().apply {
         color = LogoColor.hashCode()
@@ -215,14 +221,14 @@ private fun DrawScope.drawLogo(center: Offset, radius: Float) {
         textAlign = Paint.Align.CENTER
         isAntiAlias = true
     }
-    
+
     drawContext.canvas.nativeCanvas.drawText(
         "ALTIPLANO",
         center.x,
         center.y - radius * 0.2f,
         modelPaint
     )
-    
+
     // Draw "SWISS MADE" text
     val swissMadePaint = Paint().apply {
         color = LogoColor.hashCode()
@@ -230,14 +236,14 @@ private fun DrawScope.drawLogo(center: Offset, radius: Float) {
         textAlign = Paint.Align.CENTER
         isAntiAlias = true
     }
-    
+
     drawContext.canvas.nativeCanvas.drawText(
         "SWISS MADE",
         center.x,
         center.y + radius * 0.5f,
         swissMadePaint
     )
-    
+
     // Draw "ULTRA-THIN" text - a key feature of the Altiplano
     val ultraThinPaint = Paint().apply {
         color = LogoColor.hashCode()
@@ -245,7 +251,7 @@ private fun DrawScope.drawLogo(center: Offset, radius: Float) {
         textAlign = Paint.Align.CENTER
         isAntiAlias = true
     }
-    
+
     drawContext.canvas.nativeCanvas.drawText(
         "ULTRA-THIN",
         center.x,
