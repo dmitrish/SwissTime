@@ -15,3 +15,10 @@ val LightGold = Color(0xFFD4AF37)
 val LightBronze = Color(0xFFB87333)
 val LightSilver = Color(0xFFE0E0E0)
 val LightAccent = Color(0xFF2E5984)
+
+// Night theme colors (same as Day/Light theme but with black background)
+val NightNavy = Color(0xFF000000) // Black background for night theme
+val NightGold = LightGold
+val NightBronze = LightBronze
+val NightSilver = LightSilver
+val NightAccent = LightAccent

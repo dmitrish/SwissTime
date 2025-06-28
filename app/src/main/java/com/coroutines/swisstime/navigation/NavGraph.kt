@@ -15,17 +15,24 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.coroutines.swisstime.TimingLogger
 import com.coroutines.swisstime.WatchInfo
 import com.coroutines.swisstime.darken
 import com.coroutines.swisstime.getWatchFaceColor
 import com.coroutines.swisstime.ui.screens.BrandLogosScreen
 import com.coroutines.swisstime.ui.screens.CustomWorldMapScreen
+import com.coroutines.swisstime.ui.screens.OptimizedWorldMapScreen
+import com.coroutines.swisstime.ui.screens.SettingsScreen
+import com.coroutines.swisstime.ui.screens.TimeScreen
 import com.coroutines.swisstime.ui.screens.WatchDetailScreen
 import com.coroutines.swisstime.ui.screens.WatchListScreen
 import com.coroutines.swisstime.ui.screens.WorldMapScreen
+import com.coroutines.swisstime.viewmodel.ThemeViewModel
+import com.coroutines.swisstime.viewmodel.WatchViewModel
 
 // Define the routes for the app
 sealed class Screen(val route: String) {
+    object Time : Screen("time")
     object WatchList : Screen("watchList")
     object WatchDetail : Screen("watchDetail/{watchIndex}") {
         fun createRoute(watchIndex: Int): String = "watchDetail/$watchIndex"
@@ -33,6 +40,7 @@ sealed class Screen(val route: String) {
     object BrandLogos : Screen("brandLogos")
     object WorldMap : Screen("worldMap")
     object CustomWorldMap : Screen("customWorldMap")
+    object Settings : Screen("settings")
 }
 
 // Animation duration for transitions - extremely short duration for immediate UI updates
@@ -43,11 +51,13 @@ fun NavGraph(
     navController: NavHostController,
     watches: List<WatchInfo>,
     selectedWatchName: String?,
-    onSelectForWidget: (WatchInfo) -> Unit
+    onSelectForWidget: (WatchInfo) -> Unit,
+    watchViewModel: WatchViewModel,
+    themeViewModel: ThemeViewModel
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.WatchList.route,
+        startDestination = Screen.Time.route,
         // Set enter/exit animations for the entire NavHost
         enterTransition = {
             fadeIn(animationSpec = tween(ANIMATION_DURATION))
@@ -62,6 +72,31 @@ fun NavGraph(
             fadeOut(animationSpec = tween(ANIMATION_DURATION))
         }
     ) {
+        composable(
+            route = Screen.Time.route,
+            enterTransition = {
+                fadeIn(animationSpec = tween(ANIMATION_DURATION))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(ANIMATION_DURATION))
+            }
+        ) {
+            // Get the current context to access the activity
+            val context = LocalContext.current
+            val activity = context as? ComponentActivity
+
+            val originalColor = MaterialTheme.colorScheme.background.toArgb()
+
+            activity?.window?.setStatusBarColor(originalColor);
+            activity?.window?.setNavigationBarColor(originalColor);
+
+            // Render the TimeScreen
+            TimeScreen(
+                watchViewModel = watchViewModel
+            )
+        }
+
+
         composable(
             route = Screen.WatchList.route,
             // Add specific animations for this route if needed
@@ -93,16 +128,25 @@ fun NavGraph(
 
                     // Check if this is the Piaget Altiplano watch
                     if (watch.name.contains("Piaget Altiplano")) {
-                        // Navigate to the custom world map screen
-                        navController.navigate(Screen.CustomWorldMap.route)
+                        // Log the start time when tapping on the Piaget watch
+                        val startTime = System.currentTimeMillis()
+                        // Store the start time in a static variable to access it later
+                        TimingLogger.startTime = startTime
+                        android.util.Log.d("PerformanceLog", "Tapped on Piaget watch at $startTime ms")
+
+                        // Navigate to the optimized world map screen
+                        navController.navigate(Screen.WorldMap.route)
                     } else {
                         // Navigate to the detail screen
                         navController.navigate(Screen.WatchDetail.createRoute(index))
                     }
                 },
-                onTitleClick = {
-                    // Navigate to the brand logos screen
-                    navController.navigate(Screen.BrandLogos.route)
+                onTitleClick = { watch ->
+                    // Save the selected watch via the ViewModel
+                    watchViewModel.saveSelectedWatch(watch)
+
+                    // Navigate to the Time screen
+                    navController.navigate(Screen.Time.route)
                 },
                 selectedWatchName = selectedWatchName,
                 onSelectForWidget = onSelectForWidget,
@@ -198,7 +242,7 @@ fun NavGraph(
             activity?.window?.setNavigationBarColor(originalColor);
 
             // Render the WorldMapScreen
-            WorldMapScreen(
+            OptimizedWorldMapScreen(
                 onBackClick = {
                     // Navigate back to the list screen
                     navController.popBackStack()
@@ -230,6 +274,30 @@ fun NavGraph(
                     // Navigate back to the list screen
                     navController.popBackStack()
                 }
+            )
+        }
+
+        composable(
+            route = Screen.Settings.route,
+            enterTransition = {
+                fadeIn(animationSpec = tween(ANIMATION_DURATION))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(ANIMATION_DURATION))
+            }
+        ) {
+            // Get the current context to access the activity
+            val context = LocalContext.current
+            val activity = context as? ComponentActivity
+
+            val originalColor = MaterialTheme.colorScheme.background.toArgb()
+
+            activity?.window?.setStatusBarColor(originalColor);
+            activity?.window?.setNavigationBarColor(originalColor);
+
+            // Render the SettingsScreen
+            SettingsScreen(
+                themeViewModel = themeViewModel
             )
         }
     }
