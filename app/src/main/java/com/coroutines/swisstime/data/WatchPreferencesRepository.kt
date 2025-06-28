@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -20,12 +21,23 @@ class WatchPreferencesRepository(private val context: Context) {
     // Define preference keys
     companion object {
         private val SELECTED_WATCH_KEY = stringPreferencesKey("selected_watch")
+        private val SELECTED_TIMEZONE_KEY = stringPreferencesKey("selected_timezone")
+        private val SELECTED_WATCHES_KEY = stringSetPreferencesKey("selected_watches")
+
+        // Key prefix for watch-specific timezone preferences
+        private const val WATCH_TIMEZONE_PREFIX = "watch_timezone_"
     }
 
     // Get the currently selected watch name
     val selectedWatchName: Flow<String?> = context.dataStore.data
         .map { preferences ->
             preferences[SELECTED_WATCH_KEY]
+        }
+
+    // Get the currently selected timezone ID
+    val selectedTimeZoneId: Flow<String?> = context.dataStore.data
+        .map { preferences ->
+            preferences[SELECTED_TIMEZONE_KEY]
         }
 
     // Save the selected watch name
@@ -35,10 +47,83 @@ class WatchPreferencesRepository(private val context: Context) {
         }
     }
 
+    // Save the selected timezone ID
+    suspend fun saveSelectedTimeZone(timeZoneId: String) {
+        context.dataStore.edit { preferences ->
+            preferences[SELECTED_TIMEZONE_KEY] = timeZoneId
+        }
+    }
+
+    // Get the timezone ID for a specific watch
+    fun getWatchTimeZoneId(watchName: String): Flow<String?> = context.dataStore.data
+        .map { preferences ->
+            val key = stringPreferencesKey("${WATCH_TIMEZONE_PREFIX}${watchName}")
+            preferences[key]
+        }
+
+    // Save the timezone ID for a specific watch
+    suspend fun saveWatchTimeZone(watchName: String, timeZoneId: String) {
+        context.dataStore.edit { preferences ->
+            val key = stringPreferencesKey("${WATCH_TIMEZONE_PREFIX}${watchName}")
+            preferences[key] = timeZoneId
+        }
+    }
+
     // Clear the selected watch
     suspend fun clearSelectedWatch() {
         context.dataStore.edit { preferences ->
             preferences.remove(SELECTED_WATCH_KEY)
+        }
+    }
+
+    // Clear the selected timezone
+    suspend fun clearSelectedTimeZone() {
+        context.dataStore.edit { preferences ->
+            preferences.remove(SELECTED_TIMEZONE_KEY)
+        }
+    }
+
+    // Clear the timezone for a specific watch
+    suspend fun clearWatchTimeZone(watchName: String) {
+        context.dataStore.edit { preferences ->
+            val key = stringPreferencesKey("${WATCH_TIMEZONE_PREFIX}${watchName}")
+            preferences.remove(key)
+        }
+    }
+
+    // Get the list of selected watch names
+    val selectedWatchNames: Flow<Set<String>> = context.dataStore.data
+        .map { preferences ->
+            preferences[SELECTED_WATCHES_KEY] ?: emptySet()
+        }
+
+    // Save the list of selected watch names
+    suspend fun saveSelectedWatches(watchNames: Set<String>) {
+        context.dataStore.edit { preferences ->
+            preferences[SELECTED_WATCHES_KEY] = watchNames
+        }
+    }
+
+    // Add a watch to the list of selected watches
+    suspend fun addSelectedWatch(watchName: String) {
+        context.dataStore.edit { preferences ->
+            val currentWatches = preferences[SELECTED_WATCHES_KEY] ?: emptySet()
+            preferences[SELECTED_WATCHES_KEY] = currentWatches + watchName
+        }
+    }
+
+    // Remove a watch from the list of selected watches
+    suspend fun removeSelectedWatch(watchName: String) {
+        context.dataStore.edit { preferences ->
+            val currentWatches = preferences[SELECTED_WATCHES_KEY] ?: emptySet()
+            preferences[SELECTED_WATCHES_KEY] = currentWatches - watchName
+        }
+    }
+
+    // Clear all selected watches
+    suspend fun clearAllSelectedWatches() {
+        context.dataStore.edit { preferences ->
+            preferences.remove(SELECTED_WATCHES_KEY)
         }
     }
 }
