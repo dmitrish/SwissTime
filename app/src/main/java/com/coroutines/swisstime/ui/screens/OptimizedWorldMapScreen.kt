@@ -5,6 +5,7 @@ import android.graphics.Paint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,7 +14,10 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -21,9 +25,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,10 +56,16 @@ import androidx.core.graphics.drawable.toBitmap
 import com.coroutines.swisstime.R
 import com.coroutines.swisstime.TimingLogger
 import com.coroutines.swisstime.WatchInfo
+import com.coroutines.swisstime.data.TimeZoneInfo
 import com.coroutines.swisstime.ui.theme.DarkNavy
+import com.coroutines.swisstime.ui.theme.DarkNavyTriadic
+import com.coroutines.swisstime.viewmodel.WatchViewModel
 import com.coroutines.swisstime.watchfaces.PiagetAltiplano
+import com.coroutines.swisstime.watchfaces.ZenithElPrimero
 import kotlinx.coroutines.delay
 import java.util.Calendar
+import java.util.Date
+import java.util.TimeZone
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.acos
@@ -122,7 +136,16 @@ fun OptimizedWorldMapScreen(
                 contentAlignment = Alignment.Center
             ) {
                 if (selectedWatch != null) {
-                    selectedWatch.composable(Modifier.fillMaxSize(0.8f))
+                    // Special handling for Piaget Altiplano to pass the timezone
+                    if (selectedWatch.name == "Piaget Altiplano") {
+                        PiagetAltiplano(
+                            modifier = Modifier.fillMaxSize(0.8f),
+                            timeZone = TimeZone.getDefault()
+                        )
+                    } else {
+                        // For other watches, use the default composable
+                        selectedWatch.composable(Modifier.fillMaxSize(0.8f))
+                    }
                 } else {
                     PiagetAltiplano(
                         modifier = Modifier.fillMaxSize(0.8f)
@@ -147,17 +170,67 @@ fun OptimizedWorldMapScreen(
 fun SelectedWatchScreen(
     onBackClick: () -> Unit,
     selectedWatch: WatchInfo? = null,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    watchViewModel: WatchViewModel? = null
 ) {
-    var currentTime by remember { mutableStateOf(Calendar.getInstance()) }
+    // Early return if no watch is selected or no view model is provided
+    if (selectedWatch == null || watchViewModel == null) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "No watch selected",
+                style = MaterialTheme.typography.headlineMedium,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
+        return
+    }
+
+    // Get the watch-specific time zone if available, otherwise use the global selected time zone
+    // Use a key for collectAsState to ensure it's updated when the watch name changes
+    val watchTimeZone = if (watchViewModel != null && selectedWatch != null) {
+        val watchTimeZoneFlow = remember(selectedWatch.name) {
+            watchViewModel.getWatchTimeZone(selectedWatch.name)
+        }
+        watchTimeZoneFlow.collectAsState().value
+    } else {
+        watchViewModel?.selectedTimeZoneObject?.collectAsState()?.value ?: TimeZone.getDefault()
+    }
+
+    // Use watchTimeZone and selectedWatch.name as keys to ensure it's re-initialized when either changes
+    var currentTime by remember(watchTimeZone, selectedWatch?.name) { 
+        mutableStateOf(Calendar.getInstance(watchTimeZone)) 
+    }
 
     // Update time every second
-    LaunchedEffect(key1 = true) {
+    // Use both watchTimeZone and selectedWatch.name as keys to ensure it's re-launched when either changes
+    LaunchedEffect(key1 = watchTimeZone, key2 = selectedWatch?.name) {
         while (true) {
-            currentTime = Calendar.getInstance()
+            currentTime = Calendar.getInstance(watchTimeZone)
             delay(1000) // Update every second
         }
     }
+
+    // Get all available time zones
+    val allTimeZones = watchViewModel.allTimeZones
+
+    // Get the watch-specific time zone info if available, otherwise use the global selected time zone info
+    // Use a key for collectAsState to ensure it's updated when the watch name changes
+    val watchTimeZoneInfo = if (watchViewModel != null && selectedWatch != null) {
+        val watchTimeZoneInfoFlow = remember(selectedWatch.name) {
+            watchViewModel.getWatchTimeZoneInfo(selectedWatch.name)
+        }
+        watchTimeZoneInfoFlow.collectAsState().value
+    } else {
+        watchViewModel?.selectedTimeZone?.collectAsState()?.value
+    }
+
+    // State for dropdown expanded
+    // Use selectedWatch.name as key to ensure it's re-initialized when the watch changes
+    var expanded by remember(selectedWatch?.name) { mutableStateOf(false) }
 
     Scaffold(
         topBar = {},
@@ -168,9 +241,66 @@ fun SelectedWatchScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            // Flexible spacer to push content to the bottom
+            // Flexible spacer to push content to the bottom (half of it)
             androidx.compose.foundation.layout.Spacer(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(0.5f)
+            )
+
+            // Display the time zone dropdown
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // Display the selected time zone as a clickable text
+                    Text(
+                        text = watchTimeZoneInfo?.displayName ?: "Select Time Zone",
+                        style = MaterialTheme.typography.bodyLarge,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .clickable { expanded = true }
+                            .padding(8.dp)
+                    )
+
+                    // Dropdown menu for time zone selection
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false },
+                        modifier = Modifier.fillMaxWidth(0.8f),
+                        containerColor = Color(DarkNavyTriadic.toArgb()) // Complementary color to DarkNavy
+                    ) {
+                        allTimeZones.forEach { timeZoneInfo ->
+                            DropdownMenuItem(
+                                text = { 
+                                    Text(
+                                        text = timeZoneInfo.displayName,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = Color.White // White text for better contrast
+                                    ) 
+                                },
+                                onClick = {
+                                    // Save the timezone for the specific watch
+                                    watchViewModel.saveWatchTimeZone(selectedWatch.name, timeZoneInfo.id)
+                                    expanded = false
+                                },
+                                colors = MenuDefaults.itemColors(
+                                    textColor = Color.White,
+                                    leadingIconColor = Color.White,
+                                    trailingIconColor = Color.White
+                                )
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Remaining half of the spacer to position the time zone halfway between top and watch
+            androidx.compose.foundation.layout.Spacer(
+                modifier = Modifier.weight(0.5f)
             )
 
             // Display the selected watch or default to Piaget Altiplano
@@ -181,10 +311,31 @@ fun SelectedWatchScreen(
                 contentAlignment = Alignment.Center
             ) {
                 if (selectedWatch != null) {
-                    selectedWatch.composable(Modifier.fillMaxSize(0.8f))
+                    // Special handling for Piaget Altiplano to pass the timezone directly
+                    if (selectedWatch.name == "Piaget Altiplano") {
+                        PiagetAltiplano(
+                            modifier = Modifier.fillMaxSize(0.8f),
+                            timeZone = watchTimeZone
+                        )
+                    } else if (selectedWatch.name == "Zenith El Primero") {
+                        // Special handling for Zenith El Primero to pass the timezone directly
+                        ZenithElPrimero(
+                            modifier = Modifier.fillMaxSize(0.8f),
+                            timeZone = watchTimeZone
+                        )
+                    } else {
+                        // For other watches, use the TimeZoneContextWrapper to set the default timezone
+                        TimeZoneContextWrapper(
+                            timeZone = watchTimeZone,
+                            modifier = Modifier.fillMaxSize(0.8f)
+                        ) { modifier ->
+                            selectedWatch.composable(modifier)
+                        }
+                    }
                 } else {
                     PiagetAltiplano(
-                        modifier = Modifier.fillMaxSize(0.8f)
+                        modifier = Modifier.fillMaxSize(0.8f),
+                        timeZone = watchTimeZone
                     )
                 }
             }
@@ -298,23 +449,26 @@ fun OptimizedWorldMapWithDayNight(
     currentTime: Calendar,
     modifier: Modifier = Modifier
 ) {
+    // Convert to GMT time for day/night visualization
+    val gmtTime = Calendar.getInstance(TimeZone.getTimeZone("GMT"))
+    gmtTime.timeInMillis = currentTime.timeInMillis
     // Constants from earth.py
     val blur = 4f  // blur angle for terminator
     val phong = true  // enable Phong shading
 
     // Extract time components once - only care about hour and 10-minute intervals for caching
     // This reduces recalculations to at most 144 times per day (24 hours * 6 ten-minute intervals)
-    val hour = currentTime.get(Calendar.HOUR_OF_DAY)
-    val tenMinuteInterval = currentTime.get(Calendar.MINUTE) / 10
-    val minute = currentTime.get(Calendar.MINUTE)
-    val second = currentTime.get(Calendar.SECOND)
+    val hour = gmtTime.get(Calendar.HOUR_OF_DAY)
+    val tenMinuteInterval = gmtTime.get(Calendar.MINUTE) / 10
+    val minute = gmtTime.get(Calendar.MINUTE)
+    val second = gmtTime.get(Calendar.SECOND)
     val hourDecimal = hour + minute / 60f + second / 3600f
 
     // Calculate sun position only when time changes significantly (every 10 minutes)
     // This is a major optimization as sun position calculation is expensive
     val cacheKey = "${hour}_${tenMinuteInterval}"
     val sunPosition by remember(cacheKey) {
-        derivedStateOf { calculateSunPosition(currentTime) }
+        derivedStateOf { calculateSunPosition(gmtTime) }
     }
 
     // Cache all calculation results to avoid recalculating on every recomposition
@@ -697,4 +851,56 @@ private fun rev(x: Float): Float {
     var rv = x - (x / 360f).toInt() * 360f
     if (rv < 0) rv += 360f
     return rv
+}
+
+/**
+ * A wrapper composable that provides timezone-aware time to its content.
+ * This allows any watch face to display the correct time for a specific timezone.
+ */
+@Composable
+fun TimeZoneAwareWrapper(
+    timeZone: TimeZone,
+    modifier: Modifier = Modifier,
+    content: @Composable (Modifier, Calendar) -> Unit
+) {
+    // Create a Calendar instance with the specified timezone
+    var currentTime by remember(timeZone) { mutableStateOf(Calendar.getInstance(timeZone)) }
+
+    // Update time every second
+    LaunchedEffect(timeZone) {
+        while (true) {
+            currentTime = Calendar.getInstance(timeZone)
+            delay(1000) // Update every second
+        }
+    }
+
+    // Call the content with the current time
+    content(modifier, currentTime)
+}
+
+/**
+ * A wrapper composable specifically for watch faces that don't accept a timezone parameter.
+ * It sets the default TimeZone for the current thread, which affects Calendar.getInstance() calls.
+ */
+@Composable
+fun TimeZoneContextWrapper(
+    timeZone: TimeZone,
+    modifier: Modifier = Modifier,
+    content: @Composable (Modifier) -> Unit
+) {
+    // Save the original default timezone
+    val originalTimeZone = remember { TimeZone.getDefault() }
+
+    // Set the default timezone for the current thread
+    // This affects all Calendar.getInstance() calls without a timezone parameter
+    DisposableEffect(timeZone) {
+        TimeZone.setDefault(timeZone)
+        onDispose {
+            // Restore the original default timezone when the composable is disposed
+            TimeZone.setDefault(originalTimeZone)
+        }
+    }
+
+    // Call the content
+    content(modifier)
 }

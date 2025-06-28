@@ -22,3 +22,6 @@ val NightGold = LightGold
 val NightBronze = LightBronze
 val NightSilver = LightSilver
 val NightAccent = LightAccent
+
+
+val DarkNavyTriadic =Color(0xFF4E4F2E)
