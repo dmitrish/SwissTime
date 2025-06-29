@@ -72,7 +72,7 @@ fun ZenithElPrimero(
             val radius = min(size.width, size.height) / 2 * 0.8f
 
             // Draw clock face
-            drawClockFace(center, radius)
+            drawClockFace(center, radius, currentTime)
 
             // Get current time values
             val hour = currentTime.get(Calendar.HOUR)
@@ -95,7 +95,7 @@ fun ZenithElPrimero(
     }
 }
 
-private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
+private fun DrawScope.drawClockFace(center: Offset, radius: Float, currentTime: Calendar) {
     // Draw outer circle (border)
     drawCircle(
         color = ClockBorderColor,
@@ -238,7 +238,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
     }
 
     // Draw running seconds hand in left subdial
-    val second = Calendar.getInstance().get(Calendar.SECOND)
+    val second = currentTime.get(Calendar.SECOND)
     val secondAngle = second * 6f
 
     rotate(secondAngle, pivot = leftSubdialCenter) {
@@ -278,7 +278,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
         isAntiAlias = true
     }
 
-    val day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH).toString()
+    val day = currentTime.get(Calendar.DAY_OF_MONTH).toString()
     drawContext.canvas.nativeCanvas.drawText(
         day,
         dateX,
