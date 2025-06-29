@@ -45,7 +45,8 @@ fun PiagetAltiplano(
     timeZone: TimeZone = TimeZone.getDefault()
 ) {
     // Use the provided time zone to get the current time
-    var internalTime by remember { mutableStateOf(Calendar.getInstance(timeZone)) }
+    // Use timeZone as a key to ensure it's recreated when the timeZone changes
+    var internalTime by remember(timeZone) { mutableStateOf(Calendar.getInstance(timeZone)) }
 
     // Update time every second using the provided time zone
     LaunchedEffect(key1 = timeZone) {
