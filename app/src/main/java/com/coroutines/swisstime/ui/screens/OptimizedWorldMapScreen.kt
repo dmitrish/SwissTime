@@ -2,6 +2,8 @@ package com.coroutines.swisstime.ui.screens
 
 import android.graphics.Bitmap
 import android.graphics.Paint
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -57,12 +59,18 @@ import com.coroutines.swisstime.R
 import com.coroutines.swisstime.TimingLogger
 import com.coroutines.swisstime.WatchInfo
 import com.coroutines.swisstime.data.TimeZoneInfo
+import com.coroutines.swisstime.data.TimeZoneProvider
+import com.coroutines.swisstime.data.rememberCurrentTimeZoneCalendar
 import com.coroutines.swisstime.ui.theme.DarkNavy
 import com.coroutines.swisstime.ui.theme.DarkNavyTriadic
 import com.coroutines.swisstime.viewmodel.WatchViewModel
 import com.coroutines.swisstime.watchfaces.PiagetAltiplano
 import com.coroutines.swisstime.watchfaces.ZenithElPrimero
+//import kotlinx.datetime.TimeZone
 import kotlinx.coroutines.delay
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.TimeZone
@@ -79,6 +87,62 @@ import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
 import kotlin.math.tan
+
+// Object to store the time for each watch
+object WatchTimeStore {
+    // Map to store the time for each watch
+    val watchTimeMap = mutableMapOf<String, Calendar>()
+
+    // Map to store the timezone for each watch
+    val watchTimeZoneMap = mutableMapOf<String, TimeZone>()
+
+    // Map to store the last update time for each watch
+    private val lastUpdateTimeMap = mutableMapOf<String, Long>()
+
+    // Function to update the time for a specific watch
+    fun updateTime(watchName: String, timeZone: TimeZone) {
+        val now = System.currentTimeMillis()
+        val lastUpdateTime = lastUpdateTimeMap[watchName] ?: 0L
+
+        // Get the existing time or create a new one
+        val existingTime = watchTimeMap[watchName]
+        val newTime = if (existingTime != null) {
+            // Calculate how much time has passed since the last update
+            val timeDiff = now - lastUpdateTime
+            if (timeDiff > 0) {
+                // Add the time difference to the existing time
+                // Create a new Calendar instance to avoid modifying the existing one
+                val updatedTime = Calendar.getInstance(timeZone)
+                // Set the time to the existing time plus the time difference
+                updatedTime.timeInMillis = existingTime.timeInMillis + timeDiff
+                updatedTime
+            } else {
+                // If no time has passed, create a new Calendar with the same time
+                val updatedTime = Calendar.getInstance(timeZone)
+                updatedTime.timeInMillis = existingTime.timeInMillis
+                updatedTime
+            }
+        } else {
+            // If no existing time, create a new one
+            Calendar.getInstance(timeZone)
+        }
+
+        // Update the maps with the new time
+        watchTimeMap[watchName] = newTime
+        watchTimeZoneMap[watchName] = timeZone
+        lastUpdateTimeMap[watchName] = now
+
+        // Debug log
+        println("[DEBUG_LOG] Updated time for $watchName: ${newTime.time}, timezone: ${timeZone.id}")
+    }
+
+    // Function to update all watch times
+    fun updateAllTimes() {
+        watchTimeZoneMap.forEach { (watchName, timeZone) ->
+            updateTime(watchName, timeZone)
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -166,6 +230,7 @@ fun OptimizedWorldMapScreen(
 
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SelectedWatchScreen(
     onBackClick: () -> Unit,
@@ -191,26 +256,66 @@ fun SelectedWatchScreen(
 
     // Get the watch-specific time zone if available, otherwise use the global selected time zone
     // Use a key for collectAsState to ensure it's updated when the watch name changes
-    val watchTimeZone = if (watchViewModel != null && selectedWatch != null) {
+    val watchTimeZone = run {
         val watchTimeZoneFlow = remember(selectedWatch.name) {
             watchViewModel.getWatchTimeZone(selectedWatch.name)
         }
         watchTimeZoneFlow.collectAsState().value
-    } else {
-        watchViewModel?.selectedTimeZoneObject?.collectAsState()?.value ?: TimeZone.getDefault()
     }
 
-    // Use watchTimeZone and selectedWatch.name as keys to ensure it's re-initialized when either changes
-    var currentTime by remember(watchTimeZone, selectedWatch?.name) { 
-        mutableStateOf(Calendar.getInstance(watchTimeZone)) 
+    // Register this watch's timezone in the WatchTimeStore
+    // This ensures the global timer knows about this watch
+    LaunchedEffect(selectedWatch.name, watchTimeZone) {
+        println("[DEBUG_LOG] Registering watch ${selectedWatch.name} with timezone ${watchTimeZone.id}")
+        WatchTimeStore.watchTimeZoneMap[selectedWatch.name] = watchTimeZone
+        // Initialize the time if it doesn't exist yet
+        if (WatchTimeStore.watchTimeMap[selectedWatch.name] == null) {
+            println("[DEBUG_LOG] Initializing time for ${selectedWatch.name}")
+            WatchTimeStore.updateTime(selectedWatch.name, watchTimeZone)
+        } else {
+            println("[DEBUG_LOG] Watch ${selectedWatch.name} already has time: ${WatchTimeStore.watchTimeMap[selectedWatch.name]?.time}")
+        }
     }
 
-    // Update time every second
-    // Use both watchTimeZone and selectedWatch.name as keys to ensure it's re-launched when either changes
-    LaunchedEffect(key1 = watchTimeZone, key2 = selectedWatch?.name) {
+    // Get the time for this watch from the WatchTimeStore
+    // Use selectedWatch.name as a key to ensure it's re-initialized when the watch changes
+    // This is crucial for ensuring each watch has its own independent time state
+    var currentTime by remember(selectedWatch.name) {
+        // Initialize with the stored time or a new time if not available
+        // Clone the Calendar to ensure we're working with a fresh instance
+        val storedTime = WatchTimeStore.watchTimeMap[selectedWatch.name]
+        val initialTime = if (storedTime != null) {
+            // Clone the stored time to avoid modifying it
+            val clonedTime = Calendar.getInstance(watchTimeZone)
+            clonedTime.timeInMillis = storedTime.timeInMillis
+            clonedTime
+        } else {
+            // Create a new time if not available
+            val newTime = Calendar.getInstance(watchTimeZone)
+            // Register it in the WatchTimeStore
+            WatchTimeStore.watchTimeMap[selectedWatch.name] = newTime
+            newTime
+        }
+        println("[DEBUG_LOG] Initial time for ${selectedWatch.name}: ${initialTime.time}, timezone: ${watchTimeZone.id}")
+        mutableStateOf(initialTime)
+    }
+
+    // Update the local state from WatchTimeStore every frame
+    // This ensures the watch display is always in sync with the global time
+    // Use a global key that is the same for all watches
+    // This ensures that the LaunchedEffect is not re-executed when the watch comes into focus
+    val globalKey = "globalTimeUpdateLoop"
+    LaunchedEffect(globalKey) {
+        println("[DEBUG_LOG] Starting time update loop for ${selectedWatch.name}")
         while (true) {
-            currentTime = Calendar.getInstance(watchTimeZone)
-            delay(1000) // Update every second
+            val storeTime = WatchTimeStore.watchTimeMap[selectedWatch.name]
+            if (storeTime != null) {
+                // Always update the time, even if it seems the same
+                // This ensures continuous ticking regardless of page visibility
+                println("[DEBUG_LOG] Updating time for ${selectedWatch.name} from ${currentTime.time} to ${storeTime.time}")
+                currentTime = storeTime.clone() as Calendar
+            }
+            delay(16) // Update every frame (approximately 60 FPS)
         }
     }
 
@@ -266,6 +371,18 @@ fun SelectedWatchScreen(
                             .padding(8.dp)
                     )
 
+                    val targetZoneId: ZoneId = ZoneId.of(watchTimeZoneInfo?.id)
+                    val currentZonedDateTime: ZonedDateTime = ZonedDateTime.now(targetZoneId)
+
+                    Text(
+                        text = currentZonedDateTime.format(DateTimeFormatter.ofPattern("dd MMMM, yyyy")),
+                        style = MaterialTheme.typography.bodyLarge,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .clickable { expanded = true }
+                            .padding(8.dp)
+                    )
+
                     // Dropdown menu for time zone selection
                     DropdownMenu(
                         expanded = expanded,
@@ -311,31 +428,23 @@ fun SelectedWatchScreen(
                 contentAlignment = Alignment.Center
             ) {
                 if (selectedWatch != null) {
-                    // Special handling for Piaget Altiplano to pass the timezone directly
-                    if (selectedWatch.name == "Piaget Altiplano") {
-                        PiagetAltiplano(
-                            modifier = Modifier.fillMaxSize(0.8f),
-                            timeZone = watchTimeZone
-                        )
-                    } else if (selectedWatch.name == "Zenith El Primero") {
-                        // Special handling for Zenith El Primero to pass the timezone directly
-                        ZenithElPrimero(
-                            modifier = Modifier.fillMaxSize(0.8f),
-                            timeZone = watchTimeZone
-                        )
-                    } else {
-                        // For other watches, use the TimeZoneContextWrapper to set the default timezone
-                        TimeZoneContextWrapper(
-                            timeZone = watchTimeZone,
-                            modifier = Modifier.fillMaxSize(0.8f)
-                        ) { modifier ->
-                            selectedWatch.composable(modifier)
-                        }
-                    }
+                    // Use the unified TimeZoneAwareWatchFace composable for all watches
+                    TimeZoneAwareWatchFace(
+                        watchInfo = selectedWatch,
+                        timeZone = watchTimeZone,
+                        modifier = Modifier.fillMaxSize(0.8f)
+                    )
                 } else {
-                    PiagetAltiplano(
-                        modifier = Modifier.fillMaxSize(0.8f),
-                        timeZone = watchTimeZone
+                    // For the default case, create a dummy WatchInfo for Piaget Altiplano
+                    val defaultWatch = WatchInfo(
+                        name = "Piaget Altiplano",
+                        description = "Default watch",
+                        composable = { modifier -> PiagetAltiplano(modifier = modifier) }
+                    )
+                    TimeZoneAwareWatchFace(
+                        watchInfo = defaultWatch,
+                        timeZone = watchTimeZone,
+                        modifier = Modifier.fillMaxSize(0.8f)
                     )
                 }
             }
@@ -854,53 +963,92 @@ private fun rev(x: Float): Float {
 }
 
 /**
- * A wrapper composable that provides timezone-aware time to its content.
- * This allows any watch face to display the correct time for a specific timezone.
+ * A unified composable for all watch faces that handles timezone-aware time updates.
+ * This composable works for all watches, regardless of whether they directly accept a timeZone parameter or not.
+ * It directly sets the default timezone for the thread before rendering the watch face, ensuring
+ * that all Calendar.getInstance() calls use the correct timezone.
  */
 @Composable
-fun TimeZoneAwareWrapper(
+fun TimeZoneAwareWatchFace(
+    watchInfo: WatchInfo,
     timeZone: TimeZone,
-    modifier: Modifier = Modifier,
-    content: @Composable (Modifier, Calendar) -> Unit
+    modifier: Modifier = Modifier
 ) {
-    // Create a Calendar instance with the specified timezone
-    var currentTime by remember(timeZone) { mutableStateOf(Calendar.getInstance(timeZone)) }
+    // Use the watch name as a stable key
+    val watchName = watchInfo.name
 
-    // Update time every second
-    LaunchedEffect(timeZone) {
-        while (true) {
-            currentTime = Calendar.getInstance(timeZone)
-            delay(1000) // Update every second
+    // Register this watch in the WatchTimeStore to ensure it keeps ticking even when not visible
+    LaunchedEffect(watchName, timeZone.id) {
+        println("[DEBUG_LOG] Registering watch $watchName with timezone ${timeZone.id} in TimeZoneAwareWatchFace")
+        WatchTimeStore.watchTimeZoneMap[watchName] = timeZone
+        if (WatchTimeStore.watchTimeMap[watchName] == null) {
+            WatchTimeStore.updateTime(watchName, timeZone)
         }
     }
 
-    // Call the content with the current time
-    content(modifier, currentTime)
-}
+    // Get the current time from the WatchTimeStore or create a new one
+    // Use both watchName and timeZone.id as keys to ensure it's re-initialized when either changes
+    var currentTime by remember(watchName, timeZone.id) {
+        // Force update the WatchTimeStore with the new timezone
+        WatchTimeStore.updateTime(watchName, timeZone)
 
-/**
- * A wrapper composable specifically for watch faces that don't accept a timezone parameter.
- * It sets the default TimeZone for the current thread, which affects Calendar.getInstance() calls.
- */
-@Composable
-fun TimeZoneContextWrapper(
-    timeZone: TimeZone,
-    modifier: Modifier = Modifier,
-    content: @Composable (Modifier) -> Unit
-) {
+        val storedTime = WatchTimeStore.watchTimeMap[watchName]
+        val initialTime = if (storedTime != null) {
+            storedTime.clone() as Calendar
+        } else {
+            Calendar.getInstance(timeZone)
+        }
+        println("[DEBUG_LOG] Initial time for $watchName: ${initialTime.time}, timezone: ${timeZone.id}")
+        mutableStateOf(initialTime)
+    }
+
+    // Update the time every frame from the WatchTimeStore
+    // This ensures the watch keeps ticking even when not visible
+    // Use both watchName and timeZone.id as keys to ensure it's re-launched when either changes
+    LaunchedEffect(watchName, timeZone.id) {
+        println("[DEBUG_LOG] Starting time update loop for $watchName with timezone ${timeZone.id}")
+        while (true) {
+            val storeTime = WatchTimeStore.watchTimeMap[watchName]
+            if (storeTime != null) {
+                currentTime = storeTime.clone() as Calendar
+            }
+            delay(16) // Update every frame (approximately 60 FPS)
+        }
+    }
+
     // Save the original default timezone
     val originalTimeZone = remember { TimeZone.getDefault() }
 
     // Set the default timezone for the current thread
     // This affects all Calendar.getInstance() calls without a timezone parameter
-    DisposableEffect(timeZone) {
+    DisposableEffect(watchName, timeZone.id) {
+        // Set the default timezone before rendering
+        println("[DEBUG_LOG] Setting default timezone to ${timeZone.id} for watch $watchName")
         TimeZone.setDefault(timeZone)
+
         onDispose {
             // Restore the original default timezone when the composable is disposed
+            println("[DEBUG_LOG] Restoring default timezone to ${originalTimeZone.id} for watch $watchName")
             TimeZone.setDefault(originalTimeZone)
         }
     }
 
-    // Call the content
-    content(modifier)
+    // Special handling for watch faces that accept a timezone parameter directly
+    if (watchName == "Zenith El Primero") {
+        // For ZenithElPrimero, pass the timezone directly
+        ZenithElPrimero(
+            modifier = modifier,
+            timeZone = timeZone
+        )
+    } else if (watchName == "Piaget Altiplano") {
+        // For PiagetAltiplano, pass the timezone directly
+        PiagetAltiplano(
+            modifier = modifier,
+            timeZone = timeZone
+        )
+    } else {
+        // For other watches, just call the composable directly
+        // The default timezone has already been set, so they will use the correct timezone
+        watchInfo.composable(modifier)
+    }
 }
