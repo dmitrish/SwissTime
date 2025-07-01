@@ -9,6 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.coroutines.swisstime.ui.theme.SwissTimeTheme
 import kotlinx.coroutines.delay
 import java.util.Calendar
+import java.util.TimeZone
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
@@ -41,17 +43,17 @@ private val NumbersColor = Color(0xFFE0E0E0) // Light silver numbers
 private val CenterDotColor = Color(0xFFE0E0E0) // Light silver center dot
 
 @Composable
-fun GirardPerregauxLaureato(modifier: Modifier = Modifier) {
-    var currentTime by remember { mutableStateOf(Calendar.getInstance()) }
+fun GirardPerregauxLaureato(modifier: Modifier = Modifier, timeZone: TimeZone = TimeZone.getDefault()) {
+    var currentTime by remember { mutableStateOf(Calendar.getInstance(timeZone )) }
 
+    val timeZoneX by rememberUpdatedState(timeZone)
     // Update time every second
     LaunchedEffect(key1 = true) {
         while (true) {
-            currentTime = Calendar.getInstance()
+            currentTime = Calendar.getInstance(timeZoneX)
             delay(1000) // Update every second
         }
     }
-
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
