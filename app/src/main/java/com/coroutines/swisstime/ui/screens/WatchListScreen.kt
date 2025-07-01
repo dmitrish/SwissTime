@@ -54,6 +54,7 @@ import com.coroutines.swisstime.WatchInfo
 import com.coroutines.swisstime.darken
 import com.coroutines.swisstime.ui.screens.BrandLogo
 import com.coroutines.swisstime.ui.screens.getBrandLogos
+import java.util.TimeZone
 
 
 // Composable for a single brand logo item in the horizontal row
@@ -222,7 +223,7 @@ fun WatchListItem(
                     .padding(0.dp, 8.dp, 8.dp, 8.dp),
                 contentAlignment = Alignment.Center
             ) {
-                watch.composable(Modifier.fillMaxSize())
+                watch.composable(Modifier.fillMaxSize(), TimeZone.getDefault() )
             }
 
             Spacer(modifier = Modifier.width(16.dp))

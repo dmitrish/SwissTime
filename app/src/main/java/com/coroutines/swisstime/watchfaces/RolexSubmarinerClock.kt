@@ -10,6 +10,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,6 +31,7 @@ import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import java.util.TimeZone
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
@@ -47,13 +49,14 @@ private val DigitalTimeColor = Color(0xFFD4AF37) // Gold digital time
 private val BezelColor = Color(0xFF00008B) // Dark blue bezel
 
 @Composable
-fun RolexSubmarinerClock(modifier: Modifier = Modifier) {
-    var currentTime by remember { mutableStateOf(Calendar.getInstance()) }
+fun RolexSubmarinerClock(modifier: Modifier = Modifier, timeZone: TimeZone = TimeZone.getDefault()){
+    var currentTime by remember { mutableStateOf(Calendar.getInstance(timeZone )) }
 
+    val timeZoneX by rememberUpdatedState(timeZone)
     // Update time every second
     LaunchedEffect(key1 = true) {
         while (true) {
-            currentTime = Calendar.getInstance()
+            currentTime = Calendar.getInstance(timeZoneX)
             delay(1000) // Update every second
         }
     }

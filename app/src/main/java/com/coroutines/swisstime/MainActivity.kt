@@ -67,9 +67,11 @@ import com.coroutines.swisstime.widget.WatchWidget
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
+import com.coroutines.swisstime.data.TimeZoneInfo
 import com.coroutines.swisstime.ui.screens.WatchDetailScreen
 import com.coroutines.swisstime.ui.screens.WatchListScreen
 import com.coroutines.swisstime.ui.theme.DarkNavy
+import com.coroutines.swisstime.viewmodel.WatchViewModel
 import com.coroutines.swisstime.watchfaces.AhoiNeomatic38DateAtlantic
 import com.coroutines.swisstime.watchfaces.AutobahnNeomatic41DateSportsGray
 import com.coroutines.swisstime.watchfaces.BlancpainFiftyFathoms
@@ -99,7 +101,7 @@ import java.util.TimeZone
 data class WatchInfo(
     val name: String,
     val description: String,
-    val composable: @Composable (Modifier) -> Unit
+    val composable: @Composable (Modifier, TimeZone) -> Unit
 )
 
 // Function to get the watch face color based on the watch name
