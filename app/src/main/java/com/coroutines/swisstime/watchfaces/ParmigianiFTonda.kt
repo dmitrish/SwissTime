@@ -1,5 +1,6 @@
 package com.coroutines.swisstime.watchfaces
 
+import android.R.attr.timeZone
 import android.graphics.Paint
 import android.graphics.Typeface
 import androidx.compose.foundation.Canvas
@@ -82,7 +83,7 @@ fun ParmigianiFTonda(modifier: Modifier = Modifier, timeZone: TimeZone = TimeZon
             drawGuilloche(center, radius)
 
             // Draw date window (common in Parmigiani Tonda models)
-            drawDateWindow(center, radius)
+            drawDateWindow(center, radius, timeZoneX)
 
             // Draw clock hands
             drawClockHands(center, radius, hour, minute, second)
@@ -236,7 +237,7 @@ private fun DrawScope.drawGuilloche(center: Offset, radius: Float) {
     }
 }
 
-private fun DrawScope.drawDateWindow(center: Offset, radius: Float) {
+private fun DrawScope.drawDateWindow(center: Offset, radius: Float, timeZoneX: TimeZone ) {
     // Draw date window at 3 o'clock position (common in Parmigiani Tonda models)
     val dateWindowX = center.x + radius * 0.6f
     val dateWindowY = center.y
@@ -280,7 +281,7 @@ private fun DrawScope.drawDateWindow(center: Offset, radius: Float) {
     }
     
     // Get current date
-    val calendar = Calendar.getInstance()
+    val calendar = Calendar.getInstance(timeZoneX)
     val date = calendar.get(Calendar.DAY_OF_MONTH)
     
     drawContext.canvas.nativeCanvas.drawText(
