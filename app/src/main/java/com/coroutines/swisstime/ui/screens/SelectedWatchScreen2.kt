@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -16,11 +17,13 @@ import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import kotlinx.coroutines.delay
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -114,27 +117,21 @@ fun SelectedWatchScreen2(
                     )
 
                     val targetZoneId: ZoneId = ZoneId.of(watchTimeZoneInfo?.id)
-                    val currentZonedDateTime: ZonedDateTime = ZonedDateTime.now(targetZoneId)
 
-                    Text(
-                        text = currentZonedDateTime.format(DateTimeFormatter.ofPattern("dd MMMM, yyyy")),
-                        style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .clickable { expanded = true }
-                            .padding(8.dp)
-                    )
+                    // Create a state to hold the current time that will be updated every second
+                    var currentTime by remember { mutableStateOf(ZonedDateTime.now(targetZoneId)) }
 
-                    Text(
-                        text = currentZonedDateTime.format(DateTimeFormatter.ofPattern("H:mm:ss a")),
-                        style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.Center,
+                    // Update the time every second
+                    LaunchedEffect(targetZoneId) {
+                        while(true) {
+                            currentTime = ZonedDateTime.now(targetZoneId)
+                            delay(1000) // Update every second
+                        }
+                    }
 
-                        modifier = Modifier
-                            .testTag("timeText")
-                            .clickable { expanded = true }
-                            .padding(8.dp)
-                    )
+
+
+
 
                     // Dropdown menu for time zone selection
                     DropdownMenu(
@@ -165,6 +162,31 @@ fun SelectedWatchScreen2(
                             )
                         }
                     }
+
+                    Text(
+                        text = currentTime.format(DateTimeFormatter.ofPattern("H:mm:ss a")),
+                        style = MaterialTheme.typography.bodyLarge,
+                        textAlign = TextAlign.Center,
+
+                        modifier = Modifier
+                            .testTag("timeText")
+                            .clickable { expanded = true }
+                            .padding(8.dp)
+                    )
+
+                    Text(
+                        text = currentTime.format(DateTimeFormatter.ofPattern("dd MMMM")),
+                        style = MaterialTheme.typography.bodyLarge,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .clickable { expanded = true }
+                            .padding(top = 8.dp, bottom = 16.dp)
+                    )
+
+                    androidx.compose.foundation.layout.Spacer(
+                        modifier = Modifier.height(16.dp)
+                    )
+
                 }
             }
 
