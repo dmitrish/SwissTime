@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.coroutines.swisstime"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.coroutines.swisstime"
@@ -49,12 +49,11 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
 
     // Foundation for Pager component
-    implementation("androidx.compose.foundation:foundation")
-    implementation("androidx.compose.foundation:foundation-layout")
+   // implementation("androidx.compose.foundation:foundation")
+   // implementation("androidx.compose.foundation:foundation-layout")
 
-    // Accompanist for Pager
-    implementation("com.google.accompanist:accompanist-pager:0.32.0")
-    implementation("com.google.accompanist:accompanist-pager-indicators:0.32.0")
+    // Use Jetpack Compose Pager
+   // implementation("androidx.compose.foundation:foundation-pager:1.0.0")
 
     // Glance for App Widgets
     implementation(libs.androidx.glance)

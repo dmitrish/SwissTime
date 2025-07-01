@@ -7,8 +7,14 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.runBlocking
 
 // Create a DataStore instance at the top level
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "watch_preferences")
@@ -55,11 +61,24 @@ class WatchPreferencesRepository(private val context: Context) {
     }
 
     // Get the timezone ID for a specific watch
-    fun getWatchTimeZoneId(watchName: String): Flow<String?> = context.dataStore.data
+    fun getWatchTimeZoneId(watchName: String, scope: CoroutineScope): SharedFlow<String?> = context.dataStore.data
         .map { preferences ->
             val key = stringPreferencesKey("${WATCH_TIMEZONE_PREFIX}${watchName}")
             preferences[key]
         }
+        .shareIn(
+            scope = scope,
+            started = SharingStarted.WhileSubscribed(5000),
+            replay = 0
+        )
+
+    fun getWatchTimeZoneIdBlocking(watchName: String): String? = runBlocking {
+        context.dataStore.data
+            .map { preferences ->
+                val key = stringPreferencesKey("${WATCH_TIMEZONE_PREFIX}${watchName}")
+                preferences[key]
+            }.first()
+    }
 
     // Save the timezone ID for a specific watch
     suspend fun saveWatchTimeZone(watchName: String, timeZoneId: String) {
