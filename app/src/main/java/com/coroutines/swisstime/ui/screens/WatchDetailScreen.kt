@@ -59,6 +59,7 @@ import com.coroutines.swisstime.darken
 import com.coroutines.swisstime.getTextColorForBackground
 import com.coroutines.swisstime.getWatchFaceColor
 import com.coroutines.swisstime.isDark
+import java.util.TimeZone
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -216,7 +217,7 @@ fun WatchDetailScreen(
                             .clickable { isExpanded = !isExpanded }, // Toggle expanded state on click
                         contentAlignment = Alignment.Center
                     ) {
-                        watch.composable(Modifier.fillMaxSize())
+                        watch.composable(Modifier.fillMaxSize(),  TimeZone.getDefault() )
                     }
                 }
 
