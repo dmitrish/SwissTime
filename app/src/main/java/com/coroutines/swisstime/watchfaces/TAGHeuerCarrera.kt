@@ -147,7 +147,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
     }
     
     drawContext.canvas.nativeCanvas.drawText(
-        "TAG HEUER",
+        "時の葉",
         center.x,
         center.y - radius * 0.3f,
         logoPaint
@@ -163,7 +163,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
     }
     
     drawContext.canvas.nativeCanvas.drawText(
-        "CARRERA",
+        "Tokinoha",
         center.x,
         center.y - radius * 0.15f,
         modelPaint

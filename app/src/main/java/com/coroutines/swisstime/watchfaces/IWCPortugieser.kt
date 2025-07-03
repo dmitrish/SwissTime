@@ -214,7 +214,7 @@ private fun drawStaticElements(center: Offset, radius: Float): DrawScope.() -> U
     }
 
     drawContext.canvas.nativeCanvas.drawText(
-        "IWC",
+        "HOROLOGIA",
         center.x,
         center.y - radius * 0.3f,
         logoPaint
@@ -228,7 +228,7 @@ private fun drawStaticElements(center: Offset, radius: Float): DrawScope.() -> U
     }
 
     drawContext.canvas.nativeCanvas.drawText(
-        "SCHAFFHAUSEN",
+        "ROMANUM",
         center.x,
         center.y - radius * 0.2f,
         originPaint

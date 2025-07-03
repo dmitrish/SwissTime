@@ -239,7 +239,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
     }
     
     drawContext.canvas.nativeCanvas.drawText(
-        "POWER RESERVE",
+        "NAUTILUS CENTURION",
         center.x,
         powerReserveY - powerReserveHeight * 1.2f,
         powerReservePaint
