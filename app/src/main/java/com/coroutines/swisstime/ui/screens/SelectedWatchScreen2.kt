@@ -61,6 +61,7 @@ import com.coroutines.swisstime.watchfaces.PiagetAltiplano
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
 import java.util.TimeZone
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -69,10 +70,10 @@ fun SelectedWatchScreen2(
     onBackClick: () -> Unit,
     selectedWatch: WatchInfo? = null,
     modifier: Modifier = Modifier,
-    watchViewModel: WatchViewModel? = null
+    watchViewModel: WatchViewModel? = null,
+    isPageTransitioning: Boolean = false
 ) {
     val TAG = "Performance:SelectedWatchScreen2"
-    Log.d(TAG, "SelectedWatchScreen2:watchTimeZone:before}")
     // Early return if no watch is selected or no view model is provided
     if (selectedWatch == null || watchViewModel == null) {
         Box(
@@ -89,22 +90,23 @@ fun SelectedWatchScreen2(
         return
     }
 
-    val watchTimeZone = watchViewModel.selectedTimeZone.collectAsState().value
-
-
+    // Get the time zone info for this watch - use remember to avoid recomposition
+    // This is more efficient than getting the selectedTimeZone
     val watchTimeZoneInfo = if (watchViewModel != null && selectedWatch != null) {
+        // Use remember to avoid recreating the flow on each recomposition
         val watchTimeZoneInfoFlow = remember(selectedWatch.name) {
+            Log.d(TAG, "Creating watchTimeZoneInfoFlow for ${selectedWatch.name}")
             watchViewModel.getWatchTimeZoneInfo(selectedWatch.name)
         }
+        // Collect the flow as state
         watchTimeZoneInfoFlow.collectAsState().value
     } else {
+        // Fallback to the selected time zone if no watch is selected
         watchViewModel?.selectedTimeZone?.collectAsState()?.value
     }
-    Log.d("TAG", "SelectedWatchScreen2:watchTimeZone:after}")
-    Log.d("TAG", "SelectedWatchScreen2:allTimeZones:before}")
-    // Get all available time zones
-    val allTimeZones = remember { watchViewModel.allTimeZones}
-    Log.d(TAG, "SelectedWatchScreen2:allTimeZones:after}")
+
+    // Log completion of time zone info retrieval
+    Log.d(TAG, "Retrieved time zone info: ${watchTimeZoneInfo?.id}")
 
     // State for dropdown expanded
     // Use selectedWatch.name as key to ensure it's re-initialized when the watch changes
@@ -169,15 +171,20 @@ fun SelectedWatchScreen2(
                         )
                     }
 
-                    val targetZoneId: ZoneId = ZoneId.of(watchTimeZoneInfo?.id)
-
-                  //  val targetZoneId: ZoneId = ZoneId.of("GMT")
+                    // Create ZoneId only once and remember it - avoid logging during page transitions
+                    val targetZoneId = remember(watchTimeZoneInfo?.id) {
+                        ZoneId.of(watchTimeZoneInfo?.id ?: "GMT")
+                    }
 
                     // Create a state to hold the current time that will be updated every second
                     var currentTime by remember { mutableStateOf(ZonedDateTime.now(targetZoneId)) }
 
-                    // Update the time every second
-                    LaunchedEffect(targetZoneId) {
+                    // Update the time every second - use targetZoneId as key to restart when it changes
+                    // Use a key that includes the watch name to ensure proper recomposition
+                    LaunchedEffect(targetZoneId, selectedWatch?.name) {
+                        // Delay the first update to reduce work during page transition
+                        delay(100) // Small delay to prioritize rendering
+
                         while(true) {
                             currentTime = ZonedDateTime.now(targetZoneId)
                             delay(1000) // Update every second
@@ -185,57 +192,57 @@ fun SelectedWatchScreen2(
                     }
 
                     // Dropdown menu for time zone selection
-                    DropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false },
-                        // Use a much larger offset to position the dropdown menu
-                        offset = DpOffset(x = 0.dp, y = 500.dp),
-                        modifier = Modifier
-                            .fillMaxWidth(0.8f) // Make it smaller in width
-                            .fillMaxHeight(0.9f), // Make it 80% of the screen height
-                        containerColor = Color(DarkNavyTriadic.toArgb()), // Complementary color to DarkNavy
-                        shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp) // Add rounded corners
-                    ) {
-                        // Sort timezones by their distance from GMT
-                        val sortedTimeZones = remember(allTimeZones) {
-                            allTimeZones.sortedBy { timeZoneInfo ->
-                                // Get the raw offset in milliseconds from GMT
-                                val offset = TimeZone.getTimeZone(timeZoneInfo.id).rawOffset
-                                // Use absolute value to sort by distance from GMT
-                                Math.abs(offset)
+                    if (expanded) {
+                        // Only create the dropdown menu when it's actually expanded
+                        // This defers the expensive operation until it's needed
+                        DropdownMenu(
+                            expanded = true, // Always true since we only create it when expanded
+                            onDismissRequest = { expanded = false },
+                            // Use a much larger offset to position the dropdown menu
+                            offset = DpOffset(x = 0.dp, y = 500.dp),
+                            modifier = Modifier
+                                .fillMaxWidth(0.8f) // Make it smaller in width
+                                .fillMaxHeight(0.9f), // Make it 80% of the screen height
+                            containerColor = Color(DarkNavyTriadic.toArgb()), // Complementary color to DarkNavy
+                            shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp) // Add rounded corners
+                        ) {
+                            // Get pre-sorted time zones from the view model - use remember to cache the result
+                            // This is now only done when the dropdown is expanded, not during page transitions
+                            val sortedTimeZones = remember { 
+                                watchViewModel.getSortedTimeZones() 
                             }
-                        }
 
-                        sortedTimeZones.forEach { timeZoneInfo ->
-                            DropdownMenuItem(
-                                text = {
-                                    Text(
-                                        text = buildAnnotatedString {
-                                            if (timeZoneInfo.displayName.isNotEmpty()) {
-                                                // Apply bold style to the first letter
-                                                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                                    append(timeZoneInfo.displayName.substring(0, 1))
+                            sortedTimeZones.forEach { timeZoneInfo ->
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(
+                                            text = buildAnnotatedString {
+                                                if (timeZoneInfo.displayName.isNotEmpty()) {
+                                                    // Apply bold style to the first letter
+                                                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                                        append(timeZoneInfo.displayName.substring(0, 1))
+                                                    }
+                                                    // Append the rest of the text with normal style
+                                                    append(timeZoneInfo.displayName.substring(1))
                                                 }
-                                                // Append the rest of the text with normal style
-                                                append(timeZoneInfo.displayName.substring(1))
-                                            }
-                                        },
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = Color.White, // White text for better contrast
-                                        modifier = Modifier.padding(start = 10.dp) // Add left padding of 10.dp
+                                            },
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = Color.White, // White text for better contrast
+                                            modifier = Modifier.padding(start = 10.dp) // Add left padding of 10.dp
+                                        )
+                                    },
+                                    onClick = {
+                                        // Save the timezone for the specific watch
+                                        watchViewModel.saveWatchTimeZone(selectedWatch.name, timeZoneInfo.id)
+                                        expanded = false
+                                    },
+                                    colors = MenuDefaults.itemColors(
+                                        textColor = Color.White,
+                                        leadingIconColor = Color.White,
+                                        trailingIconColor = Color.White
                                     )
-                                },
-                                onClick = {
-                                    // Save the timezone for the specific watch
-                                    watchViewModel.saveWatchTimeZone(selectedWatch.name, timeZoneInfo.id)
-                                    expanded = false
-                                },
-                                colors = MenuDefaults.itemColors(
-                                    textColor = Color.White,
-                                    leadingIconColor = Color.White,
-                                    trailingIconColor = Color.White
                                 )
-                            )
+                            }
                         }
                     }
 
@@ -260,7 +267,7 @@ fun SelectedWatchScreen2(
                     )
 
                     // Reddish line that when tapped will remove the watch from selected watches
-                    Box(
+                  /*  Box(
                         modifier = Modifier
                             .padding(top = 10.dp)
                             .width(30.dp)
@@ -269,7 +276,7 @@ fun SelectedWatchScreen2(
                             .clickable {
                                 showRemoveConfirmation = true
                             }
-                    )
+                    ) */
 
                     // Confirmation dialog
                     if (showRemoveConfirmation) {
@@ -336,14 +343,27 @@ fun SelectedWatchScreen2(
                 )
             }
 
-            // Spacer after the watch to balance with the top
+            // Spacer after the watch (reduced weight to make room for the world map)
             androidx.compose.foundation.layout.Spacer(
-                modifier = Modifier.weight(0.3f)
+                modifier = Modifier.weight(0.1f)
+            )
+
+            // Current time for the world map
+            val currentTime = remember { Calendar.getInstance() }
+
+            // Update time every second
+            LaunchedEffect(key1 = true) {
+                while (true) {
+                    currentTime.timeInMillis = System.currentTimeMillis()
+                    delay(1000) // Update every second
+                }
+            }
+
+
+            // Small spacer at the bottom
+            androidx.compose.foundation.layout.Spacer(
+                modifier = Modifier.weight(0.05f)
             )
         }
     }
-
-
-
-
 }

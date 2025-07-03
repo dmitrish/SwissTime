@@ -34,155 +34,63 @@ import kotlinx.coroutines.delay
 import java.util.Calendar
 import java.util.TimeZone
 
+// Map of watch name prefixes to their corresponding composable functions
+// This avoids the expensive if-else chain and provides faster lookups
+private val watchFaceMap = mapOf<String, @Composable (Modifier, TimeZone) -> Unit>(
+    "Zenith El Primero" to { mod, tz -> ZenithElPrimero(modifier = mod, timeZone = tz) },
+    "Piaget Altiplano" to { mod, tz -> PiagetAltiplano(modifier = mod, timeZone = tz) },
+    "Blanc" to { mod, tz -> BlancpainFiftyFathoms(modifier = mod, timeZone = tz) },
+    "Breitling" to { mod, tz -> BreitlingNavitimer(modifier = mod, timeZone = tz) },
+    "Breguet" to { mod, tz -> BreguetClassique(modifier = mod, timeZone = tz) },
+    "Carl" to { mod, tz -> CarlFBuchererManero(modifier = mod, timeZone = tz) },
+    "Chopard" to { mod, tz -> ChopardLUC(modifier = mod, timeZone = tz) },
+    "Franck" to { mod, tz -> FranckMullerVanguard(modifier = mod, timeZone = tz) },
+    "Girard" to { mod, tz -> GirardPerregauxLaureato(modifier = mod, timeZone = tz) },
+    "H. Moser & Cie Endeavour" to { mod, tz -> HMoserEndeavour(modifier = mod, timeZone = tz) },
+    "IWC" to { mod, tz -> IWCPortugieser(modifier = mod, timeZone = tz) },
+    "Jaeger" to { mod, tz -> JaegerLeCoultreReverso(modifier = mod, timeZone = tz) },
+    "Longines" to { mod, tz -> LonginesMasterCollection(modifier = mod, timeZone = tz) },
+    "Parmigiani" to { mod, tz -> ParmigianiFTonda(modifier = mod, timeZone = tz) },
+    "Patek" to { mod, tz -> PatekPhilippeClock(modifier = mod, timeZone = tz) },
+    "Rolex Submariner" to { mod, tz -> RolexSubmarinerClock(modifier = mod, timeZone = tz) },
+    "TAG" to { mod, tz -> TAGHeuerCarrera(modifier = mod, timeZone = tz) },
+    "Ulysee Nardin" to { mod, tz -> UlysseNardinMarineChronometer(modifier = mod, timeZone = tz) },
+    "Vacherone Constantin" to { mod, tz -> VacheronConstantinClock(modifier = mod, timeZone = tz) }
+)
+
 @Composable
 fun TimeZoneAwareWatchFace2(
     watchInfo: WatchInfo,
-   // timeZone: TimeZone,
     viewModel: WatchViewModel,
     modifier: Modifier = Modifier
 ) {
     // Use the watch name as a stable key
     val watchName = watchInfo.name
 
-    val timeZone by viewModel.getWatchTimeZone(watchName).collectAsState()
+    // Get the time zone for this watch directly without using flows
+    // This is much more efficient during page transitions
+    val timeZone = remember(watchName) {
+        viewModel.getTimeZoneDirect(watchName)
+    }
 
+    // Find the appropriate watch face composable based on the watch name
+    // This is much faster than a large if-else chain
+    val watchFaceComposable = remember(watchName) {
+        // First try an exact match
+        watchFaceMap[watchName] ?: run {
+            // If no exact match, try to find a prefix match
+            watchFaceMap.entries.find { (prefix, _) -> 
+                watchName.startsWith(prefix)
+            }?.value
+        }
+    }
 
-
-    // Special handling for watch faces that accept a timezone parameter directly
-    if (watchName == "Zenith El Primero") {
-        // For ZenithElPrimero, pass the timezone directly
-        ZenithElPrimero(
-            modifier = modifier,
-            timeZone = timeZone
-        )
-    } else if (watchName == "Piaget Altiplano") {
-        // For PiagetAltiplano, pass the timezone directly
-        PiagetAltiplano(
-            modifier = modifier,
-            timeZone = timeZone
-        )
-    } else if (watchName.startsWith("Blanc")) {
-        // For PiagetAltiplano, pass the timezone directly
-        BlancpainFiftyFathoms(
-            modifier = modifier,
-            timeZone = timeZone
-        )
-    }
-    else if (watchName.startsWith("Breitling")) {
-        // For PiagetAltiplano, pass the timezone directly
-        BreitlingNavitimer(
-            modifier = modifier,
-            timeZone = timeZone
-        )
-    }
- else if (watchName.startsWith("Breguet")) {
-    // For PiagetAltiplano, pass the timezone directly
-        BreguetClassique(
-            modifier = modifier,
-            timeZone = timeZone
-        )
-}
-    else if (watchName.startsWith("Carl")) {
-        // For PiagetAltiplano, pass the timezone directly
-        CarlFBuchererManero(
-            modifier = modifier,
-            timeZone = timeZone
-        )
-    }
-    else if (watchName.startsWith("Chopard")) {
-        // For PiagetAltiplano, pass the timezone directly
-        ChopardLUC(
-            modifier = modifier,
-            timeZone = timeZone
-        )
-    }
-    else if (watchName.startsWith("Franck")) {
-        // For PiagetAltiplano, pass the timezone directly
-        FranckMullerVanguard(
-            modifier = modifier,
-            timeZone = timeZone
-        )
-    }
-    else if (watchName.startsWith("Girard")) {
-        // For PiagetAltiplano, pass the timezone directly
-        GirardPerregauxLaureato(
-            modifier = modifier,
-            timeZone = timeZone
-        )
-    }
-    else if (watchName == "H. Moser & Cie Endeavour"){
-        // Use the optimized version for better performance
-        HMoserEndeavour(
-            modifier = modifier,
-            timeZone = timeZone
-        )
-    }
-    else if (watchName.startsWith("IWC")) {
-        // For PiagetAltiplano, pass the timezone directly
-        IWCPortugieser(
-            modifier = modifier,
-            timeZone = timeZone
-        )
-    }
-    else if (watchName.startsWith("Jaeger")) {
-        // For PiagetAltiplano, pass the timezone directly
-        JaegerLeCoultreReverso(
-            modifier = modifier,
-            timeZone = timeZone
-        )
-    }
-    else if (watchName.startsWith("Longines")) {
-        // For PiagetAltiplano, pass the timezone directly
-        LonginesMasterCollection(
-            modifier = modifier,
-            timeZone = timeZone
-        )
-    }
-    else if (watchName.startsWith("Parmigiani")) {
-        // For PiagetAltiplano, pass the timezone directly
-        ParmigianiFTonda(
-            modifier = modifier,
-            timeZone = timeZone
-        )
-    }
-    else if (watchName.startsWith("Patek")) {
-        // For PiagetAltiplano, pass the timezone directly
-        PatekPhilippeClock(
-            modifier = modifier,
-            timeZone = timeZone
-        )
-    }
-    else if (watchName.startsWith("Rolex Submariner")) {
-        // For PiagetAltiplano, pass the timezone directly
-        RolexSubmarinerClock(
-            modifier = modifier,
-            timeZone = timeZone
-        )
-    }
-    else if (watchName.startsWith("TAG")) {
-        // For PiagetAltiplano, pass the timezone directly
-        TAGHeuerCarrera(
-            modifier = modifier,
-            timeZone = timeZone
-        )
-    }
-    else if (watchName.startsWith("Ulysee Nardin")) {
-        // For PiagetAltiplano, pass the timezone directly
-        UlysseNardinMarineChronometer(
-            modifier = modifier,
-            timeZone = timeZone
-        )
-    }
-    else if (watchName.startsWith("Vacherone Constantin")) {
-        // For PiagetAltiplano, pass the timezone directly
-        VacheronConstantinClock(
-            modifier = modifier,
-            timeZone = timeZone
-        )
-    }
- else {
-        // For other watches, just call the composable directly
-        // The default timezone has already been set, so they will use the correct timezone
-          watchInfo.composable(modifier, timeZone)
+    // Render the watch face
+    if (watchFaceComposable != null) {
+        // Use the found composable
+        watchFaceComposable(modifier, timeZone)
+    } else {
+        // Fallback to the default composable
+        watchInfo.composable(modifier, timeZone)
     }
 }

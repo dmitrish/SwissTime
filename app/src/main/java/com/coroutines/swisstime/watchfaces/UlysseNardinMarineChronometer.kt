@@ -160,7 +160,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
     }
     
     drawContext.canvas.nativeCanvas.drawText(
-        "ULYSSE NARDIN",
+        "CONSTANTINUS",
         center.x,
         center.y - radius * 0.1f,
         logoPaint
@@ -176,7 +176,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
     }
     
     drawContext.canvas.nativeCanvas.drawText(
-        "MARINE CHRONOMETER",
+        "AUREUS CHRONOMETER",
         center.x,
         center.y,
         modelPaint
