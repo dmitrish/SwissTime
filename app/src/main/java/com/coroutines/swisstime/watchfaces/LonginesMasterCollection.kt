@@ -126,7 +126,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
     }
     
     drawContext.canvas.nativeCanvas.drawText(
-        "LONGINES",
+        "LÉONARD",
         center.x,
         center.y - radius * 0.3f,
         logoPaint

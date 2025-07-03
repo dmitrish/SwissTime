@@ -59,6 +59,31 @@ class WatchViewModel(
     // Get all available time zones
     val allTimeZones: List<TimeZoneInfo> = timeZoneRepository.getAllTimeZones()
 
+    // Cache for sorted time zones to avoid expensive sorting operations
+    private var sortedTimeZonesCache: List<TimeZoneInfo>? = null
+
+    // Get time zones sorted by their distance from GMT
+    fun getSortedTimeZones(): List<TimeZoneInfo> {
+        // Return cached result if available
+        sortedTimeZonesCache?.let { return it }
+
+        // Sort time zones by their distance from GMT
+        val sorted = allTimeZones.sortedBy { timeZoneInfo ->
+            // Check if we already have this time zone in the cache
+            timeZoneCache[timeZoneInfo.id]?.rawOffset ?: run {
+                // Get the raw offset in milliseconds from GMT
+                val timeZone = TimeZone.getTimeZone(timeZoneInfo.id)
+                // Cache the time zone for future use
+                timeZoneCache[timeZoneInfo.id] = timeZone
+                timeZone.rawOffset
+            }
+        }
+
+        // Cache the result
+        sortedTimeZonesCache = sorted
+        return sorted
+    }
+
     // Get the selected time zone as a StateFlow
     val selectedTimeZone: StateFlow<TimeZoneInfo> = timeZoneRepository.selectedTimeZoneInfo
         .stateIn(
@@ -84,12 +109,23 @@ class WatchViewModel(
             initialValue = TimeZone.getDefault()
         )
 
+    // Cache for TimeZone objects to avoid repeated lookups
+    private val timeZoneCache = mutableMapOf<String, TimeZone>()
+
     // Get the TimeZone object for a specific watch
     fun getWatchTimeZone(watchName: String): StateFlow<TimeZone> {
         return watchPreferencesRepository.getWatchTimeZoneId(watchName, viewModelScope)
             .map { timeZoneId ->
                 if (timeZoneId != null) {
-                    TimeZone.getTimeZone(timeZoneId)
+                    // Check cache first
+                    timeZoneCache[timeZoneId]?.let { return@map it }
+
+                    // Create a new TimeZone object
+                    val timeZone = TimeZone.getTimeZone(timeZoneId)
+
+                    // Cache the result
+                    timeZoneCache[timeZoneId] = timeZone
+                    timeZone
                 } else {
                     // Default to the selected time zone if no specific time zone is set for this watch
                     selectedTimeZoneObject.value
@@ -102,20 +138,54 @@ class WatchViewModel(
             )
     }
 
+    // Cache for time zone info to avoid repeated expensive lookups
+    private val timeZoneInfoCache = mutableMapOf<String, TimeZoneInfo>()
+
     // Get the TimeZoneInfo for a specific watch
     fun getWatchTimeZoneInfo(watchName: String): StateFlow<TimeZoneInfo> {
+        // Eagerly try to get the time zone ID and create the TimeZoneInfo
+        // This helps with performance during page transitions
+        val timeZoneId = watchPreferencesRepository.getWatchTimeZoneIdBlocking(watchName)
+        if (timeZoneId != null) {
+            // Check if we already have this time zone in the cache
+            timeZoneInfoCache[timeZoneId]?.let { cachedInfo ->
+                // If it's in the cache, we can create a StateFlow with it as the initial value
+                // This avoids the expensive flow collection during page transitions
+                return kotlinx.coroutines.flow.MutableStateFlow(cachedInfo)
+            }
+
+            // If not in cache, create it now and cache it
+            val timeZone = TimeZone.getTimeZone(timeZoneId)
+            val isDaylightTime = timeZone.inDaylightTime(Date())
+            val timeZoneInfo = TimeZoneInfo(
+                id = timeZoneId,
+                displayName = timeZone.getDisplayName(isDaylightTime, TimeZone.LONG)
+            )
+            timeZoneInfoCache[timeZoneId] = timeZoneInfo
+
+            // Return a StateFlow with the pre-created TimeZoneInfo
+            return kotlinx.coroutines.flow.MutableStateFlow(timeZoneInfo)
+        }
+
+        // If we couldn't get the time zone ID eagerly, fall back to the original implementation
         return watchPreferencesRepository.getWatchTimeZoneId(watchName, viewModelScope)
-            .map { timeZoneId ->
-                if (timeZoneId != null) {
-                    val timeZone = TimeZone.getTimeZone(timeZoneId)
+            .map { tzId ->
+                if (tzId != null) {
+                    // Check cache first
+                    timeZoneInfoCache[tzId]?.let { return@map it }
+
+                    val timeZone = TimeZone.getTimeZone(tzId)
                     val isDaylightTime = timeZone.inDaylightTime(Date())
 
-                    // Get all time zones to find the matching one
-                    val allTimeZones = timeZoneRepository.getAllTimeZones()
-                    allTimeZones.find { it.id == timeZoneId } ?: TimeZoneInfo(
-                        id = timeZoneId,
+                    // Create a new TimeZoneInfo directly without searching through all time zones
+                    val timeZoneInfo = TimeZoneInfo(
+                        id = tzId,
                         displayName = timeZone.getDisplayName(isDaylightTime, TimeZone.LONG)
                     )
+
+                    // Cache the result
+                    timeZoneInfoCache[tzId] = timeZoneInfo
+                    timeZoneInfo
                 } else {
                     // Default to the selected time zone info if no specific time zone is set for this watch
                     selectedTimeZone.value
@@ -126,6 +196,50 @@ class WatchViewModel(
                 started = SharingStarted.WhileSubscribed(5000),
                 initialValue = selectedTimeZone.value
             )
+    }
+
+    // Get a cached TimeZoneInfo by ID, or create a new one if not in cache
+    fun getCachedTimeZoneInfo(timeZoneId: String): TimeZoneInfo {
+        // Check cache first
+        timeZoneInfoCache[timeZoneId]?.let { return it }
+
+        // If not in cache, create a new TimeZoneInfo
+        val timeZone = TimeZone.getTimeZone(timeZoneId)
+        val isDaylightTime = timeZone.inDaylightTime(Date())
+        val timeZoneInfo = TimeZoneInfo(
+            id = timeZoneId,
+            displayName = timeZone.getDisplayName(isDaylightTime, TimeZone.LONG)
+        )
+
+        // Cache the result
+        timeZoneInfoCache[timeZoneId] = timeZoneInfo
+        return timeZoneInfo
+    }
+
+    // Get the time zone ID for a watch directly (blocking)
+    // This is more efficient than using a flow during page transitions
+    fun getWatchTimeZoneIdDirect(watchName: String): String? {
+        return watchPreferencesRepository.getWatchTimeZoneIdBlocking(watchName)
+    }
+
+    // Get a TimeZone object directly without using flows
+    // This is more efficient during page transitions
+    fun getTimeZoneDirect(watchName: String): TimeZone {
+        val timeZoneId = getWatchTimeZoneIdDirect(watchName)
+        if (timeZoneId != null) {
+            // Check cache first
+            timeZoneCache[timeZoneId]?.let { return it }
+
+            // Create a new TimeZone object
+            val timeZone = TimeZone.getTimeZone(timeZoneId)
+
+            // Cache the result
+            timeZoneCache[timeZoneId] = timeZone
+            return timeZone
+        }
+
+        // Fallback to default
+        return TimeZone.getDefault()
     }
 
     // Save the time zone for a specific watch
