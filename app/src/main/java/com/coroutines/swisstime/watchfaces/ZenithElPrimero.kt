@@ -150,7 +150,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float, currentTime: 
     }
 
     drawContext.canvas.nativeCanvas.drawText(
-        "ZENITH",
+        "L’Heure Éternelle",
         center.x,
         center.y - radius * 0.1f,
         logoPaint
@@ -166,7 +166,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float, currentTime: 
     }
 
     drawContext.canvas.nativeCanvas.drawText(
-        "EL PRIMERO",
+        "MAISON",
         center.x,
         center.y + radius * 0.1f,
         modelPaint

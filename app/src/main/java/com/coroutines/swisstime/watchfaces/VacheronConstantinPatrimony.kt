@@ -284,7 +284,7 @@ private fun DrawScope.drawLogo(center: Offset, radius: Float) {
     }
 
     drawContext.canvas.nativeCanvas.drawText(
-        "VACHERON CONSTANTIN",
+        "CHANT DU TEMPS",
         center.x,
         center.y - radius * 0.15f,
         brandPaint
