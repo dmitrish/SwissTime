@@ -35,6 +35,7 @@ androidx-datastore-preferences = { group = "androidx.datastore", name = "datasto
 androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "material-icons" }
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashscreen" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
+androidx-runtime-tracing = {group = "androidx.compose.runtime", name = "runtime-tracing"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -3,6 +3,7 @@ package com.coroutines.swisstime.ui.screens
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -16,6 +17,7 @@ import com.coroutines.swisstime.watchfaces.BreitlingNavitimer
 import com.coroutines.swisstime.watchfaces.CarlFBuchererManero
 import com.coroutines.swisstime.watchfaces.ChopardLUC
 import com.coroutines.swisstime.watchfaces.FranckMullerVanguard
+import com.coroutines.swisstime.watchfaces.GirardPerregauxLaureato
 import com.coroutines.swisstime.watchfaces.HMoserEndeavour
 import com.coroutines.swisstime.watchfaces.IWCPortugieser
 import com.coroutines.swisstime.watchfaces.JaegerLeCoultreReverso
@@ -35,12 +37,15 @@ import java.util.TimeZone
 @Composable
 fun TimeZoneAwareWatchFace2(
     watchInfo: WatchInfo,
-    timeZone: TimeZone,
+   // timeZone: TimeZone,
     viewModel: WatchViewModel,
     modifier: Modifier = Modifier
 ) {
     // Use the watch name as a stable key
     val watchName = watchInfo.name
+
+    val timeZone by viewModel.getWatchTimeZone(watchName).collectAsState()
+
 
 
     // Special handling for watch faces that accept a timezone parameter directly
@@ -98,8 +103,15 @@ fun TimeZoneAwareWatchFace2(
             timeZone = timeZone
         )
     }
-    else if (watchName.startsWith("Moser")) {
+    else if (watchName.startsWith("Girard")) {
         // For PiagetAltiplano, pass the timezone directly
+        GirardPerregauxLaureato(
+            modifier = modifier,
+            timeZone = timeZone
+        )
+    }
+    else if (watchName == "H. Moser & Cie Endeavour"){
+        // Use the optimized version for better performance
         HMoserEndeavour(
             modifier = modifier,
             timeZone = timeZone
