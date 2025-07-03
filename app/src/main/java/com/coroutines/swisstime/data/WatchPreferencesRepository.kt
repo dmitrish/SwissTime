@@ -60,6 +60,13 @@ class WatchPreferencesRepository(private val context: Context) {
         }
     }
 
+
+    /*fun getWatchTimeZoneId(watchName: String): Flow<String> = context.dataStore.data
+        .map { preferences ->
+            val key = stringPreferencesKey("${WATCH_TIMEZONE_PREFIX}${watchName}")
+            preferences[key] ?: ""
+        } */
+
     // Get the timezone ID for a specific watch
     fun getWatchTimeZoneId(watchName: String, scope: CoroutineScope): SharedFlow<String?> = context.dataStore.data
         .map { preferences ->
@@ -70,7 +77,9 @@ class WatchPreferencesRepository(private val context: Context) {
             scope = scope,
             started = SharingStarted.WhileSubscribed(5000),
             replay = 0
-        )
+        ) 
+
+
 
     fun getWatchTimeZoneIdBlocking(watchName: String): String? = runBlocking {
         context.dataStore.data

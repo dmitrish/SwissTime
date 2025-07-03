@@ -123,7 +123,7 @@ fun CustomWorldMapScreen(
 
             // Custom World map with day/night visualization - bottom aligned
             CustomWorldMapWithDayNight(
-                currentTime = currentTime,
+              //  currentTime = currentTime,
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(2f) // 2:1 aspect ratio for the world map
@@ -134,9 +134,10 @@ fun CustomWorldMapScreen(
 
 @Composable
 fun CustomWorldMapWithDayNight(
-    currentTime: Calendar,
+   // currentTime: Calendar,
     modifier: Modifier = Modifier
 ) {
+    var currentTime = Calendar.getInstance()
     // Constants from earth.py
     val blur = 4f  // blur angle for terminator
     val phong = true  // enable Phong shading
