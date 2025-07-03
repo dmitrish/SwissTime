@@ -209,7 +209,7 @@ private fun DrawScope.drawLogo(center: Offset, radius: Float) {
 
     // Draw "PIAGET" text
     drawContext.canvas.nativeCanvas.drawText(
-        "PIAGET",
+        "CHRONOMAGUS",
         center.x,
         center.y - radius * 0.3f,
         logoPaint
@@ -224,7 +224,7 @@ private fun DrawScope.drawLogo(center: Offset, radius: Float) {
     }
 
     drawContext.canvas.nativeCanvas.drawText(
-        "ALTIPLANO",
+        "REGIUM",
         center.x,
         center.y - radius * 0.2f,
         modelPaint
@@ -239,7 +239,7 @@ private fun DrawScope.drawLogo(center: Offset, radius: Float) {
     }
 
     drawContext.canvas.nativeCanvas.drawText(
-        "SWISS MADE",
+        "Fabricatum Romae",
         center.x,
         center.y + radius * 0.5f,
         swissMadePaint

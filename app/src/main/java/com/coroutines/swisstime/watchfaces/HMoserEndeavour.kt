@@ -183,7 +183,7 @@ private fun drawWatchLogo(center: Offset, radius: Float): DrawScope.() -> Unit =
     }
 
     drawContext.canvas.nativeCanvas.drawText(
-        "H. MOSER & CIE",
+        "Centurio Luminor",
         center.x,
         center.y - radius * 0.3f,
         logoPaint
@@ -197,7 +197,7 @@ private fun drawWatchLogo(center: Offset, radius: Float): DrawScope.() -> Unit =
     }
 
     drawContext.canvas.nativeCanvas.drawText(
-        "1828",
+        "1728",
         center.x,
         center.y + radius * 0.4f,
         yearPaint

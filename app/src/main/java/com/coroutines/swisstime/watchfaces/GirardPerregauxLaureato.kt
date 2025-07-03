@@ -209,7 +209,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
     }
     
     drawContext.canvas.nativeCanvas.drawText(
-        "GIRARD-PERREGAUX",
+        "ROMA-MARINA",
         center.x,
         center.y - radius * 0.3f,
         logoPaint
@@ -225,7 +225,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
     }
     
     drawContext.canvas.nativeCanvas.drawText(
-        "LAUREATO",
+        "MILITARE",
         center.x,
         center.y - radius * 0.15f,
         modelPaint
