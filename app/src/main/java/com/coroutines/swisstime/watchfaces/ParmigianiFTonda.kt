@@ -383,7 +383,7 @@ private fun DrawScope.drawLogo(center: Offset, radius: Float) {
     }
     
     drawContext.canvas.nativeCanvas.drawText(
-        "PARMIGIANI",
+        "PONTIFEX",
         center.x,
         center.y - radius * 0.25f,
         brandPaint
@@ -398,7 +398,7 @@ private fun DrawScope.drawLogo(center: Offset, radius: Float) {
     }
     
     drawContext.canvas.nativeCanvas.drawText(
-        "FLEURIER",
+        "CHRONOMETRA",
         center.x,
         center.y - radius * 0.15f,
         fleurierPaint
