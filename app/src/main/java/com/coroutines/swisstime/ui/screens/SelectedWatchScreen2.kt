@@ -1,6 +1,8 @@
 package com.coroutines.swisstime.ui.screens
 
+import android.nfc.Tag
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -48,6 +50,8 @@ fun SelectedWatchScreen2(
     modifier: Modifier = Modifier,
     watchViewModel: WatchViewModel? = null
 ) {
+    val TAG = "Performance:SelectedWatchScreen2"
+    Log.d(TAG, "SelectedWatchScreen2:watchTimeZone:before}")
     // Early return if no watch is selected or no view model is provided
     if (selectedWatch == null || watchViewModel == null) {
         Box(
@@ -64,7 +68,8 @@ fun SelectedWatchScreen2(
         return
     }
 
-   // val watchTimeZone = watchViewModel.selectedTimeZone.collectAsState().value
+    val watchTimeZone = watchViewModel.selectedTimeZone.collectAsState().value
+
 
     val watchTimeZoneInfo = if (watchViewModel != null && selectedWatch != null) {
         val watchTimeZoneInfoFlow = remember(selectedWatch.name) {
@@ -74,12 +79,16 @@ fun SelectedWatchScreen2(
     } else {
         watchViewModel?.selectedTimeZone?.collectAsState()?.value
     }
+    Log.d("TAG", "SelectedWatchScreen2:watchTimeZone:after}")
+    Log.d("TAG", "SelectedWatchScreen2:allTimeZones:before}")
     // Get all available time zones
-    val allTimeZones = watchViewModel.allTimeZones
+    val allTimeZones = remember { watchViewModel.allTimeZones}
+    Log.d(TAG, "SelectedWatchScreen2:allTimeZones:after}")
 
     // State for dropdown expanded
     // Use selectedWatch.name as key to ensure it's re-initialized when the watch changes
     var expanded by remember(selectedWatch?.name) { mutableStateOf(false) }
+
 
 
     Scaffold(
@@ -108,7 +117,7 @@ fun SelectedWatchScreen2(
                 ) {
                     // Display the selected time zone as a clickable text
                     Text(
-                        text = watchTimeZoneInfo?.displayName ?: "Select Time Zone",
+                        text =  watchTimeZoneInfo?.displayName ?: "Select Time Zone",
                         style = MaterialTheme.typography.bodyLarge,
                         textAlign = TextAlign.Center,
                         modifier = Modifier
@@ -118,20 +127,18 @@ fun SelectedWatchScreen2(
 
                     val targetZoneId: ZoneId = ZoneId.of(watchTimeZoneInfo?.id)
 
+                  //  val targetZoneId: ZoneId = ZoneId.of("GMT")
+
                     // Create a state to hold the current time that will be updated every second
                     var currentTime by remember { mutableStateOf(ZonedDateTime.now(targetZoneId)) }
 
                     // Update the time every second
                     LaunchedEffect(targetZoneId) {
                         while(true) {
-                            currentTime = ZonedDateTime.now(targetZoneId)
+                           // currentTime = ZonedDateTime.now(targetZoneId)
                             delay(1000) // Update every second
                         }
                     }
-
-
-
-
 
                     // Dropdown menu for time zone selection
                     DropdownMenu(
@@ -186,7 +193,6 @@ fun SelectedWatchScreen2(
                     androidx.compose.foundation.layout.Spacer(
                         modifier = Modifier.height(16.dp)
                     )
-
                 }
             }
 
@@ -195,7 +201,7 @@ fun SelectedWatchScreen2(
                 modifier = Modifier.weight(0.2f)
             )
 
-            val currentTimeZone = watchViewModel.getWatchTimeZone(selectedWatch.name).collectAsState()
+          //  val currentTimeZone = watchViewModel.getWatchTimeZone(selectedWatch.name).collectAsState()
 
             Box(
                 modifier = Modifier
@@ -206,8 +212,8 @@ fun SelectedWatchScreen2(
                 //selectedWatch.composable(Modifier.fillMaxSize(0.8f), watchViewModel, currentTimeZone.value)
                 TimeZoneAwareWatchFace2(
                     watchInfo = selectedWatch,
-                    timeZone = currentTimeZone.value,
-                    watchViewModel,
+               //     timeZone = currentTimeZone.value,
+                    viewModel = watchViewModel,
                     modifier = Modifier.fillMaxSize(0.8f)
                 )
             }
@@ -218,5 +224,8 @@ fun SelectedWatchScreen2(
             )
         }
     }
+
+
+
 
 }
