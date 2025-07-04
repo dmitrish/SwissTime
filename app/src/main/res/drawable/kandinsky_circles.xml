@@ -1,0 +1,93 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="288dp"
+    android:height="288dp"
+    android:viewportWidth="288"
+    android:viewportHeight="288">
+
+    <!-- Background circle -->
+    <path
+        android:name="background"
+        android:pathData="M144,144 m-68.4,0 a68.4,68.4 0 1,0 136.8,0 a68.4,68.4 0 1,0 -136.8,0"
+        android:fillColor="#F5F5F5"/>
+
+
+    <!-- Colored circles -->
+    <!-- Large blue circle in top-left quadrant -->
+    <group
+        android:name="blue_circle"
+        android:pivotX="108"
+        android:pivotY="108">
+        <path
+            android:pathData="M108,108 m-10.93,0 a10.93,10.93 0 1,0 21.86,0 a10.93,10.93 0 1,0 -21.86,0"
+            android:fillColor="#1D5DC7"/>
+    </group>
+
+    <!-- Medium red circle in top-right quadrant -->
+    <group
+        android:name="red_circle"
+        android:pivotX="192"
+        android:pivotY="108">
+        <path
+            android:pathData="M192,108 m-8.7,0 a8.7,8.7 0 1,0 17.4,0 a8.7,8.7 0 1,0 -17.4,0"
+            android:fillColor="#D13B40"/>
+    </group>
+
+    <!-- Small yellow circle in bottom-left quadrant -->
+    <group
+        android:name="yellow_circle"
+        android:pivotX="96"
+        android:pivotY="180">
+        <path
+            android:pathData="M96,180 m-6.57,0 a6.57,6.57 0 1,0 13.14,0 a6.57,6.57 0 1,0 -13.14,0"
+            android:fillColor="#FFC857"/>
+    </group>
+
+    <!-- Medium green circle in bottom-right quadrant -->
+    <group
+        android:name="green_circle"
+        android:pivotX="180"
+        android:pivotY="192">
+        <path
+            android:pathData="M180,192 m-7.83,0 a7.83,7.83 0 1,0 15.66,0 a7.83,7.83 0 1,0 -15.66,0"
+            android:fillColor="#2E8B57"/>
+    </group>
+
+    <!-- Small purple circle near center -->
+    <group
+        android:name="purple_circle"
+        android:pivotX="156"
+        android:pivotY="120">
+        <path
+            android:pathData="M156,120 m-7.85,0 a7.85,7.85 0 1,0 15.7,0 a7.85,7.85 0 1,0 -15.7,0"
+            android:fillColor="#9370DB"/>
+    </group>
+
+    <!-- Small orange circle near center -->
+    <group
+        android:name="orange_circle"
+        android:pivotX="120"
+        android:pivotY="156">
+        <path
+            android:pathData="M120,156 m-6.55,0 a6.55,6.55 0 1,0 13.1,0 a6.55,6.55 0 1,0 -13.1,0"
+            android:fillColor="#FF7F50"/>
+    </group>
+
+    <!-- Additional smaller circles -->
+    <path
+        android:name="small_blue_circle"
+        android:pathData="M168,156 m-5.2,0 a5.2,5.2 0 1,0 10.4,0 a5.2,5.2 0 1,0 -10.4,0"
+        android:fillColor="#1D5DC7"
+        android:fillAlpha="0.7"/>
+
+    <path
+        android:name="small_red_circle"
+        android:pathData="M114,126 m-3.85,0 a3.85,3.85 0 1,0 7.7,0 a3.85,3.85 0 1,0 -7.7,0"
+        android:fillColor="#D13B40"
+        android:fillAlpha="0.7"/>
+
+    <path
+        android:name="small_yellow_circle"
+        android:pathData="M144,174 m-4.55,0 a4.55,4.55 0 1,0 9.1,0 a4.55,4.55 0 1,0 -9.1,0"
+        android:fillColor="#FFC857"
+        android:fillAlpha="0.7"/>
+</vector>

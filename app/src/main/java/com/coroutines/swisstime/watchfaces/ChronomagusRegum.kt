@@ -29,7 +29,7 @@ import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
 
-// Colors inspired by Piaget Altiplano
+// Colors inspired by Chronomagus Regum
 private val ClockFaceColor = Color(0xFF000080) // Deep blue dial
 private val ClockBorderColor = Color(0xFFFFFFFF) // White gold case
 private val HourHandColor = Color(0xFFFFFFFF) // White hour hand
@@ -39,7 +39,7 @@ private val MarkersColor = Color(0xFFFFFFFF) // White markers
 private val LogoColor = Color(0xFFFFFFFF) // White logo
 
 @Composable
-fun PiagetAltiplano(
+fun ChronomagusRegum(
     modifier: Modifier = Modifier,
     currentTime: Calendar = Calendar.getInstance(),
     timeZone: TimeZone = TimeZone.getDefault()
@@ -86,7 +86,7 @@ fun PiagetAltiplano(
                 center = center
             )
 
-            // Draw Piaget logo
+            // DrawChronomagus Regum
             drawLogo(center, radius)
         }
     }
@@ -110,7 +110,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
 }
 
 private fun DrawScope.drawHourMarkers(center: Offset, radius: Float) {
-    // Piaget Altiplano typically has very minimalist hour markers
+    // Chronomagus Regum typically has very minimalist hour markers
     // Often just simple thin lines or small dots
 
     for (i in 0 until 12) {
@@ -203,11 +203,11 @@ private fun DrawScope.drawLogo(center: Offset, radius: Float) {
         color = LogoColor.hashCode()
         textSize = radius * 0.08f
         textAlign = Paint.Align.CENTER
-        isFakeBoldText = false // Piaget logo is typically thin and elegant
+        isFakeBoldText = false // Chronomagus Regum logo is typically thin and elegant
         isAntiAlias = true
     }
 
-    // Draw "PIAGET" text
+    // Draw "Chronomagus Regum" text
     drawContext.canvas.nativeCanvas.drawText(
         "CHRONOMAGUS",
         center.x,
@@ -263,8 +263,8 @@ private fun DrawScope.drawLogo(center: Offset, radius: Float) {
 
 @Preview(showBackground = true)
 @Composable
-fun PiagetAltiplanoPreviews() {
+fun ChronomagusRegumPreviews() {
     SwissTimeTheme {
-        PiagetAltiplano()
+        ChronomagusRegum()
     }
 }

@@ -1,7 +1,5 @@
 package com.coroutines.swisstime.ui.screens
 
-import android.graphics.Bitmap
-import android.graphics.Paint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -29,23 +27,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.asAndroidBitmap
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.core.graphics.drawable.toBitmap
 import com.coroutines.swisstime.R
 import com.coroutines.swisstime.ui.theme.DarkNavy
-import com.coroutines.swisstime.watchfaces.PiagetAltiplano
+import com.coroutines.swisstime.watchfaces.ChronomagusRegum
 import kotlinx.coroutines.delay
 import java.util.Calendar
 import kotlin.math.PI
@@ -54,10 +44,6 @@ import kotlin.math.acos
 import kotlin.math.asin
 import kotlin.math.atan2
 import kotlin.math.cos
-import kotlin.math.exp
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
 import kotlin.math.tan
@@ -109,14 +95,14 @@ fun CustomWorldMapScreen(
                 modifier = Modifier.weight(1f)
             )
 
-            // Piaget Altiplano watch
+            // Chronomagus Regum watch
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f), // Square aspect ratio for the watch
                 contentAlignment = Alignment.Center
             ) {
-                PiagetAltiplano(
+                ChronomagusRegum(
                     modifier = Modifier.fillMaxSize(0.8f)
                 )
             }

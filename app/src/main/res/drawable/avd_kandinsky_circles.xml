@@ -1,0 +1,52 @@
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/kandinsky_circles">
+
+    <!-- Blue circle animations -->
+    <target
+        android:name="blue_circle"
+        android:animation="@animator/scale_blue_circle" />
+    <target
+        android:name="blue_circle"
+        android:animation="@animator/color_blue_circle" />
+
+    <!-- Red circle animations -->
+    <target
+        android:name="red_circle"
+        android:animation="@animator/scale_red_circle" />
+    <target
+        android:name="red_circle"
+        android:animation="@animator/color_red_circle" />
+
+    <!-- Yellow circle animations -->
+    <target
+        android:name="yellow_circle"
+        android:animation="@animator/scale_yellow_circle" />
+    <target
+        android:name="yellow_circle"
+        android:animation="@animator/color_yellow_circle" />
+
+    <!-- Green circle animations -->
+    <target
+        android:name="green_circle"
+        android:animation="@animator/scale_green_circle" />
+    <target
+        android:name="green_circle"
+        android:animation="@animator/color_green_circle" />
+
+    <!-- Purple circle animations -->
+    <target
+        android:name="purple_circle"
+        android:animation="@animator/scale_purple_circle" />
+    <target
+        android:name="purple_circle"
+        android:animation="@animator/color_purple_circle" />
+
+    <!-- Orange circle animations -->
+    <target
+        android:name="orange_circle"
+        android:animation="@animator/scale_orange_circle" />
+    <target
+        android:name="orange_circle"
+        android:animation="@animator/color_orange_circle" />
+
+</animated-vector>
