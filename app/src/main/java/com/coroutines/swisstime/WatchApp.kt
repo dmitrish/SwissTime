@@ -1,26 +1,18 @@
 package com.coroutines.swisstime
 
 import android.widget.Toast
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.glance.appwidget.updateAll
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -31,12 +23,8 @@ import com.coroutines.swisstime.data.WatchPreferencesRepository
 import com.coroutines.swisstime.navigation.NavGraph
 import com.coroutines.swisstime.navigation.SwissTimeNavigationBar
 import com.coroutines.swisstime.ui.theme.SwissTimeTheme
-import com.coroutines.swisstime.ui.theme.ThemeMode
 import com.coroutines.swisstime.viewmodel.ThemeViewModel
 import com.coroutines.swisstime.viewmodel.WatchViewModel
-import com.coroutines.swisstime.ui.screens.WatchDetailScreen
-import com.coroutines.swisstime.ui.screens.WatchListScreen
-import androidx.compose.foundation.lazy.rememberLazyListState
 import com.coroutines.swisstime.watchfaces.AhoiNeomatic38DateAtlantic
 import com.coroutines.swisstime.watchfaces.AutobahnNeomatic41DateSportsGray
 import com.coroutines.swisstime.watchfaces.BlancpainFiftyFathoms
@@ -44,14 +32,15 @@ import com.coroutines.swisstime.watchfaces.BreguetClassique
 import com.coroutines.swisstime.watchfaces.BreitlingNavitimer
 import com.coroutines.swisstime.watchfaces.CarlFBuchererManero
 import com.coroutines.swisstime.watchfaces.ChopardLUC
-import com.coroutines.swisstime.watchfaces.FranckMullerVanguard
+import com.coroutines.swisstime.watchfaces.LucernaRoma
 import com.coroutines.swisstime.watchfaces.GirardPerregauxLaureato
 import com.coroutines.swisstime.watchfaces.HMoserEndeavour
 import com.coroutines.swisstime.watchfaces.IWCPortugieser
 import com.coroutines.swisstime.watchfaces.JaegerLeCoultreReverso
+import com.coroutines.swisstime.watchfaces.KandinskyEvening
 import com.coroutines.swisstime.watchfaces.LonginesMasterCollection
 import com.coroutines.swisstime.watchfaces.ParmigianiFTonda
-import com.coroutines.swisstime.watchfaces.PiagetAltiplano
+import com.coroutines.swisstime.watchfaces.ChronomagusRegum
 import com.coroutines.swisstime.watchfaces.TAGHeuerCarrera
 import com.coroutines.swisstime.watchfaces.UlysseNardinMarineChronometer
 import com.coroutines.swisstime.watchfaces.VacheronConstantinClock
@@ -60,7 +49,6 @@ import com.coroutines.swisstime.watchfaces.ZenithElPrimero
 import com.coroutines.swisstime.widget.WatchWidget
 import kotlinx.coroutines.launch
 import java.util.TimeZone
-import kotlin.concurrent.timer
 
 @Composable
 fun WatchApp(watchPreferencesRepository: WatchPreferencesRepository) {
@@ -276,6 +264,11 @@ private fun getWatches(): List<WatchInfo> {
           description = "The Girard-Perregaux Laureato, first introduced in 1975, features an integrated bracelet and octagonal bezel. With its distinctive hobnail pattern dial, it represents the brand's ability to combine technical excellence with distinctive design elements.",
           composable = { modifier, timeZone -> GirardPerregauxLaureato(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
       ),
+      WatchInfo(
+          name = "Kandinsky Evening",
+          description = "The Kandinsky Evening watch face is inspired by Wassily Kandinsky's famous 'Circles in a Circle' painting. It features a light background with multiple colored circles of various sizes and intersecting lines, creating a vibrant and artistic timepiece that celebrates the abstract art movement.",
+          composable = { modifier, timeZone -> KandinskyEvening(modifier = modifier, timeZone = timeZone) }
+      ),
       /*  WatchInfo(
             name = "Oris Aquis",
             description = "The Oris Aquis is a professional dive watch known for its robust construction and distinctive design. With its ceramic bezel insert and high water resistance, it offers exceptional performance at a more accessible price point than many Swiss luxury watches.",
@@ -328,9 +321,9 @@ private fun getWatches(): List<WatchInfo> {
         ),*/
       // New Swiss watches
       WatchInfo(
-          name = "Franck Muller Vanguard",
-          description = "The Franck Muller Vanguard features a distinctive tonneau (barrel) shape case and bold, colorful numerals. Known as the 'Master of Complications', Franck Muller combines avant-garde design with traditional Swiss watchmaking expertise to create timepieces that are both technically impressive and visually striking.",
-          composable = { modifier, timeZone -> FranckMullerVanguard(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+          name = "Lucerna Roma",
+          description = "The Lucerna Roma features a distinctive tonneau (barrel) shape case and bold, colorful numerals. Known as the 'Master of Inventions', Lucerna Roma combines avant-garde design with traditional Swiss watchmaking expertise to create timepieces that are both technically impressive and visually striking.",
+          composable = { modifier, timeZone -> LucernaRoma(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
       ),
       WatchInfo(
           name = "H. Moser & Cie Endeavour",
@@ -358,9 +351,9 @@ private fun getWatches(): List<WatchInfo> {
           composable = { modifier, timeZone -> CarlFBuchererManero(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
       ),
       WatchInfo(
-          name = "Piaget Altiplano",
-          description = "The Piaget Altiplano is celebrated for its ultra-thin profile and minimalist design. Since the 1950s, Piaget has been a pioneer in creating incredibly slim watches, with the Altiplano line showcasing the brand's expertise in producing elegant timepieces that combine technical innovation with refined aesthetics.",
-          composable = { modifier, timeZone -> PiagetAltiplano(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+          name = "Chronomagus Regum",
+          description = "The Chronomagus Regum is celebrated for its ultra-thin profile and minimalist design. Since the 1950s, Chronomagus has been a pioneer in creating incredibly slim watches, with the Regum line showcasing the brand's expertise in producing elegant timepieces that combine technical innovation with refined aesthetics.",
+          composable = { modifier, timeZone -> ChronomagusRegum(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
       ),
       WatchInfo(
           name = "TAG Heuer Carrera",

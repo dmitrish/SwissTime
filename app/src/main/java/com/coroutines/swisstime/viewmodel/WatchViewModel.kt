@@ -143,31 +143,27 @@ class WatchViewModel(
 
     // Get the TimeZoneInfo for a specific watch
     fun getWatchTimeZoneInfo(watchName: String): StateFlow<TimeZoneInfo> {
-        // Eagerly try to get the time zone ID and create the TimeZoneInfo
+        // Eagerly try to get the time zone ID and create the TimeZoneInfo for initial value
         // This helps with performance during page transitions
-        val timeZoneId = watchPreferencesRepository.getWatchTimeZoneIdBlocking(watchName)
-        if (timeZoneId != null) {
+        val initialTimeZoneId = watchPreferencesRepository.getWatchTimeZoneIdBlocking(watchName)
+        val initialTimeZoneInfo = if (initialTimeZoneId != null) {
             // Check if we already have this time zone in the cache
-            timeZoneInfoCache[timeZoneId]?.let { cachedInfo ->
-                // If it's in the cache, we can create a StateFlow with it as the initial value
-                // This avoids the expensive flow collection during page transitions
-                return kotlinx.coroutines.flow.MutableStateFlow(cachedInfo)
+            timeZoneInfoCache[initialTimeZoneId]?.let { return@let it } ?: run {
+                // If not in cache, create it now and cache it
+                val timeZone = TimeZone.getTimeZone(initialTimeZoneId)
+                val isDaylightTime = timeZone.inDaylightTime(Date())
+                val timeZoneInfo = TimeZoneInfo(
+                    id = initialTimeZoneId,
+                    displayName = timeZone.getDisplayName(isDaylightTime, TimeZone.LONG)
+                )
+                timeZoneInfoCache[initialTimeZoneId] = timeZoneInfo
+                timeZoneInfo
             }
-
-            // If not in cache, create it now and cache it
-            val timeZone = TimeZone.getTimeZone(timeZoneId)
-            val isDaylightTime = timeZone.inDaylightTime(Date())
-            val timeZoneInfo = TimeZoneInfo(
-                id = timeZoneId,
-                displayName = timeZone.getDisplayName(isDaylightTime, TimeZone.LONG)
-            )
-            timeZoneInfoCache[timeZoneId] = timeZoneInfo
-
-            // Return a StateFlow with the pre-created TimeZoneInfo
-            return kotlinx.coroutines.flow.MutableStateFlow(timeZoneInfo)
+        } else {
+            selectedTimeZone.value
         }
 
-        // If we couldn't get the time zone ID eagerly, fall back to the original implementation
+        // Use Flow for immediate updates when timezone is changed in the dropdown
         return watchPreferencesRepository.getWatchTimeZoneId(watchName, viewModelScope)
             .map { tzId ->
                 if (tzId != null) {
@@ -194,7 +190,7 @@ class WatchViewModel(
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000),
-                initialValue = selectedTimeZone.value
+                initialValue = initialTimeZoneInfo
             )
     }
 

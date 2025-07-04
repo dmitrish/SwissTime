@@ -126,22 +126,8 @@ fun NavGraph(
                 onWatchClick = { watch ->
                     // Find the index of the watch in the list
                     val index = watches.indexOf(watch)
-
-                    // Check if this is the Piaget Altiplano watch
-                    /*if (watch.name.contains("Piaget Altiplano")) {
-                        // Log the start time when tapping on the Piaget watch
-                      //  val startTime = System.currentTimeMillis()
-                        // Store the start time in a static variable to access it later
-                      //  TimingLogger.startTime = startTime
-                        android.util.Log.d("PerformanceLog", "Tapped on Piaget watch at $startTime ms")
-
-                        // Navigate to the optimized world map screen
-                      //  navController.navigate(Screen.WorldMap.route)
-                    } else { */
-                        // Navigate to the detail screen
                         navController.navigate(Screen.WatchDetail.createRoute(index))
-                   // }
-                },
+               },
                 onTitleClick = { watch ->
                     // Save the selected watch via the ViewModel
                     watchViewModel.saveSelectedWatch(watch)

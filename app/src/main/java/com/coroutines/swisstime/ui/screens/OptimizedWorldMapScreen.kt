@@ -1,13 +1,8 @@
 package com.coroutines.swisstime.ui.screens
 
-import android.graphics.Bitmap
-import android.graphics.Paint
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,10 +11,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -27,11 +19,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -40,39 +29,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.core.graphics.drawable.toBitmap
 import com.coroutines.swisstime.R
 import com.coroutines.swisstime.TimingLogger
 import com.coroutines.swisstime.WatchInfo
-import com.coroutines.swisstime.data.TimeZoneInfo
-import com.coroutines.swisstime.data.TimeZoneProvider
-import com.coroutines.swisstime.data.rememberCurrentTimeZoneCalendar
 import com.coroutines.swisstime.ui.theme.DarkNavy
-import com.coroutines.swisstime.ui.theme.DarkNavyTriadic
-import com.coroutines.swisstime.viewmodel.WatchViewModel
-import com.coroutines.swisstime.watchfaces.PiagetAltiplano
+import com.coroutines.swisstime.watchfaces.ChronomagusRegum
 import com.coroutines.swisstime.watchfaces.ZenithElPrimero
 //import kotlinx.datetime.TimeZone
 import kotlinx.coroutines.delay
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
 import java.util.Calendar
-import java.util.Date
 import java.util.TimeZone
 import kotlin.math.PI
 import kotlin.math.abs
@@ -80,10 +52,6 @@ import kotlin.math.acos
 import kotlin.math.asin
 import kotlin.math.atan2
 import kotlin.math.cos
-import kotlin.math.exp
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.math.pow
 import kotlin.math.sin
 import kotlin.math.sqrt
 import kotlin.math.tan
@@ -192,7 +160,7 @@ fun OptimizedWorldMapScreen(
                 modifier = Modifier.weight(1f)
             )
 
-            // Display the selected watch or default to Piaget Altiplano
+            // Display the selected watch or default to Chronomagus Regum
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -200,9 +168,9 @@ fun OptimizedWorldMapScreen(
                 contentAlignment = Alignment.Center
             ) {
                 if (selectedWatch != null) {
-                    // Special handling for Piaget Altiplano to pass the timezone
-                    if (selectedWatch.name == "Piaget Altiplano") {
-                        PiagetAltiplano(
+                    // Special handling for Chronomagus Regumto pass the timezone
+                    if (selectedWatch.name == "Chronomagus Regum") {
+                        ChronomagusRegum(
                             modifier = Modifier.fillMaxSize(0.8f),
                             timeZone = TimeZone.getDefault()
                         )
@@ -211,7 +179,7 @@ fun OptimizedWorldMapScreen(
                       //  selectedWatch.composable(Modifier.fillMaxSize(0.8f))
                     }
                 } else {
-                    PiagetAltiplano(
+                    ChronomagusRegum(
                         modifier = Modifier.fillMaxSize(0.8f)
                     )
                 }
@@ -824,9 +792,9 @@ fun TimeZoneAwareWatchFace(
             modifier = modifier,
             timeZone = timeZone
         )
-    } else if (watchName == "Piaget Altiplano") {
-        // For PiagetAltiplano, pass the timezone directly
-        PiagetAltiplano(
+    } else if (watchName == "Chronomagus Regum") {
+        // For Chronomagus Regum, pass the timezone directly
+        ChronomagusRegum(
             modifier = modifier,
             timeZone = timeZone
         )
