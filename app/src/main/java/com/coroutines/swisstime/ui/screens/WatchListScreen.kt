@@ -244,12 +244,12 @@ fun WatchListItem(
                         color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier
                             .weight(1f)
-                            .clickable(onClick = { onTitleClick(watch) })
+                            .clickable(onClick = { onClick() })
                     )
 
                     // Widget selection icon
                     IconButton(
-                        onClick = { onSelectForWidget() },
+                        onClick = { onTitleClick(watch) },
                         modifier = Modifier.size(40.dp)
                     ) {
                         Icon(

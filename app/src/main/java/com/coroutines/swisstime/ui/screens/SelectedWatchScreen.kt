@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.coroutines.swisstime.WatchInfo
 import com.coroutines.swisstime.ui.theme.DarkNavyTriadic
 import com.coroutines.swisstime.viewmodel.WatchViewModel
-import com.coroutines.swisstime.watchfaces.PiagetAltiplano
+import com.coroutines.swisstime.watchfaces.ChronomagusRegum
 import kotlinx.coroutines.delay
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -244,11 +244,11 @@ fun SelectedWatchScreen(
                         modifier = Modifier.fillMaxSize(0.8f)
                     )
                 } else {
-                    // For the default case, create a dummy WatchInfo for Piaget Altiplano
+                    // For the default case, create a dummy WatchInfo for Chronomagus Regum
                     val defaultWatch = WatchInfo(
-                        name = "Piaget Altiplano",
+                        name = "Chronomagus Regum",
                         description = "Default watch",
-                        composable = { modifier, timeZone -> PiagetAltiplano(modifier = modifier, timeZone = TimeZone.getDefault() )  }
+                        composable = { modifier, timeZone -> ChronomagusRegum(modifier = modifier, timeZone = TimeZone.getDefault() )  }
                     )
                     TimeZoneAwareWatchFace(
                         watchInfo = defaultWatch,

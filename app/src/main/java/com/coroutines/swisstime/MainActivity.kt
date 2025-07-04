@@ -1,100 +1,22 @@
 package com.coroutines.swisstime
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.compose.foundation.clickable
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.outlined.AddToHomeScreen
-import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.glance.appwidget.updateAll
 import com.coroutines.swisstime.data.WatchPreferencesRepository
-import com.coroutines.swisstime.splash.SplashScreenSelector
 import com.coroutines.swisstime.ui.theme.SwissTimeTheme
-import com.coroutines.swisstime.widget.WatchWidget
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
-import com.coroutines.swisstime.data.TimeZoneInfo
-import com.coroutines.swisstime.ui.screens.WatchDetailScreen
-import com.coroutines.swisstime.ui.screens.WatchListScreen
-import com.coroutines.swisstime.ui.theme.DarkNavy
-import com.coroutines.swisstime.viewmodel.WatchViewModel
-import com.coroutines.swisstime.watchfaces.AhoiNeomatic38DateAtlantic
-import com.coroutines.swisstime.watchfaces.AutobahnNeomatic41DateSportsGray
-import com.coroutines.swisstime.watchfaces.BlancpainFiftyFathoms
-import com.coroutines.swisstime.watchfaces.BreguetClassique
-import com.coroutines.swisstime.watchfaces.BreitlingNavitimer
-import com.coroutines.swisstime.watchfaces.CarlFBuchererManero
-import com.coroutines.swisstime.watchfaces.ChopardLUC
-import com.coroutines.swisstime.watchfaces.FranckMullerVanguard
-import com.coroutines.swisstime.watchfaces.GirardPerregauxLaureato
-import com.coroutines.swisstime.watchfaces.HMoserEndeavour
-import com.coroutines.swisstime.watchfaces.IWCPortugieser
-import com.coroutines.swisstime.watchfaces.JaegerLeCoultreReverso
-import com.coroutines.swisstime.watchfaces.LonginesMasterCollection
-import com.coroutines.swisstime.watchfaces.ParmigianiFTonda
-import com.coroutines.swisstime.watchfaces.PiagetAltiplano
-import com.coroutines.swisstime.watchfaces.TAGHeuerCarrera
-import com.coroutines.swisstime.watchfaces.UlysseNardinMarineChronometer
-import com.coroutines.swisstime.watchfaces.VacheronConstantinClock
-import com.coroutines.swisstime.watchfaces.VacheronConstantinPatrimony
-import com.coroutines.swisstime.watchfaces.ZenithElPrimero
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.delay
-import java.util.Calendar
 import java.util.TimeZone
 
 // Data class to hold watch information
@@ -179,8 +101,9 @@ class MainActivity : ComponentActivity() {
 
 
         // Keep the splash screen visible until the app is fully loaded
-       /* splashScreen.setKeepOnScreenCondition { !isContentReady }
+        splashScreen.setKeepOnScreenCondition { !isContentReady }
 
+        /*
         // Let the Splash Screen API handle the animation automatically
         // We only need to set up a custom exit animation for the fade out
         splashScreen.setOnExitAnimationListener { splashScreenViewProvider ->
@@ -208,9 +131,9 @@ class MainActivity : ComponentActivity() {
             // Start the animation
             fadeOut.start()
         }
-
-
         */
+
+
         // Initialize the repository
         watchPreferencesRepository = WatchPreferencesRepository(this)
 
@@ -225,7 +148,7 @@ class MainActivity : ComponentActivity() {
                     // Delay setting isContentReady to true to match the animation duration
                     android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
                         isContentReady = true
-                    }, 2000) // 2 second delay to match the animation duration
+                    }, 500) // 2 second delay to match the animation duration
                 }
             }
         }
