@@ -70,7 +70,7 @@ class WatchWidget : GlanceAppWidget() {
                 watchName.contains("H. Moser") -> Color(0xFF1E5631) // Deep green dial
                 watchName.contains("Parmigiani") -> Color(0xFF1A237E) // Deep blue dial
                 watchName.contains("Carl F. Bucherer") -> Color(0xFFF5F5F5) // Silver-white dial
-                watchName.contains("Piaget") -> Color(0xFF000080) // Deep blue dial
+                watchName.contains("Chronomagus Regum") -> Color(0xFF000080) // Deep blue dial
                 watchName.contains("Oris") -> Color.Black // Black dial
                 watchName.contains("Tudor") -> Color.Black // Black dial
                 watchName.contains("Baume & Mercier") -> Color.White // White dial

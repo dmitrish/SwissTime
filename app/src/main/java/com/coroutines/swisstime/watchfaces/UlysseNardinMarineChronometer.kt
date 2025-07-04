@@ -50,7 +50,7 @@ fun UlysseNardinMarineChronometer(modifier: Modifier = Modifier,timeZone: TimeZo
 
     val timeZoneX by rememberUpdatedState(timeZone)
     // Update time every second
-    LaunchedEffect(key1 = true) {
+    LaunchedEffect(key1 = timeZone) {
         while (true) {
             currentTime = Calendar.getInstance(timeZoneX)
             delay(1000) // Update every second
@@ -66,8 +66,8 @@ fun UlysseNardinMarineChronometer(modifier: Modifier = Modifier,timeZone: TimeZo
             val center = Offset(size.width / 2, size.height / 2)
             val radius = min(size.width, size.height) / 2 * 0.8f
 
-            // Draw clock face
-            drawClockFace(center, radius)
+            // Draw clock face with current time
+            drawClockFaceWithTime(center, radius, currentTime, timeZoneX)
 
             // Get current time values
             val hour = currentTime.get(Calendar.HOUR)
@@ -91,6 +91,10 @@ fun UlysseNardinMarineChronometer(modifier: Modifier = Modifier,timeZone: TimeZo
 }
 
 private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
+    drawClockFaceWithTime(center, radius, Calendar.getInstance())
+}
+
+private fun DrawScope.drawClockFaceWithTime(center: Offset, radius: Float, currentTime: Calendar, timeZone: TimeZone = TimeZone.getDefault()) {
     // Draw outer circle (border)
     drawCircle(
         color = ClockBorderColor,
@@ -105,11 +109,11 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
         radius = radius - 4f,
         center = center
     )
-    
+
     // Draw Ulysse Nardin logo (anchor symbol)
     val anchorSize = radius * 0.15f
     val anchorY = center.y - radius * 0.3f
-    
+
     // Draw anchor stock (top horizontal bar)
     drawLine(
         color = ClockBorderColor,
@@ -117,7 +121,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
         end = Offset(center.x + anchorSize / 2, anchorY - anchorSize / 4),
         strokeWidth = anchorSize / 8
     )
-    
+
     // Draw anchor stem (vertical bar)
     drawLine(
         color = ClockBorderColor,
@@ -125,11 +129,11 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
         end = Offset(center.x, anchorY + anchorSize / 2),
         strokeWidth = anchorSize / 10
     )
-    
+
     // Draw anchor arms (curved parts)
     val armWidth = anchorSize / 2
     val armHeight = anchorSize / 3
-    
+
     // Left arm
     val leftArmPath = Path().apply {
         moveTo(center.x, anchorY + anchorSize / 4)
@@ -139,7 +143,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
         )
     }
     drawPath(leftArmPath, ClockBorderColor, style = Stroke(width = anchorSize / 10))
-    
+
     // Right arm
     val rightArmPath = Path().apply {
         moveTo(center.x, anchorY + anchorSize / 4)
@@ -149,7 +153,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
         )
     }
     drawPath(rightArmPath, ClockBorderColor, style = Stroke(width = anchorSize / 10))
-    
+
     // Draw "ULYSSE NARDIN" text
     val logoPaint = Paint().apply {
         color = ClockBorderColor.hashCode()
@@ -158,14 +162,14 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
         isFakeBoldText = true
         isAntiAlias = true
     }
-    
+
     drawContext.canvas.nativeCanvas.drawText(
         "CONSTANTINUS",
         center.x,
         center.y - radius * 0.1f,
         logoPaint
     )
-    
+
     // Draw "MARINE CHRONOMETER" text
     val modelPaint = Paint().apply {
         color = ClockBorderColor.hashCode()
@@ -174,19 +178,19 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
         isFakeBoldText = false
         isAntiAlias = true
     }
-    
+
     drawContext.canvas.nativeCanvas.drawText(
         "AUREUS CHRONOMETER",
         center.x,
         center.y,
         modelPaint
     )
-    
+
     // Draw power reserve indicator at 12 o'clock
     val powerReserveY = center.y - radius * 0.5f
     val powerReserveWidth = radius * 0.4f
     val powerReserveHeight = radius * 0.1f
-    
+
     // Power reserve background (semi-circular)
     val powerReservePath = Path().apply {
         // Draw semi-circle
@@ -202,33 +206,33 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
             forceMoveTo = false
         )
     }
-    
+
     drawPath(
         path = powerReservePath,
         color = Color.White,
         style = Stroke(width = powerReserveHeight)
     )
-    
+
     // Power reserve border
     drawPath(
         path = powerReservePath,
         color = ClockBorderColor,
         style = Stroke(width = 2f)
     )
-    
+
     // Power reserve markings
     for (i in 0..4) {
         val angle = Math.PI * i / 4
         val markerX = center.x + cos(angle + Math.PI).toFloat() * (powerReserveWidth / 2)
         val markerY = powerReserveY
-        
+
         drawCircle(
             color = ClockBorderColor,
             radius = 2f,
             center = Offset(markerX, markerY)
         )
     }
-    
+
     // Power reserve text
     val powerReservePaint = Paint().apply {
         color = ClockBorderColor.hashCode()
@@ -237,14 +241,14 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
         isFakeBoldText = false
         isAntiAlias = true
     }
-    
+
     drawContext.canvas.nativeCanvas.drawText(
         "NAUTILUS CENTURION",
         center.x,
         powerReserveY - powerReserveHeight * 1.2f,
         powerReservePaint
     )
-    
+
     // Power reserve indicator (simulated at 60% full)
     val indicatorAngle = Math.PI * 0.6
     val indicatorPath = Path().apply {
@@ -261,16 +265,16 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
             forceMoveTo = false
         )
     }
-    
+
     drawPath(
         path = indicatorPath,
         color = PowerReserveColor,
         style = Stroke(width = powerReserveHeight * 0.8f)
     )
-    
+
     // Draw date window at 6 o'clock
     val dateY = center.y + radius * 0.5f
-    
+
     // Date window (rectangular with rounded corners)
     drawRoundRect(
         color = Color.White,
@@ -285,7 +289,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
         cornerRadius = CornerRadius(radius * 0.02f),
         style = Stroke(width = 2f)
     )
-    
+
     // Date text
     val datePaint = Paint().apply {
         color = ClockBorderColor.hashCode()
@@ -294,8 +298,8 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
         isFakeBoldText = true
         isAntiAlias = true
     }
-    
-    val day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH).toString()
+
+    val day = currentTime.get(Calendar.DAY_OF_MONTH).toString()
     drawContext.canvas.nativeCanvas.drawText(
         day,
         center.x,
@@ -307,7 +311,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
 private fun DrawScope.drawHourMarkersAndNumbers(center: Offset, radius: Float) {
     // Ulysse Nardin Marine Chronometer typically uses Roman numerals
     val romanNumerals = listOf("I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII")
-    
+
     val textPaint = Paint().apply {
         color = NumbersColor.hashCode()
         textSize = radius * 0.12f
@@ -315,12 +319,12 @@ private fun DrawScope.drawHourMarkersAndNumbers(center: Offset, radius: Float) {
         isFakeBoldText = true
         isAntiAlias = true
     }
-    
+
     // Draw Roman numerals
     for (i in 0 until 12) {
         // Skip VI (6 o'clock) and XII (12 o'clock) where the date window and power reserve are
         if (i == 6 || i == 0) continue
-        
+
         val angle = Math.PI / 6 * i
         val numberRadius = radius * 0.7f
         val numberX = center.x + cos(angle).toFloat() * numberRadius
@@ -333,45 +337,45 @@ private fun DrawScope.drawHourMarkersAndNumbers(center: Offset, radius: Float) {
             textPaint
         )
     }
-    
+
     // Draw minute markers (small dots)
     for (i in 0 until 60) {
         if (i % 5 == 0) continue // Skip where hour markers are
-        
+
         val angle = Math.PI * 2 * i / 60
         val markerRadius = radius * 0.01f
         val markerX = center.x + cos(angle).toFloat() * radius * 0.85f
         val markerY = center.y + sin(angle).toFloat() * radius * 0.85f
-        
+
         drawCircle(
             color = MarkersColor,
             radius = markerRadius,
             center = Offset(markerX, markerY)
         )
     }
-    
+
     // Draw railroad-style minute track (characteristic of marine chronometers)
     val trackRadius = radius * 0.85f
     val trackWidth = radius * 0.03f
-    
+
     drawCircle(
         color = Color.Transparent,
         radius = trackRadius,
         center = center,
         style = Stroke(width = trackWidth)
     )
-    
+
     // Draw minute track divisions
     for (i in 0 until 60) {
         val angle = Math.PI * 2 * i / 60
         val innerRadius = trackRadius - trackWidth / 2
         val outerRadius = trackRadius + trackWidth / 2
-        
+
         val innerX = center.x + cos(angle).toFloat() * innerRadius
         val innerY = center.y + sin(angle).toFloat() * innerRadius
         val outerX = center.x + cos(angle).toFloat() * outerRadius
         val outerY = center.y + sin(angle).toFloat() * outerRadius
-        
+
         drawLine(
             color = MarkersColor.copy(alpha = 0.3f),
             start = Offset(innerX, innerY),
@@ -443,7 +447,7 @@ private fun DrawScope.drawClockHands(
             strokeWidth = 2f,
             cap = StrokeCap.Round
         )
-        
+
         // Arrow tip
         val arrowSize = radius * 0.05f
         val arrowPath = Path().apply {
@@ -453,7 +457,7 @@ private fun DrawScope.drawClockHands(
             close()
         }
         drawPath(arrowPath, SecondHandColor)
-        
+
         // Counterbalance
         drawCircle(
             color = SecondHandColor,

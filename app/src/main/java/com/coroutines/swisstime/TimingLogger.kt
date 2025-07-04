@@ -4,7 +4,7 @@ import android.util.Log
 
 /**
  * Utility class for logging performance timing information.
- * Used to measure the time between tapping on the Piaget watch and the OptimizedWorldMapScreen being completely drawn.
+ * Used to measure the time between tapping on the Chronomagus watch and the OptimizedWorldMapScreen being completely drawn.
  */
 object TimingLogger {
     // Static variable to store the start time

@@ -1,0 +1,8 @@
+<objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
+    android:propertyName="fillColor"
+    android:duration="2200"
+    android:valueFrom="#D13B40"
+    android:valueTo="#9A1F24"
+    android:repeatCount="infinite"
+    android:repeatMode="reverse"
+    android:interpolator="@android:interpolator/accelerate_decelerate" />
