@@ -205,311 +205,319 @@ fun CustomWorldMapWithDayNight(
                 contentScale = ContentScale.FillWidth
             )
 
+
+
             // Canvas for drawing the terminator and masking the night side
-            Canvas(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                val width = size.width
-                val height = size.height
 
-                // Calculate the terminator curve points
-                val terminatorPoints = mutableListOf<Pair<Offset, Offset>>() // Pairs of (rising, setting) points
-                val path = Path()
+         Canvas(
+             modifier = Modifier.fillMaxSize()
+         ) {
+             val width = size.width
+             val height = size.height
 
-                // Calculate the number of points to generate based on screen height
-                // More points for higher resolution screens, fewer for lower resolution
-                val numPoints = (height / 2).coerceAtLeast(180f).toInt()
-                val yStep = height / numPoints
+             // Calculate the terminator curve points
+             val terminatorPoints = mutableListOf<Pair<Offset, Offset>>() // Pairs of (rising, setting) points
+             val path = Path()
 
-                // For each pixel row in the image (with adaptive step size)
-                for (i in 0..numPoints) {
-                    val yPos = i * yStep
+             // Calculate the number of points to generate based on screen height
+             // More points for higher resolution screens, fewer for lower resolution
+             val numPoints = (height / 2).coerceAtLeast(180f).toInt()
+             val yStep = height / numPoints
 
-                    // Convert y-coordinate to latitude (-90° to 90°, with 0° at the equator)
-                    val latitude = 90f - (yPos / height * 180f)
-                    val latRad = latitude * (PI / 180f).toFloat()
+             // For each pixel row in the image (with adaptive step size)
+             for (i in 0..numPoints) {
+                 val yPos = i * yStep
 
-                    // For each latitude, calculate the terminator longitude
-                    // This is based on the calc_alt function in earth.py
-                    val declRad = Decl * (PI / 180f).toFloat()
+                 // Convert y-coordinate to latitude (-90° to 90°, with 0° at the equator)
+                 val latitude = 90f - (yPos / height * 180f)
+                 val latRad = latitude * (PI / 180f).toFloat()
 
-                    // Calculate the hour angle where the sun's altitude is 0 (the terminator)
-                    // This is where we solve for the longitude where altitude = 0
-                    val cosTerm = -tan(declRad) * tan(latRad)
+                 // For each latitude, calculate the terminator longitude
+                 // This is based on the calc_alt function in earth.py
+                 val declRad = Decl * (PI / 180f).toFloat()
 
-                    // Check if there's a terminator at this latitude
-                    if (abs(cosTerm) <= 1.0f) {
-                        // Calculate the hour angle at the terminator (both rising and setting points)
-                        val HAterm = acos(cosTerm)
+                 // Calculate the hour angle where the sun's altitude is 0 (the terminator)
+                 // This is where we solve for the longitude where altitude = 0
+                 val cosTerm = -tan(declRad) * tan(latRad)
 
-                        // Apply correction factors to account for map projection distortion
-                        // This helps to fine-tune the terminator position
-                        // Different factors for rising and setting to maintain correct distance while positioning properly
-                        val risingCorrectionFactor = 0.69f  // Further decreased to move the curve more to the left (1.04/1.5)
-                        val settingCorrectionFactor = 0.39f // Further decreased to move the curve more to the left (0.58/1.5)
+                 // Check if there's a terminator at this latitude
+                 if (abs(cosTerm) <= 1.0f) {
+                     // Calculate the hour angle at the terminator (both rising and setting points)
+                     val HAterm = acos(cosTerm)
 
-                        // Convert hour angle to longitude for rising point (eastern terminator)
-                        val longTermRising = rev(RA * 15f - HAterm * (180f / PI.toFloat()) * risingCorrectionFactor - GMST0 * 15f - hourDecimal * 15f)
+                     // Apply correction factors to account for map projection distortion
+                     // This helps to fine-tune the terminator position
+                     // Different factors for rising and setting to maintain correct distance while positioning properly
+                     val risingCorrectionFactor = 0.69f  // Further decreased to move the curve more to the left (1.04/1.5)
+                     val settingCorrectionFactor = 0.39f // Further decreased to move the curve more to the left (0.58/1.5)
 
-                        // Convert hour angle to longitude for setting point (western terminator)
-                        val longTermSetting = rev(RA * 15f + HAterm * (180f / PI.toFloat()) * settingCorrectionFactor - GMST0 * 15f - hourDecimal * 15f)
+                     // Convert hour angle to longitude for rising point (eastern terminator)
+                     val longTermRising = rev(RA * 15f - HAterm * (180f / PI.toFloat()) * risingCorrectionFactor - GMST0 * 15f - hourDecimal * 15f)
 
-                        // Map longitudes to x-coordinates
-                        // For equirectangular projection, we need to map longitude from 0-360° to 0-width
-                        // First, normalize longitudes to -180° to 180° range
-                        val normalizedLongRising = if (longTermRising > 180f) longTermRising - 360f else longTermRising
-                        val normalizedLongSetting = if (longTermSetting > 180f) longTermSetting - 360f else longTermSetting
+                     // Convert hour angle to longitude for setting point (western terminator)
+                     val longTermSetting = rev(RA * 15f + HAterm * (180f / PI.toFloat()) * settingCorrectionFactor - GMST0 * 15f - hourDecimal * 15f)
 
-                        // Then map to x-coordinates (0 to width)
-                        val xRising = width * ((normalizedLongRising + 180f) / 360f)
-                        val xSetting = width * ((normalizedLongSetting + 180f) / 360f)
+                     // Map longitudes to x-coordinates
+                     // For equirectangular projection, we need to map longitude from 0-360° to 0-width
+                     // First, normalize longitudes to -180° to 180° range
+                     val normalizedLongRising = if (longTermRising > 180f) longTermRising - 360f else longTermRising
+                     val normalizedLongSetting = if (longTermSetting > 180f) longTermSetting - 360f else longTermSetting
 
-                        // Apply a direct offset to shift the entire bell curve to the left
-                        val xOffset = width * 0.1f // Shift left by 10% of the screen width (moved halfway back to the right)
+                     // Then map to x-coordinates (0 to width)
+                     val xRising = width * ((normalizedLongRising + 180f) / 360f)
+                     val xSetting = width * ((normalizedLongSetting + 180f) / 360f)
 
-                        terminatorPoints.add(Pair(Offset(xRising - xOffset, yPos), Offset(xSetting - xOffset, yPos)))
-                    }
-                }
+                     // Apply a direct offset to shift the entire bell curve to the left
+                     val xOffset = width * 0.1f // Shift left by 10% of the screen width (moved halfway back to the right)
 
-                // Create the terminator path if we have points
-                if (terminatorPoints.isNotEmpty()) {
-                    // Start with the first rising point
-                    path.moveTo(terminatorPoints.first().first.x, terminatorPoints.first().first.y)
+                     terminatorPoints.add(Pair(Offset(xRising - xOffset, yPos), Offset(xSetting - xOffset, yPos)))
+                 }
+             }
 
-                    // Draw the rising side (going down)
-                    for (i in 1 until terminatorPoints.size) {
-                        path.lineTo(terminatorPoints[i].first.x, terminatorPoints[i].first.y)
-                    }
+             // Create the terminator path if we have points
+             if (terminatorPoints.isNotEmpty()) {
+                 // Start with the first rising point
+                 path.moveTo(terminatorPoints.first().first.x, terminatorPoints.first().first.y)
 
-                    // Connect to the last setting point
-                    path.lineTo(terminatorPoints.last().second.x, terminatorPoints.last().second.y)
+                 // Draw the rising side (going down)
+                 for (i in 1 until terminatorPoints.size) {
+                     path.lineTo(terminatorPoints[i].first.x, terminatorPoints[i].first.y)
+                 }
 
-                    // Draw the setting side (going up)
+                 // Connect to the last setting point
+                 path.lineTo(terminatorPoints.last().second.x, terminatorPoints.last().second.y)
+
+                 // Draw the setting side (going up)
+                 for (i in terminatorPoints.size - 2 downTo 0) {
+                     path.lineTo(terminatorPoints[i].second.x, terminatorPoints[i].second.y)
+                 }
+
+                 // Close the path to complete the bell shape
+                 path.close()
+             }
+
+             // Create paths for the day and night sides
+           val dayPath = Path()
+             val nightPath = Path()
+
+             // Determine if the sun is in the eastern or western hemisphere
+             val sunLong = rev(RA * 15f - GMST0 * 15f - hourDecimal * 15f)
+             val isSunInEasternHemisphere = sunLong < 180f
+
+             /*
+            if (terminatorPoints.isNotEmpty()) {
+                if (isSunInEasternHemisphere) {
+                    // Sun is in the eastern hemisphere, day is in the eastern hemisphere (right side)
+
+                    // Day path (right side)
+                    dayPath.moveTo(terminatorPoints.first().first.x, 0f) // Start at the top-right of the terminator
+                    dayPath.lineTo(width, 0f) // Go to top-right corner
+                    dayPath.lineTo(width, height) // Go to bottom-right corner
+                    dayPath.lineTo(terminatorPoints.last().first.x, height) // Go to the bottom-right of the terminator
+
+                    // Follow the terminator curve up (right side)
                     for (i in terminatorPoints.size - 2 downTo 0) {
-                        path.lineTo(terminatorPoints[i].second.x, terminatorPoints[i].second.y)
+                        dayPath.lineTo(terminatorPoints[i].first.x, terminatorPoints[i].first.y)
                     }
+                    dayPath.close() // Close the path
 
-                    // Close the path to complete the bell shape
-                    path.close()
-                }
+                    // Night path (left side)
+                    nightPath.moveTo(0f, 0f) // Start at top-left corner
+                    nightPath.lineTo(terminatorPoints.first().second.x, 0f) // Go to the top-left of the terminator
 
-                // Create paths for the day and night sides
-              val dayPath = Path()
-                val nightPath = Path()
-
-                // Determine if the sun is in the eastern or western hemisphere
-                val sunLong = rev(RA * 15f - GMST0 * 15f - hourDecimal * 15f)
-                val isSunInEasternHemisphere = sunLong < 180f
-
-                /* 
-               if (terminatorPoints.isNotEmpty()) {
-                   if (isSunInEasternHemisphere) {
-                       // Sun is in the eastern hemisphere, day is in the eastern hemisphere (right side)
-
-                       // Day path (right side)
-                       dayPath.moveTo(terminatorPoints.first().first.x, 0f) // Start at the top-right of the terminator
-                       dayPath.lineTo(width, 0f) // Go to top-right corner
-                       dayPath.lineTo(width, height) // Go to bottom-right corner
-                       dayPath.lineTo(terminatorPoints.last().first.x, height) // Go to the bottom-right of the terminator
-
-                       // Follow the terminator curve up (right side)
-                       for (i in terminatorPoints.size - 2 downTo 0) {
-                           dayPath.lineTo(terminatorPoints[i].first.x, terminatorPoints[i].first.y)
-                       }
-                       dayPath.close() // Close the path
-
-                       // Night path (left side)
-                       nightPath.moveTo(0f, 0f) // Start at top-left corner
-                       nightPath.lineTo(terminatorPoints.first().second.x, 0f) // Go to the top-left of the terminator
-
-                       // Follow the terminator curve down (left side)
-                       for (i in 1 until terminatorPoints.size) {
-                           nightPath.lineTo(terminatorPoints[i].second.x, terminatorPoints[i].second.y)
-                       }
-                       nightPath.lineTo(0f, height) // Go to bottom-left corner
-                       nightPath.close() // Close the path
-                   } else {
-                       // Sun is in the western hemisphere, day is in the western hemisphere (left side)
-
-                       // Day path (left side)
-                       dayPath.moveTo(0f, 0f) // Start at top-left corner
-                       dayPath.lineTo(terminatorPoints.first().second.x, 0f) // Go to the top-left of the terminator
-
-                       // Follow the terminator curve down (left side)
-                       for (i in 1 until terminatorPoints.size) {
-                           dayPath.lineTo(terminatorPoints[i].second.x, terminatorPoints[i].second.y)
-                       }
-                       dayPath.lineTo(0f, height) // Go to bottom-left corner
-                       dayPath.close() // Close the path
-
-                       // Night path (right side)
-                       nightPath.moveTo(terminatorPoints.first().first.x, 0f) // Start at the top-right of the terminator
-                       nightPath.lineTo(width, 0f) // Go to top-right corner
-                       nightPath.lineTo(width, height) // Go to bottom-right corner
-                       nightPath.lineTo(terminatorPoints.last().first.x, height) // Go to the bottom-right of the terminator
-
-                       // Follow the terminator curve up (right side)
-                       for (i in terminatorPoints.size - 2 downTo 0) {
-                           nightPath.lineTo(terminatorPoints[i].first.x, terminatorPoints[i].first.y)
-                       }
-                       nightPath.close() // Close the path
-                   }
-               } else {
-                   // If no terminator points (e.g., polar day/night), create simple paths
-                   if (isSunInEasternHemisphere) {
-                       // Day is on the right side
-                       dayPath.moveTo(width / 2, 0f)
-                       dayPath.lineTo(width, 0f)
-                       dayPath.lineTo(width, height)
-                       dayPath.lineTo(width / 2, height)
-                       dayPath.close()
-
-                       nightPath.moveTo(0f, 0f)
-                       nightPath.lineTo(width / 2, 0f)
-                       nightPath.lineTo(width / 2, height)
-                       nightPath.lineTo(0f, height)
-                       nightPath.close()
-                   } else {
-                       // Day is on the left side
-                       dayPath.moveTo(0f, 0f)
-                       dayPath.lineTo(width / 2, 0f)
-                       dayPath.lineTo(width / 2, height)
-                       dayPath.lineTo(0f, height)
-                       dayPath.close()
-
-                       nightPath.moveTo(width / 2, 0f)
-                       nightPath.lineTo(width, 0f)
-                       nightPath.lineTo(width, height)
-                       nightPath.lineTo(width / 2, height)
-                       nightPath.close()
-                   }
-               }
-
-               // No overlay for the day side to avoid blue tint
-
-               // Draw a very subtle dark overlay for the night side
-               drawPath(
-                   path = nightPath,
-                   color = Color(0xFF000033).copy(alpha = 0.9f) // Subtle dark blue for night
-               )
-
-             */
-
-                // Draw the blur effect at the terminator
-                // This is based on the plot function in earth.py
-                // We'll create a gradient effect near the terminator line
-
-                // For each pixel in the image (simplified to reduce computation)
-                // Adjust step size based on screen width to ensure consistent visual quality across devices
-                val stepSize = (width / 300).coerceAtLeast(1f).toInt() // Scale step size with screen width
-                for (y in 0 until height.toInt() step stepSize) {
-                    for (x in 0 until width.toInt() step stepSize) {
-                        // Convert x,y to longitude, latitude
-                        // For equirectangular projection, x maps linearly to longitude from -180° to 180°
-                        // Apply the same offset as used for the terminator points (10% of screen width)
-                        val xOffset = width * 0.16f
-                        val adjustedX = x + xOffset // Shift right to move shaded area away from USA
-                        val longitude = (adjustedX / width * 360f) - 180f
-                        // y maps linearly to latitude from 90° (top) to -90° (bottom)
-                        val latitude = 90f - (y / height * 180f)
-
-                        // Calculate the sun's altitude at this point
-                        val latRad = latitude * (PI / 180f).toFloat()
-
-                        val SIDTIME = GMST0 + hourDecimal + longitude/15f
-                        val HA = rev((SIDTIME - RA)) * 15f
-                        val HArad = HA * (PI / 180f).toFloat()
-                        val declRad = Decl * (PI / 180f).toFloat()
-
-                        val xval = cos(HArad) * cos(declRad)
-                        val yval = sin(HArad) * cos(declRad)
-                        val zval = sin(declRad)
-
-                        val xhor = xval * sin(latRad) - zval * cos(latRad)
-                        val yhor = yval
-                        val zhor = xval * cos(latRad) + zval * sin(latRad)
-
-                        val altitude = atan2(zhor, sqrt(xhor*xhor + yhor*yhor)) * (180f / PI.toFloat())
-
-                        // Apply the blur effect at the terminator
-                        if (altitude > blur && phong) {
-                            // Day side with Phong shading - no tint
-                            // No drawing here to avoid blue tint
-                        } else if (altitude < -blur) {
-                            // Night side - very subtle dark tint
-                            drawCircle(
-                                color = Color(DarkNavy.toArgb()).copy(alpha = 0.13f),
-                              //  color = Color(0xFF000033).copy(alpha = 0.05f), // Very subtle dark blue for night
-                                radius = stepSize.toFloat(),
-                                center = Offset(x.toFloat(), y.toFloat())
-                            )
-                        } else {
-                            // Terminator region - very subtle blend
-                            val alpha = (altitude + blur) / (blur * 2f)
-                            // Only apply a very subtle dark tint in the terminator region
-                            if (alpha < 0.5f) {
-                                drawCircle(
-                                    color = Color(DarkNavy.toArgb()).copy(alpha = 0.13f * (1f - alpha.coerceIn(0f, 1f))),
-                                  //  color = Color(0xFF000033).copy(alpha = 0.03f * (1f - alpha.coerceIn(0f, 1f))),
-                                    radius = stepSize.toFloat(),
-                                    center = Offset(x.toFloat(), y.toFloat())
-                                )
-                            }
-                            // No drawing for the day side of the terminator to avoid blue tint
-                        }
-                    }
-                }
-
-
-
-               /*
-                // Draw the terminator curve
-                // Scale stroke width based on screen width for consistent appearance across devices
-                val strokeWidth = (width / 600).coerceIn(1f, 3f) // Min 1, max 3
-
-                // Create a new path for the terminator line that shows the complete bell shape
-                val terminatorLinePath = Path()
-
-                if (terminatorPoints.isNotEmpty()) {
-                    // Start with the first rising point
-                    terminatorLinePath.moveTo(terminatorPoints.first().first.x, terminatorPoints.first().first.y)
-
-                    // Draw the rising side (going down)
+                    // Follow the terminator curve down (left side)
                     for (i in 1 until terminatorPoints.size) {
-                        terminatorLinePath.lineTo(terminatorPoints[i].first.x, terminatorPoints[i].first.y)
+                        nightPath.lineTo(terminatorPoints[i].second.x, terminatorPoints[i].second.y)
                     }
+                    nightPath.lineTo(0f, height) // Go to bottom-left corner
+                    nightPath.close() // Close the path
+                } else {
+                    // Sun is in the western hemisphere, day is in the western hemisphere (left side)
 
-                    // Connect to the last setting point
-                    terminatorLinePath.lineTo(terminatorPoints.last().second.x, terminatorPoints.last().second.y)
+                    // Day path (left side)
+                    dayPath.moveTo(0f, 0f) // Start at top-left corner
+                    dayPath.lineTo(terminatorPoints.first().second.x, 0f) // Go to the top-left of the terminator
 
-                    // Draw the setting side (going up)
+                    // Follow the terminator curve down (left side)
+                    for (i in 1 until terminatorPoints.size) {
+                        dayPath.lineTo(terminatorPoints[i].second.x, terminatorPoints[i].second.y)
+                    }
+                    dayPath.lineTo(0f, height) // Go to bottom-left corner
+                    dayPath.close() // Close the path
+
+                    // Night path (right side)
+                    nightPath.moveTo(terminatorPoints.first().first.x, 0f) // Start at the top-right of the terminator
+                    nightPath.lineTo(width, 0f) // Go to top-right corner
+                    nightPath.lineTo(width, height) // Go to bottom-right corner
+                    nightPath.lineTo(terminatorPoints.last().first.x, height) // Go to the bottom-right of the terminator
+
+                    // Follow the terminator curve up (right side)
                     for (i in terminatorPoints.size - 2 downTo 0) {
-                        terminatorLinePath.lineTo(terminatorPoints[i].second.x, terminatorPoints[i].second.y)
+                        nightPath.lineTo(terminatorPoints[i].first.x, terminatorPoints[i].first.y)
                     }
-
-                    // Close the path to complete the bell shape
-                    terminatorLinePath.close()
-
-                    // Gold terminator line removed as per requirement
+                    nightPath.close() // Close the path
                 }
-*/
-                /*
-                // Draw sun indicator
-                // Calculate the sun's position on the map
-                // Use the same mapping logic as the terminator calculation for consistency
-                val normalizedSunLong = if (sunLong > 180f) sunLong - 360f else sunLong
-                val sunX = width * ((normalizedSunLong + 180f) / 360f)
+            } else {
+                // If no terminator points (e.g., polar day/night), create simple paths
+                if (isSunInEasternHemisphere) {
+                    // Day is on the right side
+                    dayPath.moveTo(width / 2, 0f)
+                    dayPath.lineTo(width, 0f)
+                    dayPath.lineTo(width, height)
+                    dayPath.lineTo(width / 2, height)
+                    dayPath.close()
 
-                // Scale the sun radius based on screen width for consistent appearance across devices
-                val sunRadius = (width / 120).coerceIn(5f, 15f) // Min 5, max 15
-                drawCircle(
-                    color = Color(0xFFFFD700), // Gold for sun
-                    radius = sunRadius,
-                    center = Offset(sunX, height * 0.1f) // Position sun near the top
-                )
-*/
-                // Time text removed as per requirement
+                    nightPath.moveTo(0f, 0f)
+                    nightPath.lineTo(width / 2, 0f)
+                    nightPath.lineTo(width / 2, height)
+                    nightPath.lineTo(0f, height)
+                    nightPath.close()
+                } else {
+                    // Day is on the left side
+                    dayPath.moveTo(0f, 0f)
+                    dayPath.lineTo(width / 2, 0f)
+                    dayPath.lineTo(width / 2, height)
+                    dayPath.lineTo(0f, height)
+                    dayPath.close()
+
+                    nightPath.moveTo(width / 2, 0f)
+                    nightPath.lineTo(width, 0f)
+                    nightPath.lineTo(width, height)
+                    nightPath.lineTo(width / 2, height)
+                    nightPath.close()
+                }
             }
+
+            // No overlay for the day side to avoid blue tint
+
+            // Draw a very subtle dark overlay for the night side
+            drawPath(
+                path = nightPath,
+                color = Color(0xFF000033).copy(alpha = 0.9f) // Subtle dark blue for night
+            )
+
+          */
+
+             // Draw the blur effect at the terminator
+             // This is based on the plot function in earth.py
+             // We'll create a gradient effect near the terminator line
+
+             // For each pixel in the image (simplified to reduce computation)
+             // Adjust step size based on screen width to ensure consistent visual quality across devices
+
+
+             val stepSize = (width / 150).coerceAtLeast(1f).toInt() // Scale step size with screen width
+             for (y in 0 until height.toInt() step stepSize) {
+                 for (x in 0 until width.toInt() step stepSize) {
+                     // Convert x,y to longitude, latitude
+                     // For equirectangular projection, x maps linearly to longitude from -180° to 180°
+                     // Apply the same offset as used for the terminator points (10% of screen width)
+                     val xOffset = width * 0.16f
+                     val adjustedX = x + xOffset // Shift right to move shaded area away from USA
+                     val longitude = (adjustedX / width * 360f) - 180f
+                     // y maps linearly to latitude from 90° (top) to -90° (bottom)
+                     val latitude = 90f - (y / height * 180f)
+
+                     // Calculate the sun's altitude at this point
+                     val latRad = latitude * (PI / 180f).toFloat()
+
+                     val SIDTIME = GMST0 + hourDecimal + longitude/15f
+                     val HA = rev((SIDTIME - RA)) * 15f
+                     val HArad = HA * (PI / 180f).toFloat()
+                     val declRad = Decl * (PI / 180f).toFloat()
+
+                     val xval = cos(HArad) * cos(declRad)
+                     val yval = sin(HArad) * cos(declRad)
+                     val zval = sin(declRad)
+
+                     val xhor = xval * sin(latRad) - zval * cos(latRad)
+                     val yhor = yval
+                     val zhor = xval * cos(latRad) + zval * sin(latRad)
+
+                     val altitude = atan2(zhor, sqrt(xhor*xhor + yhor*yhor)) * (180f / PI.toFloat())
+
+                     // Apply the blur effect at the terminator
+                     if (altitude > blur && phong) {
+                         // Day side with Phong shading - no tint
+                         // No drawing here to avoid blue tint
+                     } else if (altitude < -blur) {
+                         // Night side - very subtle dark tint
+                         drawCircle(
+                             color = Color(DarkNavy.toArgb()).copy(alpha = 0.13f),
+                           //  color = Color(0xFF000033).copy(alpha = 0.05f), // Very subtle dark blue for night
+                             radius = stepSize.toFloat(),
+                             center = Offset(x.toFloat(), y.toFloat())
+                         )
+                     } else {
+                         // Terminator region - very subtle blend
+                         val alpha = (altitude + blur) / (blur * 2f)
+                         // Only apply a very subtle dark tint in the terminator region
+                         if (alpha < 0.5f) {
+                             drawCircle(
+                                 color = Color(DarkNavy.toArgb()).copy(alpha = 0.13f * (1f - alpha.coerceIn(0f, 1f))),
+                               //  color = Color(0xFF000033).copy(alpha = 0.03f * (1f - alpha.coerceIn(0f, 1f))),
+                                 radius = stepSize.toFloat(),
+                                 center = Offset(x.toFloat(), y.toFloat())
+                             )
+                         }
+                         // No drawing for the day side of the terminator to avoid blue tint
+                     }
+                 }
+             }
+
+
+
+
+
+
+            /*
+             // Draw the terminator curve
+             // Scale stroke width based on screen width for consistent appearance across devices
+             val strokeWidth = (width / 600).coerceIn(1f, 3f) // Min 1, max 3
+
+             // Create a new path for the terminator line that shows the complete bell shape
+             val terminatorLinePath = Path()
+
+             if (terminatorPoints.isNotEmpty()) {
+                 // Start with the first rising point
+                 terminatorLinePath.moveTo(terminatorPoints.first().first.x, terminatorPoints.first().first.y)
+
+                 // Draw the rising side (going down)
+                 for (i in 1 until terminatorPoints.size) {
+                     terminatorLinePath.lineTo(terminatorPoints[i].first.x, terminatorPoints[i].first.y)
+                 }
+
+                 // Connect to the last setting point
+                 terminatorLinePath.lineTo(terminatorPoints.last().second.x, terminatorPoints.last().second.y)
+
+                 // Draw the setting side (going up)
+                 for (i in terminatorPoints.size - 2 downTo 0) {
+                     terminatorLinePath.lineTo(terminatorPoints[i].second.x, terminatorPoints[i].second.y)
+                 }
+
+                 // Close the path to complete the bell shape
+                 terminatorLinePath.close()
+
+                 // Gold terminator line removed as per requirement
+             }
+*/
+             /*
+             // Draw sun indicator
+             // Calculate the sun's position on the map
+             // Use the same mapping logic as the terminator calculation for consistency
+             val normalizedSunLong = if (sunLong > 180f) sunLong - 360f else sunLong
+             val sunX = width * ((normalizedSunLong + 180f) / 360f)
+
+             // Scale the sun radius based on screen width for consistent appearance across devices
+             val sunRadius = (width / 120).coerceIn(5f, 15f) // Min 5, max 15
+             drawCircle(
+                 color = Color(0xFFFFD700), // Gold for sun
+                 radius = sunRadius,
+                 center = Offset(sunX, height * 0.1f) // Position sun near the top
+             )
+*/
+             // Time text removed as per requirement
+         }
         }
     }
 }

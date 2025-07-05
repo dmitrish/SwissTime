@@ -40,7 +40,7 @@ private val NumbersColor = Color(0xFFB27D4B) // Rose gold numbers
 private val CenterDotColor = Color(0xFFB27D4B) // Rose gold center dot
 
 @Composable
-fun VacheronConstantinClock(modifier: Modifier = Modifier, timeZone: TimeZone = TimeZone.getDefault()) {
+fun Valentinianus(modifier: Modifier = Modifier, timeZone: TimeZone = TimeZone.getDefault()) {
     var currentTime by remember { mutableStateOf(Calendar.getInstance(timeZone )) }
 
     val timeZoneX by rememberUpdatedState(timeZone)
@@ -218,6 +218,6 @@ private fun DrawScope.drawClockHands(
 @Composable
 fun VacheronConstantinClockPreview() {
     SwissTimeTheme {
-        VacheronConstantinClock()
+        Valentinianus()
     }
 }

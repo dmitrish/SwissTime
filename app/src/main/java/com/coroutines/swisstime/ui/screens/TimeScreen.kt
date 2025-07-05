@@ -452,7 +452,7 @@ fun TimeScreen(
             }
 
             // Simplified pager indicator - just show the current page number out of total
-            Text(
+          Text(
                 text = "${currentPage + 1} / ${selectedWatches.size}",
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier
@@ -465,11 +465,11 @@ fun TimeScreen(
             CustomWorldMapWithDayNight()
             // Add the lazy-loading world map with day/night visualization
             // This component won't block page transitions
-          /*  LazyWorldMapWithDayNight(
+           /* LazyWorldMapWithDayNight(
                 currentTime = currentTime ,
                 modifier = Modifier
-                    .fillMaxWidth(),
-                   // .aspectRatio(2f), // 2:1 aspect ratio for the world map
+                    .fillMaxWidth()
+                    .aspectRatio(2f), // 2:1 aspect ratio for the world map
                 isPageTransitioning = false,
                 onRenderComplete = {
                     // Log when the world map rendering is complete
