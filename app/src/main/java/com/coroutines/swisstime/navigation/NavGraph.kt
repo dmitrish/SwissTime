@@ -290,7 +290,8 @@ fun NavGraph(
 
             // Render the SettingsScreen
             SettingsScreen(
-                themeViewModel = themeViewModel
+                themeViewModel = themeViewModel,
+                watchViewModel = watchViewModel
             )
         }
     }
