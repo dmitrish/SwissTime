@@ -21,10 +21,10 @@ import com.coroutines.swisstime.watchfaces.LonginesMasterCollection
 import com.coroutines.swisstime.watchfaces.ParmigianiFTonda
 import com.coroutines.swisstime.watchfaces.PatekPhilippeClock
 import com.coroutines.swisstime.watchfaces.ChronomagusRegum
+import com.coroutines.swisstime.watchfaces.ConstantinusAureusChronometer
 import com.coroutines.swisstime.watchfaces.RolexSubmarinerClock
-import com.coroutines.swisstime.watchfaces.TAGHeuerCarrera
-import com.coroutines.swisstime.watchfaces.UlysseNardinMarineChronometer
-import com.coroutines.swisstime.watchfaces.VacheronConstantinClock
+import com.coroutines.swisstime.watchfaces.Tokinoha
+import com.coroutines.swisstime.watchfaces.Valentinianus
 import com.coroutines.swisstime.watchfaces.ZenithElPrimero
 import com.coroutines.swisstime.watchfaces.KandinskyEvening
 import java.util.TimeZone
@@ -48,9 +48,9 @@ private val watchFaceMap = mapOf<String, @Composable (Modifier, TimeZone) -> Uni
     "Parmigiani" to { mod, tz -> ParmigianiFTonda(modifier = mod, timeZone = tz) },
     "Patek" to { mod, tz -> PatekPhilippeClock(modifier = mod, timeZone = tz) },
     "Rolex Submariner" to { mod, tz -> RolexSubmarinerClock(modifier = mod, timeZone = tz) },
-    "TAG" to { mod, tz -> TAGHeuerCarrera(modifier = mod, timeZone = tz) },
-    "Ulysee Nardin" to { mod, tz -> UlysseNardinMarineChronometer(modifier = mod, timeZone = tz) },
-    "Vacherone Constantin" to { mod, tz -> VacheronConstantinClock(modifier = mod, timeZone = tz) },
+    "TAG" to { mod, tz -> Tokinoha(modifier = mod, timeZone = tz) },
+    "Constantinus Aureus" to { mod, tz -> ConstantinusAureusChronometer(modifier = mod, timeZone = tz) },
+    "Valentinianus" to { mod, tz -> Valentinianus(modifier = mod, timeZone = tz) },
     "Kandinsky Evening" to { mod, tz -> KandinskyEvening(modifier = mod, timeZone = tz) }
 )
 

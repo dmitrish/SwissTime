@@ -45,7 +45,7 @@ private val PowerReserveColor = Color(0xFFB22222) // Red power reserve indicator
 private val CenterDotColor = Color(0xFF00008B) // Dark blue center dot
 
 @Composable
-fun UlysseNardinMarineChronometer(modifier: Modifier = Modifier,timeZone: TimeZone = TimeZone.getDefault()) {
+fun  ConstantinusAureusChronometer (modifier: Modifier = Modifier,timeZone: TimeZone = TimeZone.getDefault()) {
     var currentTime by remember { mutableStateOf(Calendar.getInstance(timeZone )) }
 
     val timeZoneX by rememberUpdatedState(timeZone)
@@ -471,6 +471,6 @@ private fun DrawScope.drawClockHands(
 @Composable
 fun UlysseNardinMarineChrometerPreview() {
     SwissTimeTheme {
-        UlysseNardinMarineChronometer()
+        ConstantinusAureusChronometer()
     }
 }
