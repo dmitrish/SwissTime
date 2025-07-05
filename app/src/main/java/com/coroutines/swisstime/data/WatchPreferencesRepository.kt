@@ -29,6 +29,7 @@ class WatchPreferencesRepository(private val context: Context) {
         private val SELECTED_WATCH_KEY = stringPreferencesKey("selected_watch")
         private val SELECTED_TIMEZONE_KEY = stringPreferencesKey("selected_timezone")
         private val SELECTED_WATCHES_KEY = stringSetPreferencesKey("selected_watches")
+        private val USE_US_TIME_FORMAT_KEY = androidx.datastore.preferences.core.booleanPreferencesKey("use_us_time_format")
 
         // Key prefix for watch-specific timezone preferences
         private const val WATCH_TIMEZONE_PREFIX = "watch_timezone_"
@@ -46,6 +47,12 @@ class WatchPreferencesRepository(private val context: Context) {
             preferences[SELECTED_TIMEZONE_KEY]
         }
 
+    // Get the time format preference (true for US format, false for International format)
+    val useUsTimeFormat: Flow<Boolean> = context.dataStore.data
+        .map { preferences ->
+            preferences[USE_US_TIME_FORMAT_KEY] ?: true // Default to US format
+        }
+
     // Save the selected watch name
     suspend fun saveSelectedWatch(watchName: String) {
         context.dataStore.edit { preferences ->
@@ -57,6 +64,13 @@ class WatchPreferencesRepository(private val context: Context) {
     suspend fun saveSelectedTimeZone(timeZoneId: String) {
         context.dataStore.edit { preferences ->
             preferences[SELECTED_TIMEZONE_KEY] = timeZoneId
+        }
+    }
+
+    // Save the time format preference
+    suspend fun saveTimeFormat(useUsFormat: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[USE_US_TIME_FORMAT_KEY] = useUsFormat
         }
     }
 

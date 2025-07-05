@@ -109,6 +109,14 @@ class WatchViewModel(
             initialValue = TimeZone.getDefault()
         )
 
+    // Get the time format preference
+    val useUsTimeFormat: StateFlow<Boolean> = watchPreferencesRepository.useUsTimeFormat
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = true // Default to US format
+        )
+
     // Cache for TimeZone objects to avoid repeated lookups
     private val timeZoneCache = mutableMapOf<String, TimeZone>()
 
@@ -292,6 +300,13 @@ class WatchViewModel(
     fun saveSelectedTimeZone(timeZoneId: String) {
         viewModelScope.launch {
             timeZoneRepository.saveSelectedTimeZone(timeZoneId)
+        }
+    }
+
+    // Save the time format preference
+    fun saveTimeFormat(useUsFormat: Boolean) {
+        viewModelScope.launch {
+            watchPreferencesRepository.saveTimeFormat(useUsFormat)
         }
     }
 

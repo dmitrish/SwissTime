@@ -48,15 +48,19 @@ import com.coroutines.swisstime.viewmodel.ThemeViewModel
 @Composable
 fun SettingsScreen(
     themeViewModel: ThemeViewModel,
+    watchViewModel: com.coroutines.swisstime.viewmodel.WatchViewModel,
     modifier: Modifier = Modifier
 ) {
     // Collect theme preferences from the ViewModel
     val themeMode by themeViewModel.themeMode.collectAsState()
     val darkMode by themeViewModel.darkMode.collectAsState()
-    
+
+    // Collect time format preference from the WatchViewModel
+    val useUsTimeFormat by watchViewModel.useUsTimeFormat.collectAsState()
+
     // State for showing the theme selection dialog
     var showThemeDialog by remember { mutableStateOf(false) }
-    
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -69,9 +73,9 @@ fun SettingsScreen(
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground
         )
-        
+
         Divider()
-        
+
         // Theme settings card
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -87,9 +91,9 @@ fun SettingsScreen(
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                
+
                 Spacer(modifier = Modifier.height(16.dp))
-                
+
                 // Theme selection row
                 Row(
                     modifier = Modifier
@@ -115,7 +119,7 @@ fun SettingsScreen(
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                         )
                     }
-                    
+
                     // Theme preview
                     Box(
                         modifier = Modifier
@@ -130,9 +134,9 @@ fun SettingsScreen(
                             )
                     )
                 }
-                
+
                 Divider(modifier = Modifier.padding(vertical = 8.dp))
-                
+
                 // Dark mode toggle
                 Row(
                     modifier = Modifier
@@ -156,7 +160,7 @@ fun SettingsScreen(
                             color = MaterialTheme.colorScheme.onSurface
                         )
                     }
-                    
+
                     Switch(
                         checked = darkMode,
                         onCheckedChange = { themeViewModel.saveDarkMode(it) }
@@ -164,8 +168,55 @@ fun SettingsScreen(
                 }
             }
         }
+
+        // Time format settings card
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            )
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(
+                    text = "Time Format",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Time format toggle
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column {
+                        Text(
+                            text = "US Time Format (AM/PM)",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = if (useUsTimeFormat) "12-hour format with AM/PM" else "24-hour format",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                        )
+                    }
+
+                    Switch(
+                        checked = useUsTimeFormat,
+                        onCheckedChange = { watchViewModel.saveTimeFormat(it) }
+                    )
+                }
+            }
+        }
     }
-    
+
     // Theme selection dialog
     if (showThemeDialog) {
         Dialog(
@@ -188,9 +239,9 @@ fun SettingsScreen(
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onSurface
                     )
-                    
+
                     Spacer(modifier = Modifier.height(16.dp))
-                    
+
                     // Day Theme option
                     ThemeOption(
                         title = "Day Theme",
@@ -201,9 +252,9 @@ fun SettingsScreen(
                             showThemeDialog = false
                         }
                     )
-                    
+
                     Divider(modifier = Modifier.padding(vertical = 8.dp))
-                    
+
                     // Night Theme option
                     ThemeOption(
                         title = "Night Theme",
@@ -214,9 +265,9 @@ fun SettingsScreen(
                             showThemeDialog = false
                         }
                     )
-                    
+
                     Divider(modifier = Modifier.padding(vertical = 8.dp))
-                    
+
                     // System Default option
                     ThemeOption(
                         title = "System Default",
@@ -227,9 +278,9 @@ fun SettingsScreen(
                             showThemeDialog = false
                         }
                     )
-                    
+
                     Spacer(modifier = Modifier.height(16.dp))
-                    
+
                     // Cancel button
                     TextButton(
                         onClick = { showThemeDialog = false },
@@ -262,9 +313,9 @@ fun ThemeOption(
             selected = selected,
             onClick = onClick
         )
-        
+
         Spacer(modifier = Modifier.width(8.dp))
-        
+
         Column(
             modifier = Modifier.weight(1f)
         ) {
@@ -279,7 +330,7 @@ fun ThemeOption(
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
             )
         }
-        
+
         if (selected) {
             Icon(
                 imageVector = Icons.Filled.Check,
