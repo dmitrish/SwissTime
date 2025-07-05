@@ -40,10 +40,10 @@ fun getWatchFaceColor(watchName: String): Color {
         watchName.contains("Blancpain") -> Color(0xFF000000) // Black dial
         watchName.contains("IWC") -> Color(0xFFFFFFFF) // White dial
         watchName.contains("Breitling") -> Color(0xFF000080) // Navy blue dial
-        watchName.contains("TAG Heuer") -> Color(0xFF000000) // Black dial
+        watchName.contains("Tokinoha") -> Color(0xFF000000) // Black dial
         watchName.contains("Longines") -> Color(0xFFF5F5F5) // Silver dial
         watchName.contains("Chopard") -> Color(0xFFFFFFFF) // White dial
-        watchName.contains("Ulysse Nardin") -> Color(0xFF00008B) // Dark blue dial
+        watchName.contains("Constantinus") -> Color(0xFF00008B) // Dark blue dial
         watchName.contains("Girard-Perregaux") -> Color(0xFFF5F5F5) // Silver dial
         watchName.contains("Oris") -> Color(0xFF000000) // Black dial
         watchName.contains("Tudor") -> Color(0xFF000000) // Black dial
@@ -86,19 +86,22 @@ class MainActivity : ComponentActivity() {
     // Flag to track whether content is ready to be shown
     private var isContentReady = false
 
+    // Method to apply edge-to-edge mode with consistent system bar styles
+    private fun applyEdgeToEdge() {
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.dark(Color.Transparent.toArgb()),
+            navigationBarStyle = SystemBarStyle.dark(Color.Transparent.toArgb())
+        )
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
-
-
         // Install splash screen before calling super.onCreate()
         val splashScreen = installSplashScreen()
 
-
         super.onCreate(savedInstanceState)
 
-        enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.dark(Color.Transparent.toArgb()),
-            navigationBarStyle = SystemBarStyle.dark(Color.Transparent.toArgb()))
-
+        // Apply edge-to-edge mode
+        applyEdgeToEdge()
 
         // Keep the splash screen visible until the app is fully loaded
         splashScreen.setKeepOnScreenCondition { !isContentReady }
@@ -133,7 +136,6 @@ class MainActivity : ComponentActivity() {
         }
         */
 
-
         // Initialize the repository
         watchPreferencesRepository = WatchPreferencesRepository(this)
 
@@ -150,6 +152,14 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        // Re-apply edge-to-edge mode when activity resumes
+        // This prevents content shifting when device is unlocked
+        applyEdgeToEdge()
     }
 }
 

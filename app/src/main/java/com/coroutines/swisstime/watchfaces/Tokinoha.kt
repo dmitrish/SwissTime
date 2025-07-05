@@ -44,7 +44,7 @@ private val CenterDotColor = Color(0xFF000000) // Black center dot
 private val TachymeterColor = Color(0xFF000000) // Black tachymeter scale
 
 @Composable
-fun TAGHeuerCarrera(modifier: Modifier = Modifier, timeZone: TimeZone = TimeZone.getDefault()) {
+fun Tokinoha(modifier: Modifier = Modifier, timeZone: TimeZone = TimeZone.getDefault()) {
     var currentTime by remember { mutableStateOf(Calendar.getInstance(timeZone )) }
 
     val timeZoneX by rememberUpdatedState(timeZone)
@@ -153,7 +153,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
         logoPaint
     )
     
-    // Draw "CARRERA" text
+
     val modelPaint = Paint().apply {
         color = Color.Black.hashCode()
         textSize = radius * 0.07f
@@ -404,6 +404,6 @@ private fun DrawScope.drawClockHands(
 @Composable
 fun TAGHeuerCarreraPreview() {
     SwissTimeTheme {
-        TAGHeuerCarrera()
+        Tokinoha()
     }
 }
