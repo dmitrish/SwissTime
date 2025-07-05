@@ -1,8 +1,12 @@
 package com.coroutines.swisstime.ui.screens
 
 import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.content.Context
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,8 +17,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -38,7 +44,9 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -113,6 +121,13 @@ fun SelectedWatchScreen2(
     // Get the current density for converting between px and dp
     val density = LocalDensity.current
 
+    // Get the haptic feedback instance
+    val haptic = LocalHapticFeedback.current
+
+    // Get the context for vibration
+    val context = LocalContext.current
+    val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+
 
 
     Scaffold(
@@ -136,6 +151,25 @@ fun SelectedWatchScreen2(
                     .padding(horizontal = 16.dp),
                 contentAlignment = Alignment.TopCenter
             ) {
+                // White X icon at the top right that when tapped will remove the watch from selected watches
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 0.dp, end = 16.dp),
+                    contentAlignment = Alignment.TopEnd
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = "Remove Watch",
+                        tint = Color.White,
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .clickable {
+                                showRemoveConfirmation = true
+                            }
+                    )
+                }
+
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = androidx.compose.foundation.layout.Arrangement.Top
@@ -170,6 +204,9 @@ fun SelectedWatchScreen2(
 
                     // Create a state to hold the current time that will be updated every second
                     var currentTime by remember { mutableStateOf(ZonedDateTime.now(targetZoneId)) }
+
+                    // Get the time format preference
+                    val useUsTimeFormat by watchViewModel.useUsTimeFormat.collectAsState()
 
                     // Update the time every second - use targetZoneId as key to restart when it changes
                     // Use a key that includes the watch name to ensure proper recomposition
@@ -224,6 +261,15 @@ fun SelectedWatchScreen2(
                                         )
                                     },
                                     onClick = {
+                                        // Trigger vibration feedback
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                            vibrator.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE))
+                                        } else {
+                                            // Deprecated in API 26
+                                            @Suppress("DEPRECATION")
+                                            vibrator.vibrate(50)
+                                        }
+
                                         // Save the timezone for the specific watch
                                         watchViewModel.saveWatchTimeZone(selectedWatch.name, timeZoneInfo.id)
                                         expanded = false
@@ -239,10 +285,13 @@ fun SelectedWatchScreen2(
                     }
 
                     Text(
-                        text = currentTime.format(DateTimeFormatter.ofPattern("H:mm:ss a")),
+                        text = currentTime.format(
+                            DateTimeFormatter.ofPattern(
+                                if (useUsTimeFormat) "h:mm:ss a" else "HH:mm:ss"
+                            )
+                        ),
                         style = MaterialTheme.typography.bodyLarge,
                         textAlign = TextAlign.Center,
-
                         modifier = Modifier
                             .testTag("timeText")
                             .clickable { expanded = true }
@@ -258,17 +307,7 @@ fun SelectedWatchScreen2(
                             .padding(top = 8.dp, bottom = 16.dp)
                     )
 
-                    // Reddish line that when tapped will remove the watch from selected watches
-                  /*  Box(
-                        modifier = Modifier
-                            .padding(top = 10.dp)
-                            .width(30.dp)
-                            .height(5.dp)
-                            .background(Color.Red.copy(alpha = 0.7f))
-                            .clickable {
-                                showRemoveConfirmation = true
-                            }
-                    ) */
+                    // The reddish line has been moved to the left of the timezone dropdown
 
                     // Confirmation dialog
                     if (showRemoveConfirmation) {

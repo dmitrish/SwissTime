@@ -139,9 +139,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             SwissTimeTheme {
-
                WatchApp(watchPreferencesRepository)
-
                 // Mark content as ready after a delay to give animation time to play
                 // This will dismiss the splash screen
                 SideEffect {
