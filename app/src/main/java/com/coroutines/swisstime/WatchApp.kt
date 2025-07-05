@@ -41,9 +41,10 @@ import com.coroutines.swisstime.watchfaces.KandinskyEvening
 import com.coroutines.swisstime.watchfaces.LonginesMasterCollection
 import com.coroutines.swisstime.watchfaces.ParmigianiFTonda
 import com.coroutines.swisstime.watchfaces.ChronomagusRegum
-import com.coroutines.swisstime.watchfaces.TAGHeuerCarrera
-import com.coroutines.swisstime.watchfaces.UlysseNardinMarineChronometer
-import com.coroutines.swisstime.watchfaces.VacheronConstantinClock
+import com.coroutines.swisstime.watchfaces.ConstantinusAureusChronometer
+import com.coroutines.swisstime.watchfaces.Tokinoha
+
+import com.coroutines.swisstime.watchfaces.Valentinianus
 import com.coroutines.swisstime.watchfaces.VacheronConstantinPatrimony
 import com.coroutines.swisstime.watchfaces.ZenithElPrimero
 import com.coroutines.swisstime.widget.WatchWidget
@@ -208,9 +209,9 @@ private fun getWatches(): List<WatchInfo> {
          ),*/
         // Additional Swiss watch brands
         WatchInfo(
-            name = "Vacheron Constantin Patrimony",
-            description = "The Vacheron Constantin Patrimony embodies the essence of pure style with its minimalist design and exceptional craftsmanship. Founded in 1755, Vacheron Constantin is one of the oldest watch manufacturers in the world, known for its elegant timepieces.",
-            composable = { modifier, timeZone -> VacheronConstantinClock(modifier = modifier, timeZone = TimeZone.getDefault() ) }
+            name = "Valentinianus",
+            description = "The Valentinianus embodies the essence of pure style with its minimalist design and exceptional craftsmanship. Founded in 1755, Vacheron Constantin is one of the oldest watch manufacturers in the world, known for its elegant timepieces.",
+            composable = { modifier, timeZone -> Valentinianus(modifier = modifier, timeZone = TimeZone.getDefault() ) }
         ),
         WatchInfo(
             name = "Jaeger-LeCoultre Reverso",
@@ -235,9 +236,9 @@ private fun getWatches(): List<WatchInfo> {
         ),
 
       WatchInfo(
-          name = "TAG Heuer Carrera",
-          description = "The TAG Heuer Carrera, designed in 1963, was inspired by the dangerous Carrera Panamericana race. With its clean dial and emphasis on legibility, it revolutionized chronograph design and continues to be a symbol of motorsport heritage.",
-          composable = { modifier, timeZone -> TAGHeuerCarrera(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+          name = "Tokinoha",
+          description = "The Tokinoha, designed in 1953, was inspired by the dangerous Panamericana race. With its clean dial and emphasis on legibility, it revolutionized chronograph design and continues to be a symbol of motorsport heritage.",
+          composable = { modifier, timeZone -> Tokinoha(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
       ),
       WatchInfo(
           name = "Zenith El Primero",
@@ -255,9 +256,9 @@ private fun getWatches(): List<WatchInfo> {
           composable = { modifier, timeZone -> ChopardLUC(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
       ),
       WatchInfo(
-          name = "Ulysse Nardin Marine Chronometer",
-          description = "The Ulysse Nardin Marine Chronometer continues the brand's heritage of producing precise marine chronometers for navigation. With its distinctive power reserve indicator and date display, it combines traditional craftsmanship with modern innovation.",
-          composable = { modifier, timeZone -> UlysseNardinMarineChronometer(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+          name = "Constantinus Aureus Marine Chronometer",
+          description = "The Constantinus Aureus Chronometer continues the brand's heritage of producing precise marine chronometers for navigation. With its distinctive power reserve indicator and date display, it combines traditional craftsmanship with modern innovation.",
+          composable = { modifier, timeZone -> ConstantinusAureusChronometer(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
       ),
       WatchInfo(
           name = "Girard-Perregaux Laureato",
@@ -356,9 +357,9 @@ private fun getWatches(): List<WatchInfo> {
           composable = { modifier, timeZone -> ChronomagusRegum(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
       ),
       WatchInfo(
-          name = "TAG Heuer Carrera",
-          description = "The TAG Heuer Carrera, first introduced in 1963, is a legendary chronograph designed for racing drivers. With its clean dial layout, distinctive subdials, and robust construction, it embodies TAG Heuer's connection to motorsport and their commitment to precision timing in high-speed environments.",
-          composable = { modifier, timeZone -> TAGHeuerCarrera(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+          name = "Tokinoha",
+          description = "The Tokinoha, first introduced in 1963, is a legendary chronograph designed for racing drivers. With its clean dial layout, distinctive subdials, and robust construction, it embodies Tokinoha's connection to motorsport and their commitment to precision timing in high-speed environments.",
+          composable = { modifier, timeZone -> Tokinoha(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
       ),
       WatchInfo(
           name = "Zenith El Primero",
