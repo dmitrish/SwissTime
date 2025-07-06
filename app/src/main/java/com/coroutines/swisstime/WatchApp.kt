@@ -25,27 +25,26 @@ import com.coroutines.swisstime.navigation.SwissTimeNavigationBar
 import com.coroutines.swisstime.ui.theme.SwissTimeTheme
 import com.coroutines.swisstime.viewmodel.ThemeViewModel
 import com.coroutines.swisstime.viewmodel.WatchViewModel
-import com.coroutines.swisstime.watchfaces.AhoiNeomatic38DateAtlantic
-import com.coroutines.swisstime.watchfaces.AutobahnNeomatic41DateSportsGray
-import com.coroutines.swisstime.watchfaces.BlancpainFiftyFathoms
-import com.coroutines.swisstime.watchfaces.BreguetClassique
-import com.coroutines.swisstime.watchfaces.BreitlingNavitimer
-import com.coroutines.swisstime.watchfaces.CarlFBuchererManero
-import com.coroutines.swisstime.watchfaces.ChopardLUC
+import com.coroutines.swisstime.watchfaces.Zeitwerk
+import com.coroutines.swisstime.watchfaces.JurgsenZenithor
+import com.coroutines.swisstime.watchfaces.AventinusClassique
+import com.coroutines.swisstime.watchfaces.EdgeOfSecond
+import com.coroutines.swisstime.watchfaces.YamaNoToki
 import com.coroutines.swisstime.watchfaces.LucernaRoma
-import com.coroutines.swisstime.watchfaces.GirardPerregauxLaureato
-import com.coroutines.swisstime.watchfaces.HMoserEndeavour
-import com.coroutines.swisstime.watchfaces.IWCPortugieser
-import com.coroutines.swisstime.watchfaces.JaegerLeCoultreReverso
+import com.coroutines.swisstime.watchfaces.RomaMarina
+import com.coroutines.swisstime.watchfaces.CenturioLuminor
+import com.coroutines.swisstime.watchfaces.HorologiaRomanum
+import com.coroutines.swisstime.watchfaces.Concordia
 import com.coroutines.swisstime.watchfaces.KandinskyEvening
-import com.coroutines.swisstime.watchfaces.LonginesMasterCollection
-import com.coroutines.swisstime.watchfaces.ParmigianiFTonda
+import com.coroutines.swisstime.watchfaces.PontifexChronometra
 import com.coroutines.swisstime.watchfaces.ChronomagusRegum
 import com.coroutines.swisstime.watchfaces.ConstantinusAureusChronometer
+import com.coroutines.swisstime.watchfaces.LeonardAutomatic
+import com.coroutines.swisstime.watchfaces.TemporisB
 import com.coroutines.swisstime.watchfaces.Tokinoha
 
 import com.coroutines.swisstime.watchfaces.Valentinianus
-import com.coroutines.swisstime.watchfaces.VacheronConstantinPatrimony
+import com.coroutines.swisstime.watchfaces.ChantDuTemps
 import com.coroutines.swisstime.watchfaces.ZenithElPrimero
 import com.coroutines.swisstime.widget.WatchWidget
 import kotlinx.coroutines.launch
@@ -177,11 +176,11 @@ fun WatchApp(watchPreferencesRepository: WatchPreferencesRepository) {
 
 private fun getWatches(): List<WatchInfo> {
     val watches = listOf(
-        WatchInfo(
+       /* WatchInfo(
             name = "Autobahn Neomatic 41 Date Sports Gray",
             description = "The Nomos Autobahn Neomatic 41 Date Sports Gray features a distinctive sports gray dial with a curved blue inner ring. This modern timepiece combines minimalist design with functional elements, including a date window at 6 o'clock and the signature red second hand.",
             composable = { modifier, timeZone -> AutobahnNeomatic41DateSportsGray(modifier = modifier, timeZone = TimeZone.getDefault() ) }
-        ),
+        ), */
         /* WatchInfo(
              name = "Patek Philippe Perpetual Calendar",
              description = "The Patek Philippe Perpetual Calendar London Edition features a light cream dial with gold accents and a sophisticated perpetual calendar complication. This timepiece represents the pinnacle of Swiss watchmaking with its elegant design and mechanical precision.",
@@ -209,30 +208,30 @@ private fun getWatches(): List<WatchInfo> {
          ),*/
         // Additional Swiss watch brands
         WatchInfo(
-            name = "Valentinianus",
-            description = "The Valentinianus embodies the essence of pure style with its minimalist design and exceptional craftsmanship. Founded in 1755, Vacheron Constantin is one of the oldest watch manufacturers in the world, known for its elegant timepieces.",
+            name = "Valentinianus Classique",
+            description = "The Valentinianus Classique embodies the essence of pure style with its minimalist design and exceptional craftsmanship. Founded in 1755, Valentinianus is one of the oldest watch manufacturers in the world, known for its elegant timepieces.",
             composable = { modifier, timeZone -> Valentinianus(modifier = modifier, timeZone = TimeZone.getDefault() ) }
         ),
         WatchInfo(
-            name = "Jaeger-LeCoultre Reverso",
-            description = "The Jaeger-LeCoultre Reverso features a unique reversible case originally designed for polo players in the 1930s. This Art Deco masterpiece combines technical innovation with timeless elegance, showcasing the brand's commitment to precision and craftsmanship.",
-            composable = { modifier, timeZone -> JaegerLeCoultreReverso(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+            name = "Concordia Felicitas",
+            description = "The Concordia Felicitas features a unique reversible case originally designed for polo players in the 1930s. This Art Deco masterpiece combines technical innovation with timeless elegance, showcasing the brand's commitment to precision and craftsmanship.",
+            composable = { modifier, timeZone -> Concordia(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
         ),
         WatchInfo(
-            name = "Blancpain Fifty Fathoms",
-            description = "The Blancpain Fifty Fathoms, introduced in 1953, was one of the first modern diving watches. With its distinctive black dial and luminous markers, it set the standard for dive watches with features like water resistance, rotating bezel, and excellent legibility.",
-            composable = { modifier, timeZone -> BlancpainFiftyFathoms(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+            name = "Jurgsen Zenithor",
+            description = "The Jurgsen Zenithor, introduced in 1947, was one of the first modern diving watches. With its distinctive black dial and luminous markers, it set the standard for dive watches with features like water resistance, rotating bezel, and excellent legibility.",
+            composable = { modifier, timeZone -> JurgsenZenithor(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
         ),
        WatchInfo(
-            name = "IWC Portugieser",
-            description = "The IWC Portugieser, first created in the 1930s, features a clean dial design inspired by precision marine chronometers. Known for its large case size and elegant simplicity, it represents IWC's commitment to technical excellence and timeless design.",
-            composable = { modifier, timeZone -> IWCPortugieser(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+            name = "Horologia Romanum",
+            description = "The Horologia Romanum, first created in the 1930s, features a clean dial design inspired by precision marine chronometers. Known for its large case size and elegant simplicity, it represents HR's commitment to technical excellence and timeless design.",
+            composable = { modifier, timeZone -> HorologiaRomanum(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
        ),
 
         WatchInfo(
-            name = "Breitling Navitimer",
-            description = "The Breitling Navitimer, introduced in 1952, features a distinctive slide rule bezel designed for pilots to perform flight calculations. With its busy dial and technical appearance, it has become an icon of aviation watches and a symbol of precision.",
-            composable = { modifier, timeZone -> BreitlingNavitimer(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+            name = "Temporis B",
+            description = "The Temporis B, introduced in 1952, features a distinctive slide rule bezel designed for pilots to perform flight calculations. With its busy dial and technical appearance, it has become an icon of aviation watches and a symbol of precision.",
+            composable = { modifier, timeZone -> TemporisB(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
         ),
 
       WatchInfo(
@@ -246,14 +245,14 @@ private fun getWatches(): List<WatchInfo> {
           composable = { modifier, timeZone -> ZenithElPrimero(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
       ),
       WatchInfo(
-          name = "Longines Master Collection",
-          description = "The Longines Master Collection showcases the brand's heritage of elegance and precision. With its classic design featuring roman numerals and a moonphase display, it represents Longines' commitment to traditional watchmaking values and timeless aesthetics.",
-          composable = { modifier, timeZone -> LonginesMasterCollection(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+          name = "Leonard Automatic Collection",
+          description = "The Leonard Automaic showcases the brand's heritage of elegance and precision. With its classic design featuring roman numerals and a moonphase display, it represents Leonards' commitment to traditional watchmaking values and timeless aesthetics.",
+          composable = { modifier, timeZone -> LeonardAutomatic(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
       ),
       WatchInfo(
-          name = "Chopard L.U.C",
-          description = "The Chopard L.U.C collection, named after founder Louis-Ulysse Chopard, represents the pinnacle of the brand's watchmaking expertise. Featuring in-house movements and exquisite finishing, these timepieces combine technical innovation with elegant design.",
-          composable = { modifier, timeZone -> ChopardLUC(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+          name = "山の時",
+          description = "The 山の時 (Yama-no-Toki) collection, named after founder 山の時, represents the pinnacle of the brand's watchmaking expertise. Featuring in-house movements and exquisite finishing, these timepieces combine technical innovation with elegant design.",
+          composable = { modifier, timeZone -> YamaNoToki(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
       ),
       WatchInfo(
           name = "Constantinus Aureus Marine Chronometer",
@@ -261,9 +260,9 @@ private fun getWatches(): List<WatchInfo> {
           composable = { modifier, timeZone -> ConstantinusAureusChronometer(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
       ),
       WatchInfo(
-          name = "Girard-Perregaux Laureato",
-          description = "The Girard-Perregaux Laureato, first introduced in 1975, features an integrated bracelet and octagonal bezel. With its distinctive hobnail pattern dial, it represents the brand's ability to combine technical excellence with distinctive design elements.",
-          composable = { modifier, timeZone -> GirardPerregauxLaureato(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+          name = "Roma Marina",
+          description = "The Roma Marina, first introduced in 1975, features an integrated bracelet and octagonal bezel. With its distinctive hobnail pattern dial, it represents the brand's ability to combine technical excellence with distinctive design elements.",
+          composable = { modifier, timeZone -> RomaMarina(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
       ),
       WatchInfo(
           name = "Kandinsky Evening",
@@ -327,29 +326,29 @@ private fun getWatches(): List<WatchInfo> {
           composable = { modifier, timeZone -> LucernaRoma(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
       ),
       WatchInfo(
-          name = "H. Moser & Cie Endeavour",
-          description = "The H. Moser & Cie Endeavour is renowned for its minimalist design and signature fumé dial that gradually darkens from center to edge. Founded in 1828, this independent Swiss manufacturer creates timepieces that combine traditional craftsmanship with contemporary aesthetics and innovative complications.",
-          composable = { modifier, timeZone -> HMoserEndeavour(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+          name = "Centurio Luminor",
+          description = "The Centurio Luminor is renowned for its minimalist design and signature fumé dial that gradually darkens from center to edge. Founded in 1848, this independent Swiss manufacturer creates timepieces that combine traditional craftsmanship with contemporary aesthetics and innovative complications.",
+          composable = { modifier, timeZone -> CenturioLuminor(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
       ),
       WatchInfo(
-          name = "Breguet Classique",
-          description = "The Breguet Classique embodies the timeless elegance of Abraham-Louis Breguet's original designs. With its coin-edge case, guilloche dial, and distinctive Breguet hands with hollow moon tips, it represents the pinnacle of traditional Swiss watchmaking and horological heritage.",
-          composable = { modifier, timeZone -> BreguetClassique(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+          name = "Aventinus Classique",
+          description = "The Aventinus Classique embodies the timeless elegance of Jean-Louis Aventinus's original designs. With its coin-edge case, guilloche dial, and distinctive Aventins hands with hollow moon tips, it represents the pinnacle of traditional Swiss watchmaking and horological heritage.",
+          composable = { modifier, timeZone -> AventinusClassique(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
       ),
       WatchInfo(
-          name = "Vacheron Constantin Patrimony",
-          description = "The Vacheron Constantin Patrimony exemplifies pure, minimalist elegance with its slim profile and clean dial. As one of the oldest continuously operating watch manufacturers, Vacheron Constantin combines centuries of tradition with contemporary refinement in this timeless dress watch.",
-          composable = { modifier, timeZone -> VacheronConstantinPatrimony(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+          name = "Chant du Temps",
+          description = "The Chant Du Temps exemplifies pure, minimalist elegance with its slim profile and clean dial. As one of the oldest continuously operating watch manufacturers, Chant Du Temps combines centuries of tradition with contemporary refinement in this timeless dress watch.",
+          composable = { modifier, timeZone -> ChantDuTemps(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
       ),
       WatchInfo(
-          name = "Parmigiani Fleurier Tonda",
-          description = "The Parmigiani Fleurier Tonda combines distinctive design elements with exceptional craftsmanship. Founded in 1996, this independent Swiss manufacturer draws on traditional techniques while incorporating modern innovations, resulting in watches with unique teardrop lugs and meticulously finished movements.",
-          composable = { modifier, timeZone -> ParmigianiFTonda(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+          name = "Pontifex Chronometra",
+          description = "The Pontifex Chronometra combines distinctive design elements with exceptional craftsmanship. Founded in 1996, this independent Swiss manufacturer draws on traditional techniques while incorporating modern innovations, resulting in watches with unique teardrop lugs and meticulously finished movements.",
+          composable = { modifier, timeZone -> PontifexChronometra(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
       ),
       WatchInfo(
-          name = "Carl F. Bucherer Manero",
-          description = "The Carl F. Bucherer Manero combines classic design with sophisticated complications like power reserve indicators and chronographs. Founded in Lucerne in 1888, Carl F. Bucherer represents Swiss watchmaking tradition with its elegant aesthetics and technical excellence.",
-          composable = { modifier, timeZone -> CarlFBuchererManero(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+          name = "Грань Секунды",
+          description = "The Грань Секунды combines classic design with sophisticated complications like power reserve indicators and chronographs. Founded in St. Petersburg in 1888, Грань Секунды represents Russian watchmaking tradition with its elegant aesthetics and technical excellence.",
+          composable = { modifier, timeZone -> EdgeOfSecond(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
       ),
       WatchInfo(
           name = "Chronomagus Regum",
@@ -361,15 +360,15 @@ private fun getWatches(): List<WatchInfo> {
           description = "The Tokinoha, first introduced in 1963, is a legendary chronograph designed for racing drivers. With its clean dial layout, distinctive subdials, and robust construction, it embodies Tokinoha's connection to motorsport and their commitment to precision timing in high-speed environments.",
           composable = { modifier, timeZone -> Tokinoha(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
       ),
-      WatchInfo(
+     /* WatchInfo(
           name = "Zenith El Primero",
           description = "The Zenith El Primero, introduced in 1969, was one of the world's first automatic chronograph movements. Known for its high-frequency 36,000 vibrations per hour and distinctive tri-color subdials, it represents Zenith's technical innovation and has become an icon of Swiss watchmaking excellence.",
           composable = { modifier, timeZone -> ZenithElPrimero(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
-      ),
+      ), */
       WatchInfo(
-          name = "Nomos Ahoi Neomatic 38 date Atlantic",
-          description = "The Nomos Ahoi Neomatic 38 date Atlantic features a deep blue dial inspired by the Atlantic Ocean. This German-made timepiece combines Bauhaus minimalism with dive watch functionality, featuring a waterproof design, luminous markers, and the distinctive red seconds hand that is a signature of Nomos Glashütte watches.",
-          composable = { modifier, timeZone -> AhoiNeomatic38DateAtlantic(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+          name = "Alpenglühen Zeitwerk",
+          description = "The Alpenglühen Zeitwerk features a deep blue dial inspired by the Atlantic Ocean. This German-made timepiece combines Bauhaus minimalism with dive watch functionality, featuring a waterproof design, luminous markers, and the distinctive red seconds hand that is a signature of Alpenglühen Zeitwerk watches.",
+          composable = { modifier, timeZone -> Zeitwerk(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
       )
 
 

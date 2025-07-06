@@ -28,7 +28,7 @@ private val SubdialHandColor = Color(0xFF000080)
 private val CenterDotColor = Color(0xFF000080)
 
 @Composable
-fun IWCPortugieser(modifier: Modifier = Modifier, timeZone: TimeZone = TimeZone.getDefault()) {
+fun HorologiaRomanum(modifier: Modifier = Modifier, timeZone: TimeZone = TimeZone.getDefault()) {
     var currentTime by remember { mutableStateOf(Calendar.getInstance(timeZone)) }
     val timeZoneX by rememberUpdatedState(timeZone)
 
@@ -339,6 +339,6 @@ fun IWCPortugieserPreview() {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        IWCPortugieser()
+        HorologiaRomanum()
     }
 }

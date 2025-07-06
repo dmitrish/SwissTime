@@ -43,7 +43,7 @@ private val NumbersColor = Color(0xFF000000) // Black numbers
 private val CenterDotColor = Color(0xFF4169E1) // Blue center dot
 
 @Composable
-fun JaegerLeCoultreReverso(modifier: Modifier = Modifier, timeZone: TimeZone = TimeZone.getDefault()) {
+fun Concordia(modifier: Modifier = Modifier, timeZone: TimeZone = TimeZone.getDefault()) {
     var currentTime by remember { mutableStateOf(Calendar.getInstance(timeZone )) }
 
     val timeZoneX by rememberUpdatedState(timeZone)
@@ -283,6 +283,6 @@ private fun DrawScope.drawClockHands(
 @Composable
 fun JaegerLeCoultreReversoPreview() {
     SwissTimeTheme {
-        JaegerLeCoultreReverso()
+        Concordia()
     }
 }
