@@ -43,7 +43,7 @@ private val NumbersColor = Color(0xFFE0E0E0) // Light silver numbers
 private val CenterDotColor = Color(0xFFE0E0E0) // Light silver center dot
 
 @Composable
-fun GirardPerregauxLaureato(modifier: Modifier = Modifier, timeZone: TimeZone = TimeZone.getDefault()) {
+fun RomaMarina(modifier: Modifier = Modifier, timeZone: TimeZone = TimeZone.getDefault()) {
     var currentTime by remember { mutableStateOf(Calendar.getInstance(timeZone )) }
 
     val timeZoneX by rememberUpdatedState(timeZone)
@@ -419,6 +419,6 @@ private fun Float.pow(exponent: Int): Float {
 @Composable
 fun GirardPerregauxLaureatoPreview() {
     SwissTimeTheme {
-        GirardPerregauxLaureato()
+        RomaMarina()
     }
 }

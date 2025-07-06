@@ -302,6 +302,6 @@ private fun DrawScope.drawLogo(center: Offset, radius: Float) {
 @Composable
 fun HMoserEndeavourOptimizedPreview() {
     SwissTimeTheme {
-        HMoserEndeavour()
+        CenturioLuminor()
     }
 }

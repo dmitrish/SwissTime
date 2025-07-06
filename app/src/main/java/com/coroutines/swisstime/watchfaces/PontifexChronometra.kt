@@ -1,8 +1,6 @@
 package com.coroutines.swisstime.watchfaces
 
-import android.R.attr.timeZone
 import android.graphics.Paint
-import android.graphics.Typeface
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -47,7 +45,7 @@ private val NumbersColor = Color(0xFFE0E0E0) // Silver numbers
 private val AccentColor = Color(0xFFD4AF37) // Gold accent
 
 @Composable
-fun ParmigianiFTonda(modifier: Modifier = Modifier, timeZone: TimeZone = TimeZone.getDefault()){
+fun PontifexChronometra(modifier: Modifier = Modifier, timeZone: TimeZone = TimeZone.getDefault()){
     var currentTime by remember { mutableStateOf(Calendar.getInstance(timeZone )) }
 
     val timeZoneX by rememberUpdatedState(timeZone)
@@ -424,6 +422,6 @@ private fun DrawScope.drawLogo(center: Offset, radius: Float) {
 @Composable
 fun ParmigianiFTondaPreview() {
     SwissTimeTheme {
-        ParmigianiFTonda()
+        PontifexChronometra()
     }
 }
