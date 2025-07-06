@@ -32,9 +32,7 @@ import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
 
-//private var Unit.setTypeface: Typeface
 
-// Colors inspired by Parmigiani Fleurier Tonda
 private val ClockFaceColor = Color(0xFF1E2C4A) // Deep blue dial
 private val ClockBorderColor = Color(0xFFD4AF37) // Gold border
 private val HourHandColor = Color(0xFFE0E0E0) // Silver hour hand
@@ -125,7 +123,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
 }
 
 private fun DrawScope.drawHourMarkers(center: Offset, radius: Float) {
-    // Parmigiani Tonda typically has applied hour markers
+
     for (i in 0 until 12) {
         val angle = Math.PI / 6 * i - Math.PI / 2 // Start at 12 o'clock
         val markerRadius = radius * 0.85f
@@ -196,7 +194,7 @@ private fun DrawScope.drawHourMarkers(center: Offset, radius: Float) {
 }
 
 private fun DrawScope.drawGuilloche(center: Offset, radius: Float) {
-    // Parmigiani watches often feature intricate guilloche patterns
+
     val patternRadius = radius * 0.7f
     
     // Draw a wave pattern (simplified guilloche)
@@ -236,7 +234,7 @@ private fun DrawScope.drawGuilloche(center: Offset, radius: Float) {
 }
 
 private fun DrawScope.drawDateWindow(center: Offset, radius: Float, timeZoneX: TimeZone ) {
-    // Draw date window at 3 o'clock position (common in Parmigiani Tonda models)
+
     val dateWindowX = center.x + radius * 0.6f
     val dateWindowY = center.y
     val dateWindowWidth = radius * 0.15f
@@ -311,7 +309,7 @@ private fun DrawScope.drawClockHands(
         drawPath(path, HourHandColor)
     }
 
-    // Minute hand - Delta-shaped (Parmigiani style)
+
     val minuteAngle = minute * 6f
     rotate(minuteAngle, pivot = center) {
         val path = Path().apply {
@@ -325,7 +323,7 @@ private fun DrawScope.drawClockHands(
         drawPath(path, MinuteHandColor)
     }
 
-    // Second hand - thin with counterbalance (Parmigiani style)
+
     val secondAngle = second * 6f
     rotate(secondAngle, pivot = center) {
         // Main hand
@@ -337,7 +335,7 @@ private fun DrawScope.drawClockHands(
             cap = StrokeCap.Round
         )
         
-        // Distinctive Parmigiani oval counterbalance
+
         val ovalPath = Path().apply {
             val ovalWidth = radius * 0.05f
             val ovalHeight = radius * 0.1f
@@ -371,7 +369,7 @@ private fun DrawScope.drawClockHands(
 }
 
 private fun DrawScope.drawLogo(center: Offset, radius: Float) {
-    // Draw Parmigiani Fleurier logo
+
     val brandPaint = Paint().apply {
         color = MarkersColor.hashCode()
         textSize = radius * 0.07f
@@ -420,7 +418,7 @@ private fun DrawScope.drawLogo(center: Offset, radius: Float) {
 
 @Preview(showBackground = true)
 @Composable
-fun ParmigianiFTondaPreview() {
+fun PontifexChronometraPreview() {
     SwissTimeTheme {
         PontifexChronometra()
     }

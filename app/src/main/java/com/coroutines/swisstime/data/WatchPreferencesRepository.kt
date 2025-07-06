@@ -30,6 +30,7 @@ class WatchPreferencesRepository(private val context: Context) {
         private val SELECTED_TIMEZONE_KEY = stringPreferencesKey("selected_timezone")
         private val SELECTED_WATCHES_KEY = stringSetPreferencesKey("selected_watches")
         private val USE_US_TIME_FORMAT_KEY = androidx.datastore.preferences.core.booleanPreferencesKey("use_us_time_format")
+        private val USE_DOUBLE_TAP_FOR_REMOVAL_KEY = androidx.datastore.preferences.core.booleanPreferencesKey("use_double_tap_for_removal")
 
         // Key prefix for watch-specific timezone preferences
         private const val WATCH_TIMEZONE_PREFIX = "watch_timezone_"
@@ -53,6 +54,12 @@ class WatchPreferencesRepository(private val context: Context) {
             preferences[USE_US_TIME_FORMAT_KEY] ?: true // Default to US format
         }
 
+    // Get the watch removal gesture preference (true for Double Tap, false for Long Press)
+    val useDoubleTapForRemoval: Flow<Boolean> = context.dataStore.data
+        .map { preferences ->
+            preferences[USE_DOUBLE_TAP_FOR_REMOVAL_KEY] ?: false // Default to Long Press
+        }
+
     // Save the selected watch name
     suspend fun saveSelectedWatch(watchName: String) {
         context.dataStore.edit { preferences ->
@@ -71,6 +78,13 @@ class WatchPreferencesRepository(private val context: Context) {
     suspend fun saveTimeFormat(useUsFormat: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[USE_US_TIME_FORMAT_KEY] = useUsFormat
+        }
+    }
+
+    // Save the watch removal gesture preference
+    suspend fun saveWatchRemovalGesture(useDoubleTap: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[USE_DOUBLE_TAP_FOR_REMOVAL_KEY] = useDoubleTap
         }
     }
 

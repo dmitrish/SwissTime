@@ -32,7 +32,7 @@ import kotlin.math.min
 import kotlin.math.sin
 import kotlin.math.sqrt
 
-// Colors inspired by Girard-Perregaux Laureato
+
 private val ClockFaceColor = Color(0xFF2F4F4F) // Dark slate gray dial (hobnail pattern)
 private val ClockBorderColor = Color(0xFFC0C0C0) // Silver border
 private val HourHandColor = Color(0xFFE0E0E0) // Light silver hour hand
@@ -64,7 +64,7 @@ fun RomaMarina(modifier: Modifier = Modifier, timeZone: TimeZone = TimeZone.getD
             val radius = min(size.width, size.height) / 2 * 0.8f
 
             // Draw clock face
-            drawClockFace(center, radius)
+            drawClockFace(center, radius, timeZoneX)
 
             // Get current time values
             val hour = currentTime.get(Calendar.HOUR)
@@ -87,8 +87,8 @@ fun RomaMarina(modifier: Modifier = Modifier, timeZone: TimeZone = TimeZone.getD
     }
 }
 
-private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
-    // Draw octagonal bezel (characteristic of Laureato)
+private fun DrawScope.drawClockFace(center: Offset, radius: Float, timeZoneX: TimeZone ) {
+
     val octagonPath = Path().apply {
         val octagonRadius = radius
         val innerRadius = radius * 0.92f
@@ -138,7 +138,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
         color = ClockFaceColor
     )
     
-    // Draw hobnail pattern (characteristic of Laureato)
+
     val patternRadius = radius * 0.8f
     val gridSize = 12 // Number of squares in each direction
     val squareSize = patternRadius * 2 / gridSize
@@ -199,7 +199,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
         }
     }
     
-    // Draw Girard-Perregaux logo
+
     val logoPaint = Paint().apply {
         color = Color.White.hashCode()
         textSize = radius * 0.1f
@@ -215,7 +215,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
         logoPaint
     )
     
-    // Draw "LAUREATO" text
+
     val modelPaint = Paint().apply {
         color = Color.White.hashCode()
         textSize = radius * 0.07f
@@ -258,7 +258,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
         isAntiAlias = true
     }
     
-    val day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH).toString()
+    val day = Calendar.getInstance(timeZoneX).get(Calendar.DAY_OF_MONTH).toString()
     drawContext.canvas.nativeCanvas.drawText(
         day,
         dateX,
@@ -268,7 +268,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
 }
 
 private fun DrawScope.drawHourMarkersAndNumbers(center: Offset, radius: Float) {
-    // Laureato uses applied baton markers
+
     for (i in 0 until 12) {
         val angle = Math.PI / 6 * i
         val markerLength = radius * 0.1f
@@ -301,7 +301,7 @@ private fun DrawScope.drawHourMarkersAndNumbers(center: Offset, radius: Float) {
         }
     }
     
-    // Draw double marker at 12 o'clock (characteristic of Laureato)
+
     val angle12 = Math.PI * 1.5 // 12 o'clock
     val marker12X = center.x + cos(angle12).toFloat() * radius * 0.7f
     val marker12Y = center.y + sin(angle12).toFloat() * radius * 0.7f
@@ -417,7 +417,7 @@ private fun Float.pow(exponent: Int): Float {
 
 @Preview(showBackground = true)
 @Composable
-fun GirardPerregauxLaureatoPreview() {
+fun RomaMarinaPreview() {
     SwissTimeTheme {
         RomaMarina()
     }
