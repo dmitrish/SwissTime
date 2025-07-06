@@ -14,6 +14,7 @@ import com.coroutines.swisstime.watchfaces.YamaNoToki
 import com.coroutines.swisstime.watchfaces.LucernaRoma
 import com.coroutines.swisstime.watchfaces.RomaMarina
 import com.coroutines.swisstime.watchfaces.CenturioLuminor
+import com.coroutines.swisstime.watchfaces.ChantDuTemps
 import com.coroutines.swisstime.watchfaces.HorologiaRomanum
 import com.coroutines.swisstime.watchfaces.Concordia
 import com.coroutines.swisstime.watchfaces.PontifexChronometra
@@ -25,6 +26,8 @@ import com.coroutines.swisstime.watchfaces.Tokinoha
 import com.coroutines.swisstime.watchfaces.Valentinianus
 import com.coroutines.swisstime.watchfaces.ZenithElPrimero
 import com.coroutines.swisstime.watchfaces.KandinskyEvening
+import com.coroutines.swisstime.watchfaces.LeonardAutomatic
+import com.coroutines.swisstime.watchfaces.Zeitwerk
 import java.util.TimeZone
 
 // Map of watch name prefixes to their corresponding composable functions
@@ -32,21 +35,22 @@ import java.util.TimeZone
 private val watchFaceMap = mapOf<String, @Composable (Modifier, TimeZone) -> Unit>(
     "Zenith El Primero" to { mod, tz -> ZenithElPrimero(modifier = mod, timeZone = tz) },
     "Chronomagus Regum" to { mod, tz -> ChronomagusRegum(modifier = mod, timeZone = tz) },
-    "Blanc" to { mod, tz -> JurgsenZenithor(modifier = mod, timeZone = tz) },
-    //"Breitling" to { mod, tz -> BreitlingNavitimer(modifier = mod, timeZone = tz) },
+    "Jurgsen Zenithor" to { mod, tz -> JurgsenZenithor(modifier = mod, timeZone = tz) },
+    "Roma Marina" to { mod, tz -> RomaMarina(modifier = mod, timeZone = tz) },
+    "Leonard Automatic" to { mod, tz -> LeonardAutomatic(modifier = mod, timeZone = tz) },
     "Aventinus" to { mod, tz -> AventinusClassique(modifier = mod, timeZone = tz) },
     "Carl" to { mod, tz -> EdgeOfSecond(modifier = mod, timeZone = tz) },
-    "Chopard" to { mod, tz -> YamaNoToki(modifier = mod, timeZone = tz) },
+    "YamaNoToki" to { mod, tz -> YamaNoToki(modifier = mod, timeZone = tz) },
     "Lucerna" to { mod, tz -> LucernaRoma(modifier = mod, timeZone = tz) },
     "Girard" to { mod, tz -> RomaMarina(modifier = mod, timeZone = tz) },
-    "H. Moser & Cie Endeavour" to { mod, tz -> CenturioLuminor(modifier = mod, timeZone = tz) },
-    "IWC" to { mod, tz -> HorologiaRomanum(modifier = mod, timeZone = tz) },
-    "Jaeger" to { mod, tz -> Concordia(modifier = mod, timeZone = tz) },
-   // "Longines" to { mod, tz -> LonginesMasterCollection(modifier = mod, timeZone = tz) },
-    "Parmigiani" to { mod, tz -> PontifexChronometra(modifier = mod, timeZone = tz) },
-    "Patek" to { mod, tz -> PatekPhilippeClock(modifier = mod, timeZone = tz) },
+    "Centurio Luminor" to { mod, tz -> CenturioLuminor(modifier = mod, timeZone = tz) },
+    "Horologia Romanum" to { mod, tz -> HorologiaRomanum(modifier = mod, timeZone = tz) },
+    "Concordia" to { mod, tz -> Concordia(modifier = mod, timeZone = tz) },
+    "Chant Du Temps" to { mod, tz -> ChantDuTemps(modifier = mod, timeZone = tz) },
+    "Pontifex Chronometra" to { mod, tz -> PontifexChronometra(modifier = mod, timeZone = tz) },
+    "Alpenglühen Zeitwerk" to { mod, tz -> Zeitwerk(modifier = mod, timeZone = tz) },
     "Rolex Submariner" to { mod, tz -> RolexSubmarinerClock(modifier = mod, timeZone = tz) },
-    "TAG" to { mod, tz -> Tokinoha(modifier = mod, timeZone = tz) },
+    "Tokinoha" to { mod, tz -> Tokinoha(modifier = mod, timeZone = tz) },
     "Constantinus Aureus" to { mod, tz -> ConstantinusAureusChronometer(modifier = mod, timeZone = tz) },
     "Valentinianus" to { mod, tz -> Valentinianus(modifier = mod, timeZone = tz) },
     "Kandinsky Evening" to { mod, tz -> KandinskyEvening(modifier = mod, timeZone = tz) }

@@ -56,6 +56,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.ui.input.pointer.pointerInput
 import com.coroutines.swisstime.WatchInfo
 import com.coroutines.swisstime.ui.theme.DarkNavyTriadic
 import com.coroutines.swisstime.viewmodel.WatchViewModel
@@ -128,6 +130,9 @@ fun SelectedWatchScreen2(
     val context = LocalContext.current
     val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
+    // Get the watch removal gesture preference
+    val useDoubleTapForRemoval = watchViewModel?.useDoubleTapForRemoval?.collectAsState()?.value ?: false
+
 
 
     Scaffold(
@@ -151,6 +156,14 @@ fun SelectedWatchScreen2(
                     .padding(horizontal = 16.dp),
                 contentAlignment = Alignment.TopCenter
             ) {
+
+            // Display the time zone dropdown
+            /*Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                contentAlignment = Alignment.TopCenter
+            ) {
                 // White X icon at the top right that when tapped will remove the watch from selected watches
                 Box(
                     modifier = Modifier
@@ -168,7 +181,7 @@ fun SelectedWatchScreen2(
                                 showRemoveConfirmation = true
                             }
                     )
-                }
+                } */
 
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -180,11 +193,24 @@ fun SelectedWatchScreen2(
                         modifier = Modifier
                             .clickable { expanded = true }
                             .padding(8.dp)
+                           // .padding(top = 30.dp)
                             .onGloballyPositioned { coordinates ->
                                 // Save the size of the Row to position the dropdown menu
                                 rowSize = coordinates.size.toSize()
                             }
                     ) {
+                        // X icon on the left of the timezone dropdown
+                       /* Icon(
+                            imageVector = Icons.Filled.Close,
+                            contentDescription = "Remove Watch",
+                            tint = Color.White,
+                            modifier = Modifier
+                                .padding(start = 16.dp, end = 8.dp)
+                                .clickable(onClick = {
+                                    showRemoveConfirmation = true
+                                })
+                        ) */
+
                         Text(
                             text = watchTimeZoneInfo?.displayName ?: "Select Time Zone",
                             style = MaterialTheme.typography.bodyLarge,
@@ -362,7 +388,39 @@ fun SelectedWatchScreen2(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(1f), // Square aspect ratio for the watch
+                    .aspectRatio(1f) // Square aspect ratio for the watch
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onLongPress = {
+                                if (!useDoubleTapForRemoval) {
+                                    // Trigger vibration feedback
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                        vibrator.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE))
+                                    } else {
+                                        // Deprecated in API 26
+                                        @Suppress("DEPRECATION")
+                                        vibrator.vibrate(50)
+                                    }
+                                    // Show confirmation dialog
+                                    showRemoveConfirmation = true
+                                }
+                            },
+                            onDoubleTap = {
+                                if (useDoubleTapForRemoval) {
+                                    // Trigger vibration feedback
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                        vibrator.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE))
+                                    } else {
+                                        // Deprecated in API 26
+                                        @Suppress("DEPRECATION")
+                                        vibrator.vibrate(50)
+                                    }
+                                    // Show confirmation dialog
+                                    showRemoveConfirmation = true
+                                }
+                            }
+                        )
+                    },
                 contentAlignment = Alignment.Center
             ) {
                 //selectedWatch.composable(Modifier.fillMaxSize(0.8f), watchViewModel, currentTimeZone.value)

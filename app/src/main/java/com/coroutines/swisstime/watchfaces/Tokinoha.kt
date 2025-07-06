@@ -30,7 +30,7 @@ import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
 
-// Colors inspired by TAG Heuer Carrera
+
 private val ClockFaceColor = Color(0xFFFFFFFF) // White dial
 private val ClockBorderColor = Color(0xFF303030) // Dark gray border
 private val HourHandColor = Color(0xFF000000) // Black hour hand
@@ -74,7 +74,7 @@ fun Tokinoha(modifier: Modifier = Modifier, timeZone: TimeZone = TimeZone.getDef
             val second = currentTime.get(Calendar.SECOND)
 
             // Draw hour markers and numbers
-            drawHourMarkersAndNumbers(center, radius)
+            drawHourMarkersAndNumbers(center, radius, timeZoneX)
 
             // Draw clock hands
             drawClockHands(center, radius, hour, minute, second)
@@ -264,8 +264,8 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
     }
 }
 
-private fun DrawScope.drawHourMarkersAndNumbers(center: Offset, radius: Float) {
-    // Carrera uses applied hour markers and minimal design
+private fun DrawScope.drawHourMarkersAndNumbers(center: Offset, radius: Float, timeZone: TimeZone ) {
+
     
     // Draw hour markers (applied baton style)
     for (i in 1..12) {
@@ -327,7 +327,7 @@ private fun DrawScope.drawHourMarkersAndNumbers(center: Offset, radius: Float) {
         isAntiAlias = true
     }
     
-    val day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH).toString()
+    val day = Calendar.getInstance(timeZone).get(Calendar.DAY_OF_MONTH).toString()
     drawContext.canvas.nativeCanvas.drawText(
         day,
         dateX,
@@ -391,7 +391,7 @@ private fun DrawScope.drawClockHands(
             cap = StrokeCap.Round
         )
         
-        // Distinctive TAG Heuer counterbalance
+
         drawCircle(
             color = SecondHandColor,
             radius = radius * 0.04f,
@@ -402,7 +402,7 @@ private fun DrawScope.drawClockHands(
 
 @Preview(showBackground = true)
 @Composable
-fun TAGHeuerCarreraPreview() {
+fun TokinohaPreview() {
     SwissTimeTheme {
         Tokinoha()
     }
