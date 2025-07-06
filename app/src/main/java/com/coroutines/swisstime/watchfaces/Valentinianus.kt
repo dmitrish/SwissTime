@@ -29,7 +29,7 @@ import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
 
-// Colors inspired by Vacheron Constantin Patrimony
+
 private val ClockFaceColor = Color(0xFFF8F5E6) // Ivory/cream dial
 private val ClockBorderColor = Color(0xFFB27D4B) // Rose gold border
 private val HourHandColor = Color(0xFFB27D4B) // Rose gold hour hand
@@ -113,7 +113,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
 }
 
 private fun DrawScope.drawHourMarkersAndNumbers(center: Offset, radius: Float) {
-    // Vacheron Constantin Patrimony typically uses slim hour markers and Roman numerals
+
     
     // Draw hour markers (slim lines)
     for (i in 1..60) {

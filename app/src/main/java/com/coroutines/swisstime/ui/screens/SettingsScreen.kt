@@ -58,6 +58,9 @@ fun SettingsScreen(
     // Collect time format preference from the WatchViewModel
     val useUsTimeFormat by watchViewModel.useUsTimeFormat.collectAsState()
 
+    // Collect watch removal gesture preference from the WatchViewModel
+    val useDoubleTapForRemoval by watchViewModel.useDoubleTapForRemoval.collectAsState()
+
     // State for showing the theme selection dialog
     var showThemeDialog by remember { mutableStateOf(false) }
 
@@ -211,6 +214,53 @@ fun SettingsScreen(
                     Switch(
                         checked = useUsTimeFormat,
                         onCheckedChange = { watchViewModel.saveTimeFormat(it) }
+                    )
+                }
+            }
+        }
+
+        // Watch removal gesture settings card
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            )
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(
+                    text = "Watch Removal Gesture",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Watch removal gesture toggle
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column {
+                        Text(
+                            text = "Use Double Tap",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = if (useDoubleTapForRemoval) "Double tap to remove watch" else "Long press to remove watch",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                        )
+                    }
+
+                    Switch(
+                        checked = useDoubleTapForRemoval,
+                        onCheckedChange = { watchViewModel.saveWatchRemovalGesture(it) }
                     )
                 }
             }
