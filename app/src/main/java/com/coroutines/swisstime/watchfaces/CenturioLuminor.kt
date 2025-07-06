@@ -29,7 +29,7 @@ private val MarkersColor = Color(0xFFE0E0E0)
 private val LogoColor = Color(0xFFE0E0E0)
 
 @Composable
-fun HMoserEndeavour(modifier: Modifier = Modifier, timeZone: TimeZone = TimeZone.getDefault()) {
+fun CenturioLuminor(modifier: Modifier = Modifier, timeZone: TimeZone = TimeZone.getDefault()) {
     var currentTime by remember { mutableStateOf(Calendar.getInstance(timeZone)) }
     val timeZoneState by rememberUpdatedState(timeZone)
 
@@ -261,6 +261,6 @@ fun HMoserEndeavourPreview() {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        HMoserEndeavour()
+        CenturioLuminor()
     }
 }

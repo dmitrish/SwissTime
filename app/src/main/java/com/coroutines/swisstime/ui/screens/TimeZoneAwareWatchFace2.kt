@@ -7,18 +7,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.coroutines.swisstime.WatchInfo
 import com.coroutines.swisstime.viewmodel.WatchViewModel
-import com.coroutines.swisstime.watchfaces.BlancpainFiftyFathoms
-import com.coroutines.swisstime.watchfaces.BreguetClassique
-import com.coroutines.swisstime.watchfaces.BreitlingNavitimer
-import com.coroutines.swisstime.watchfaces.CarlFBuchererManero
-import com.coroutines.swisstime.watchfaces.ChopardLUC
+import com.coroutines.swisstime.watchfaces.AventinusClassique
+import com.coroutines.swisstime.watchfaces.JurgsenZenithor
+import com.coroutines.swisstime.watchfaces.EdgeOfSecond
+import com.coroutines.swisstime.watchfaces.YamaNoToki
 import com.coroutines.swisstime.watchfaces.LucernaRoma
-import com.coroutines.swisstime.watchfaces.GirardPerregauxLaureato
-import com.coroutines.swisstime.watchfaces.HMoserEndeavour
-import com.coroutines.swisstime.watchfaces.IWCPortugieser
-import com.coroutines.swisstime.watchfaces.JaegerLeCoultreReverso
-import com.coroutines.swisstime.watchfaces.LonginesMasterCollection
-import com.coroutines.swisstime.watchfaces.ParmigianiFTonda
+import com.coroutines.swisstime.watchfaces.RomaMarina
+import com.coroutines.swisstime.watchfaces.CenturioLuminor
+import com.coroutines.swisstime.watchfaces.HorologiaRomanum
+import com.coroutines.swisstime.watchfaces.Concordia
+import com.coroutines.swisstime.watchfaces.PontifexChronometra
 import com.coroutines.swisstime.watchfaces.PatekPhilippeClock
 import com.coroutines.swisstime.watchfaces.ChronomagusRegum
 import com.coroutines.swisstime.watchfaces.ConstantinusAureusChronometer
@@ -34,18 +32,18 @@ import java.util.TimeZone
 private val watchFaceMap = mapOf<String, @Composable (Modifier, TimeZone) -> Unit>(
     "Zenith El Primero" to { mod, tz -> ZenithElPrimero(modifier = mod, timeZone = tz) },
     "Chronomagus Regum" to { mod, tz -> ChronomagusRegum(modifier = mod, timeZone = tz) },
-    "Blanc" to { mod, tz -> BlancpainFiftyFathoms(modifier = mod, timeZone = tz) },
-    "Breitling" to { mod, tz -> BreitlingNavitimer(modifier = mod, timeZone = tz) },
-    "Breguet" to { mod, tz -> BreguetClassique(modifier = mod, timeZone = tz) },
-    "Carl" to { mod, tz -> CarlFBuchererManero(modifier = mod, timeZone = tz) },
-    "Chopard" to { mod, tz -> ChopardLUC(modifier = mod, timeZone = tz) },
+    "Blanc" to { mod, tz -> JurgsenZenithor(modifier = mod, timeZone = tz) },
+    //"Breitling" to { mod, tz -> BreitlingNavitimer(modifier = mod, timeZone = tz) },
+    "Aventinus" to { mod, tz -> AventinusClassique(modifier = mod, timeZone = tz) },
+    "Carl" to { mod, tz -> EdgeOfSecond(modifier = mod, timeZone = tz) },
+    "Chopard" to { mod, tz -> YamaNoToki(modifier = mod, timeZone = tz) },
     "Lucerna" to { mod, tz -> LucernaRoma(modifier = mod, timeZone = tz) },
-    "Girard" to { mod, tz -> GirardPerregauxLaureato(modifier = mod, timeZone = tz) },
-    "H. Moser & Cie Endeavour" to { mod, tz -> HMoserEndeavour(modifier = mod, timeZone = tz) },
-    "IWC" to { mod, tz -> IWCPortugieser(modifier = mod, timeZone = tz) },
-    "Jaeger" to { mod, tz -> JaegerLeCoultreReverso(modifier = mod, timeZone = tz) },
-    "Longines" to { mod, tz -> LonginesMasterCollection(modifier = mod, timeZone = tz) },
-    "Parmigiani" to { mod, tz -> ParmigianiFTonda(modifier = mod, timeZone = tz) },
+    "Girard" to { mod, tz -> RomaMarina(modifier = mod, timeZone = tz) },
+    "H. Moser & Cie Endeavour" to { mod, tz -> CenturioLuminor(modifier = mod, timeZone = tz) },
+    "IWC" to { mod, tz -> HorologiaRomanum(modifier = mod, timeZone = tz) },
+    "Jaeger" to { mod, tz -> Concordia(modifier = mod, timeZone = tz) },
+   // "Longines" to { mod, tz -> LonginesMasterCollection(modifier = mod, timeZone = tz) },
+    "Parmigiani" to { mod, tz -> PontifexChronometra(modifier = mod, timeZone = tz) },
     "Patek" to { mod, tz -> PatekPhilippeClock(modifier = mod, timeZone = tz) },
     "Rolex Submariner" to { mod, tz -> RolexSubmarinerClock(modifier = mod, timeZone = tz) },
     "TAG" to { mod, tz -> Tokinoha(modifier = mod, timeZone = tz) },

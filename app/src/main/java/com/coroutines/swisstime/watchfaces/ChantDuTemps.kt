@@ -27,7 +27,6 @@ import com.coroutines.swisstime.ui.theme.SwissTimeTheme
 import kotlinx.coroutines.delay
 import java.util.Calendar
 import java.util.TimeZone
-import kotlin.concurrent.timer
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
@@ -43,7 +42,7 @@ private val NumbersColor = Color(0xFF4A4A4A) // Dark gray numbers
 private val AccentColor = Color(0xFFB8860B) // Gold accent
 
 @Composable
-fun VacheronConstantinPatrimony(modifier: Modifier = Modifier,  timeZone: TimeZone = TimeZone.getDefault()){
+fun ChantDuTemps(modifier: Modifier = Modifier, timeZone: TimeZone = TimeZone.getDefault()){
     var currentTime by remember { mutableStateOf(Calendar.getInstance(timeZone )) }
 
     val timeZoneX by rememberUpdatedState(timeZone)
@@ -325,6 +324,6 @@ private fun DrawScope.drawLogo(center: Offset, radius: Float) {
 @Composable
 fun VacheronConstantinPatrimonyPreview() {
     SwissTimeTheme {
-        VacheronConstantinPatrimony()
+        ChantDuTemps()
     }
 }
