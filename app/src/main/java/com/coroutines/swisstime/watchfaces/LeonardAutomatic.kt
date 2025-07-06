@@ -45,7 +45,7 @@ private val MoonColor = Color(0xFFFFFACD) // Light yellow moon
 private val CenterDotColor = Color(0xFF00008B) // Dark blue center dot
 
 @Composable
-fun LonginesMasterCollection(modifier: Modifier = Modifier, timeZone: TimeZone = TimeZone.getDefault()) {
+fun LeonardAutomatic(modifier: Modifier = Modifier, timeZone: TimeZone = TimeZone.getDefault()) {
     var currentTime by remember { mutableStateOf(Calendar.getInstance(timeZone )) }
 
     val timeZoneX by rememberUpdatedState(timeZone)
@@ -370,6 +370,6 @@ private fun DrawScope.drawClockHands(
 @Composable
 fun LonginesMasterCollectionPreview() {
     SwissTimeTheme {
-        LonginesMasterCollection()
+        LeonardAutomatic()
     }
 }
