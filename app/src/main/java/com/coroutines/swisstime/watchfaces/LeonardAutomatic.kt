@@ -75,7 +75,7 @@ fun LeonardAutomatic(modifier: Modifier = Modifier, timeZone: TimeZone = TimeZon
             val second = currentTime.get(Calendar.SECOND)
 
             // Draw hour markers and numbers
-            drawHourMarkersAndNumbers(center, radius)
+            drawHourMarkersAndNumbers(center, radius, timeZoneX)
 
             // Draw clock hands
             drawClockHands(center, radius, hour, minute, second)
@@ -213,7 +213,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
     )
 }
 
-private fun DrawScope.drawHourMarkersAndNumbers(center: Offset, radius: Float) {
+private fun DrawScope.drawHourMarkersAndNumbers(center: Offset, radius: Float, timeZone: TimeZone ) {
     // Longines Master Collection typically uses Roman numerals
     val romanNumerals = listOf("I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII")
     
@@ -285,7 +285,7 @@ private fun DrawScope.drawHourMarkersAndNumbers(center: Offset, radius: Float) {
         isAntiAlias = true
     }
     
-    val day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH).toString()
+    val day = Calendar.getInstance(timeZone).get(Calendar.DAY_OF_MONTH).toString()
     drawContext.canvas.nativeCanvas.drawText(
         day,
         dateX,

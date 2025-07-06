@@ -117,6 +117,14 @@ class WatchViewModel(
             initialValue = true // Default to US format
         )
 
+    // Get the watch removal gesture preference
+    val useDoubleTapForRemoval: StateFlow<Boolean> = watchPreferencesRepository.useDoubleTapForRemoval
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = false // Default to Long Press
+        )
+
     // Cache for TimeZone objects to avoid repeated lookups
     private val timeZoneCache = mutableMapOf<String, TimeZone>()
 
@@ -307,6 +315,13 @@ class WatchViewModel(
     fun saveTimeFormat(useUsFormat: Boolean) {
         viewModelScope.launch {
             watchPreferencesRepository.saveTimeFormat(useUsFormat)
+        }
+    }
+
+    // Save the watch removal gesture preference
+    fun saveWatchRemovalGesture(useDoubleTap: Boolean) {
+        viewModelScope.launch {
+            watchPreferencesRepository.saveWatchRemovalGesture(useDoubleTap)
         }
     }
 

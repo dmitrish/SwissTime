@@ -25,9 +25,9 @@ import com.coroutines.swisstime.navigation.SwissTimeNavigationBar
 import com.coroutines.swisstime.ui.theme.SwissTimeTheme
 import com.coroutines.swisstime.viewmodel.ThemeViewModel
 import com.coroutines.swisstime.viewmodel.WatchViewModel
+import com.coroutines.swisstime.watchfaces.AventinusClassique
 import com.coroutines.swisstime.watchfaces.Zeitwerk
 import com.coroutines.swisstime.watchfaces.JurgsenZenithor
-import com.coroutines.swisstime.watchfaces.AventinusClassique
 import com.coroutines.swisstime.watchfaces.EdgeOfSecond
 import com.coroutines.swisstime.watchfaces.YamaNoToki
 import com.coroutines.swisstime.watchfaces.LucernaRoma
