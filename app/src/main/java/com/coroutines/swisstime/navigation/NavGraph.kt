@@ -9,6 +9,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
@@ -129,20 +130,18 @@ fun NavGraph(
                         navController.navigate(Screen.WatchDetail.createRoute(index))
                },
                 onTitleClick = { watch ->
-                    // Save the selected watch via the ViewModel
-                    watchViewModel.saveSelectedWatch(watch)
+                    // Toggle the watch's selection status using the new method
+                    val wasAdded = watchViewModel.toggleWatchSelection(watch)
 
-                    // Navigate to the Time screen
-                    navController.navigate(Screen.Time.route)
-                },
-                selectedWatchName = selectedWatchName,
-                onSelectForWidget = {
+                    // Show appropriate toast message
                     Toast.makeText(
                         context,
-                        "\"${selectedWatchName}\" selected for widget",
+                        if (wasAdded) "\"${watch.name}\" added to selected watches" 
+                        else "\"${watch.name}\" removed from selected watches",
                         Toast.LENGTH_SHORT
                     ).show()
                 },
+                selectedWatches = watchViewModel.selectedWatches.collectAsState().value,
                 listState = listState
             )
         }
