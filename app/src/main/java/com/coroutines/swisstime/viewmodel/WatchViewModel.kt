@@ -325,6 +325,34 @@ class WatchViewModel(
         }
     }
 
+    // Toggle a watch's selection status (add if not selected, remove if already selected)
+    fun toggleWatchSelection(watch: WatchInfo): Boolean {
+        val currentWatches = _selectedWatches.value
+        val isCurrentlySelected = currentWatches.any { it.name == watch.name }
+
+        viewModelScope.launch {
+            if (isCurrentlySelected) {
+                // If the watch is already selected, remove it
+                val updatedWatches = currentWatches.filter { it.name != watch.name }
+                _selectedWatches.value = updatedWatches
+
+                // Persist the updated list
+                watchPreferencesRepository.clearAllSelectedWatches()
+                updatedWatches.forEach { watchInfo ->
+                    watchPreferencesRepository.addSelectedWatch(watchInfo.name)
+                }
+            } else {
+                // If the watch is not selected, add it
+                _selectedWatches.value = currentWatches + watch
+
+                // Persist the addition
+                watchPreferencesRepository.addSelectedWatch(watch.name)
+            }
+        }
+
+        return !isCurrentlySelected // Return the new selection state
+    }
+
     /**
      * Factory for creating WatchViewModel instances
      */

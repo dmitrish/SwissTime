@@ -50,6 +50,8 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.EaseIn
+import androidx.compose.ui.layout.FirstBaseline
+import androidx.compose.ui.text.style.TextOverflow
 import com.coroutines.swisstime.WatchInfo
 import com.coroutines.swisstime.darken
 import com.coroutines.swisstime.ui.screens.BrandLogo
@@ -112,15 +114,14 @@ fun WatchListScreen(
     watches: List<WatchInfo>,
     onWatchClick: (WatchInfo) -> Unit,
     onTitleClick: (WatchInfo) -> Unit,
-    selectedWatchName: String?,
-    onSelectForWidget: (WatchInfo) -> Any,
+    selectedWatches: List<WatchInfo>,
     modifier: Modifier = Modifier,
     listState: LazyListState
 ) {
     // Capture the background color
     val backgroundColor = MaterialTheme.colorScheme.background
     val context = LocalContext.current
-    val brandLogos = getBrandLogos(context)
+   // val brandLogos = getBrandLogos(context)
 
     // Use a Surface that fills the entire screen including the status bar area
     Surface(
@@ -139,7 +140,7 @@ fun WatchListScreen(
             )
 
             // Determine if brand logos row should be visible based on scroll position
-            val isRowVisible by remember {
+          /*  val isRowVisible by remember {
                 derivedStateOf {
                     // Show row when close to the top of the list for smoother transition
                     listState.firstVisibleItemIndex == 0 && listState.firstVisibleItemScrollOffset < 50
@@ -169,22 +170,21 @@ fun WatchListScreen(
                     onClick = { /* Optional: Handle click on logo */ },
                     modifier = Modifier.background(backgroundColor)
                 )
-            }
+            } */
 
             // Main content
             LazyColumn(
                 state = listState,
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(16.dp)
+                contentPadding = PaddingValues(8.dp)
             ) {
                 items(watches) { watch ->
                     WatchListItem(
                         watch = watch,
                         onClick = { onWatchClick(watch) },
                         onTitleClick = onTitleClick,
-                        isSelectedForWidget = selectedWatchName == watch.name,
-                        onSelectForWidget = { onSelectForWidget(watch) },
+                        isSelectedForWidget = selectedWatches.any { it.name == watch.name },
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
@@ -199,7 +199,6 @@ fun WatchListItem(
     onClick: () -> Unit,
     onTitleClick: (WatchInfo) -> Unit,
     isSelectedForWidget: Boolean = false,
-    onSelectForWidget: () -> Any,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -213,25 +212,24 @@ fun WatchListItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(0.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(8.dp),
+            verticalAlignment = Alignment.Top // Align tops of image and content
         ) {
             // Watch face on the left
             Box(
                 modifier = Modifier
-                    .size(120.dp)
-                    .padding(0.dp, 8.dp, 8.dp, 8.dp),
+                    .size(80.dp) // Reduced from 120.dp to 80.dp
+                    .padding(end = 8.dp),
                 contentAlignment = Alignment.Center
             ) {
-                watch.composable(Modifier.fillMaxSize(), TimeZone.getDefault() )
+                watch.composable(Modifier.fillMaxSize(), TimeZone.getDefault())
             }
 
-            Spacer(modifier = Modifier.width(16.dp))
-
-            // Description on the right
+            // Column for title and description on the right
             Column(
                 modifier = Modifier.weight(1f)
             ) {
+                // Title row
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -261,10 +259,13 @@ fun WatchListItem(
                 }
 
                 Spacer(modifier = Modifier.height(4.dp))
+
+                // Description below the title
                 Text(
                     text = watch.description,
                     style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 3,
+                    maxLines = 5,
+                    overflow = TextOverflow.Ellipsis,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
                 )
             }

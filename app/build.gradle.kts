@@ -6,23 +6,25 @@ plugins {
 
 android {
     namespace = "com.coroutines.swisstime"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.coroutines.swisstime"
+        applicationId = "com.coroutines.clockwithtimezone"
         minSdk = 24
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        //noinspection EditedTargetSdkVersion
+        targetSdk = 36
+        versionCode = 3
+        versionName = "1.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            signingConfig = signingConfigs.getByName("debug")
+         //   signingConfig = signingConfigs.getByName("debug")
+         //      signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
