@@ -339,8 +339,8 @@ fun SelectedWatchScreen2(
                     if (showRemoveConfirmation) {
                         AlertDialog(
                             onDismissRequest = { showRemoveConfirmation = false },
-                            title = { Text("Remove Watch") },
-                            text = { Text("Are you sure you want to remove ${selectedWatch.name} from your selected watches?") },
+                            title = { Text("Remove Watch", color = Color.Black) },
+                            text = { Text("Are you sure you want to remove ${selectedWatch.name} from your selected watches?", color = Color.Black) },
                             confirmButton = {
                                 TextButton(
                                     onClick = {
