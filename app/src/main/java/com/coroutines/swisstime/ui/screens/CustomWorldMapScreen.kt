@@ -124,6 +124,11 @@ fun CustomWorldMapWithDayNight(
     modifier: Modifier = Modifier
 ) {
     var currentTime = Calendar.getInstance()
+
+    LaunchedEffect(true){
+        currentTime =  Calendar.getInstance()
+        delay(1000 * 6)
+    }
     // Constants from earth.py
     val blur = 4f  // blur angle for terminator
     val phong = true  // enable Phong shading
