@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -35,6 +36,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.LocalConfiguration
+import android.content.res.Configuration
+import com.coroutines.swisstime.effects.FrostedGlassAGSLEffect
 import com.coroutines.swisstime.util.PerformanceMetrics
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
@@ -370,116 +374,192 @@ fun TimeScreen(
             }
         }
 
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Horizontal pager for watches
-            HorizontalPager(
-                state = pagerState,
-                // Reduce the number of preloaded pages to minimize memory usage and initial rendering cost
-                // This should improve the first page transition performance
-                beyondViewportPageCount = 1, // Only load the current page, previous, and next page
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
-                // Set a large key to ensure pages are not recycled
-                // Include the page index and the total number of watches to ensure proper keying
-                key = { page -> "watch_${selectedWatches[page].name}_$page" },
-                // Use a custom content padding to reduce the amount of content that needs to be rendered
-                // This improves performance by reducing the number of composables that need to be created
-                contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 0.dp)
-            ) { page ->
-                // Log the page index and measure rendering time
-                val startTime = System.currentTimeMillis()
-                Log.d(TAG, "Page $page rendering started at $startTime")
+        // Get the current configuration to determine orientation
+        val configuration = LocalConfiguration.current
+        val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
-                // Display the selected watch screen for the current page
-                val watch = selectedWatches[page]
+        if (isLandscape) {
+            // Landscape layout - pager on the left, map on the right
+            Row(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                // Left side - Pager with watches
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // Horizontal pager for watches
+                    HorizontalPager(
+                        state = pagerState,
+                        beyondViewportPageCount = 1,
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth(),
+                        key = { page -> "watch_${selectedWatches[page].name}_$page" },
+                        contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 0.dp)
+                    ) { page ->
+                        // Log the page index and measure rendering time
+                        val startTime = System.currentTimeMillis()
+                        Log.d(TAG, "Page $page rendering started at $startTime")
 
-                // Use a key that includes the watch name to ensure proper recomposition
-                // This helps avoid unnecessary recompositions during page transitions
-                androidx.compose.runtime.key(watch.name) {
-                    // Wrap in a Box to improve performance by reducing the number of measure/layout passes
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        // Use LaunchedEffect to measure and log rendering time
-                        LaunchedEffect(page) {
-                            val endTime = System.currentTimeMillis()
-                            val renderTime = endTime - startTime
+                        // Display the selected watch screen for the current page
+                        val watch = selectedWatches[page]
 
-                            // Log rendering metrics
-                            Log.d(TAG, "Page $page rendering completed at $endTime")
-                            Log.d(TAG, "Page $page rendering took $renderTime ms")
-                            Log.d(TAG, "Page $page contains watch: ${watch.name}")
+                        androidx.compose.runtime.key(watch.name) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                // Use LaunchedEffect to measure and log rendering time
+                                LaunchedEffect(page) {
+                                    val endTime = System.currentTimeMillis()
+                                    val renderTime = endTime - startTime
 
-                            // Record metric using PerformanceMetrics utility
-                            val renderingName = "Page${page}Rendering"
-                            val metadata = mapOf(
-                                "page" to page,
-                                "watchName" to watch.name,
-                                "startTime" to startTime,
-                                "endTime" to endTime
-                            )
-                            PerformanceMetrics.recordMetric(
-                                category = PerformanceMetrics.Categories.PAGE_RENDERING,
-                                name = renderingName,
-                                durationMs = renderTime,
-                                metadata = metadata
-                            )
+                                    // Log rendering metrics
+                                    Log.d(TAG, "Page $page rendering completed at $endTime")
+                                    Log.d(TAG, "Page $page rendering took $renderTime ms")
+                                    Log.d(TAG, "Page $page contains watch: ${watch.name}")
+
+                                    // Record metric using PerformanceMetrics utility
+                                    val renderingName = "Page${page}Rendering"
+                                    val metadata = mapOf(
+                                        "page" to page,
+                                        "watchName" to watch.name,
+                                        "startTime" to startTime,
+                                        "endTime" to endTime
+                                    )
+                                    PerformanceMetrics.recordMetric(
+                                        category = PerformanceMetrics.Categories.PAGE_RENDERING,
+                                        name = renderingName,
+                                        durationMs = renderTime,
+                                        metadata = metadata
+                                    )
+                                }
+
+                                // Use the optimized SelectedWatchScreen2 component
+                                SelectedWatchScreen2(
+                                    onBackClick = onBackClick,
+                                    selectedWatch = watch,
+                                    watchViewModel = watchViewModel,
+                                    isPageTransitioning = pagerState.isScrollInProgress
+                                )
+                            }
                         }
-
-                        // Use the optimized SelectedWatchScreen2 component
-                        // Pass isPageTransitioning parameter to prevent heavy rendering during transitions
-                        SelectedWatchScreen2(
-                            onBackClick = onBackClick,
-                            selectedWatch = watch,
-                            watchViewModel = watchViewModel,
-                            isPageTransitioning = pagerState.isScrollInProgress
-                        )
-
-                        // Use a single Text component instead of three to reduce layout complexity
-                      /*  Text(
-                            text = "Page $page: ${watch.name}",
-                            fontSize = 30.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.fillMaxWidth()
-                        ) */
                     }
+
+                    // Pager indicator
+                    Text(
+                        text = "${currentPage + 1} / ${selectedWatches.size}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier
+                            .padding(bottom = 25.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
+                }
+
+                // Right side - World Map
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CustomWorldMapWithDayNight(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(2f)
+                    )
                 }
             }
+        } else {
+            // Portrait layout - original vertical layout
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Horizontal pager for watches
+                HorizontalPager(
+                    state = pagerState,
+                    // Reduce the number of preloaded pages to minimize memory usage and initial rendering cost
+                    // This should improve the first page transition performance
+                    beyondViewportPageCount = 1, // Only load the current page, previous, and next page
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                    // Set a large key to ensure pages are not recycled
+                    // Include the page index and the total number of watches to ensure proper keying
+                    key = { page -> "watch_${selectedWatches[page].name}_$page" },
+                    // Use a custom content padding to reduce the amount of content that needs to be rendered
+                    // This improves performance by reducing the number of composables that need to be created
+                    contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 0.dp)
+                ) { page ->
+                    // Log the page index and measure rendering time
+                    val startTime = System.currentTimeMillis()
+                    Log.d(TAG, "Page $page rendering started at $startTime")
 
-            // Simplified pager indicator - just show the current page number out of total
-          Text(
-                text = "${currentPage + 1} / ${selectedWatches.size}",
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier
-                    .padding(bottom = 25.dp)
-                    .align(Alignment.CenterHorizontally)
-            )
+                    // Display the selected watch screen for the current page
+                    val watch = selectedWatches[page]
 
-            val currentTime = Calendar.getInstance()
+                    // Use a key that includes the watch name to ensure proper recomposition
+                    // This helps avoid unnecessary recompositions during page transitions
+                    androidx.compose.runtime.key(watch.name) {
+                        // Wrap in a Box to improve performance by reducing the number of measure/layout passes
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            // Use LaunchedEffect to measure and log rendering time
+                            LaunchedEffect(page) {
+                                val endTime = System.currentTimeMillis()
+                                val renderTime = endTime - startTime
 
-            CustomWorldMapWithDayNight()
-            // Add the lazy-loading world map with day/night visualization
-            // This component won't block page transitions
-           /* LazyWorldMapWithDayNight(
-                currentTime = currentTime ,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(2f), // 2:1 aspect ratio for the world map
-                isPageTransitioning = false,
-                onRenderComplete = {
-                    // Log when the world map rendering is complete
-                    Log.d(TAG, "World map rendering completed")
+                                // Log rendering metrics
+                                Log.d(TAG, "Page $page rendering completed at $endTime")
+                                Log.d(TAG, "Page $page rendering took $renderTime ms")
+                                Log.d(TAG, "Page $page contains watch: ${watch.name}")
+
+                                // Record metric using PerformanceMetrics utility
+                                val renderingName = "Page${page}Rendering"
+                                val metadata = mapOf(
+                                    "page" to page,
+                                    "watchName" to watch.name,
+                                    "startTime" to startTime,
+                                    "endTime" to endTime
+                                )
+                                PerformanceMetrics.recordMetric(
+                                    category = PerformanceMetrics.Categories.PAGE_RENDERING,
+                                    name = renderingName,
+                                    durationMs = renderTime,
+                                    metadata = metadata
+                                )
+                            }
+
+                            // Use the optimized SelectedWatchScreen2 component
+                            // Pass isPageTransitioning parameter to prevent heavy rendering during transitions
+                            SelectedWatchScreen2(
+                                onBackClick = onBackClick,
+                                selectedWatch = watch,
+                                watchViewModel = watchViewModel,
+                                isPageTransitioning = pagerState.isScrollInProgress
+                            )
+                        }
+                    }
                 }
-            )*/
 
+                // Simplified pager indicator - just show the current page number out of total
+                Text(
+                    text = "${currentPage + 1} / ${selectedWatches.size}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier
+                        .padding(bottom = 25.dp)
+                        .align(Alignment.CenterHorizontally)
+                )
 
-            // Removed CustomWorldMapWithDayNight as it's computationally expensive
-            // This should improve page transition performance
+                // World map
+                CustomWorldMapWithDayNight()
+            }
         }
     } else {
         // If no watches are selected, display a message prompting the user to select watches
