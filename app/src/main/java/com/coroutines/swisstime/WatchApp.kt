@@ -13,6 +13,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
+import android.content.res.Configuration
 import androidx.glance.appwidget.updateAll
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -145,9 +147,13 @@ fun WatchApp(watchPreferencesRepository: WatchPreferencesRepository) {
                 } */
             },
             bottomBar = {
-                // Only show the navigation bar if we're not on the WatchDetailScreen
+                // Get the current configuration to determine orientation
+                val configuration = LocalConfiguration.current
+                val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+                // Only show the navigation bar if we're not on the WatchDetailScreen and not in landscape mode
                 val currentRoute = currentDestination?.route
-                if (currentRoute == null || !currentRoute.startsWith("watchDetail")) {
+                if ((currentRoute == null || !currentRoute.startsWith("watchDetail")) && !isLandscape) {
                     SwissTimeNavigationBar(
                         navController = navController,
                         currentDestination = currentDestination

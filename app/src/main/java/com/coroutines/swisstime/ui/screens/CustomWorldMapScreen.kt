@@ -1,52 +1,39 @@
 package com.coroutines.swisstime.ui.screens
 
+import android.content.res.Resources
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.drawable.Drawable
+import android.os.Build
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.coroutines.swisstime.R
+import com.coroutines.swisstime.effects.FrostedGlassAGSLEffect
+import com.coroutines.swisstime.effects.shader.WaterEffectBitmapShader
 import com.coroutines.swisstime.ui.theme.DarkNavy
 import com.coroutines.swisstime.watchfaces.ChronomagusRegum
 import kotlinx.coroutines.delay
-import java.util.Calendar
-import kotlin.math.PI
-import kotlin.math.abs
-import kotlin.math.acos
-import kotlin.math.asin
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.sin
-import kotlin.math.sqrt
-import kotlin.math.tan
+import java.util.*
+import kotlin.math.*
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -108,14 +95,36 @@ fun CustomWorldMapScreen(
             }
 
             // Custom World map with day/night visualization - bottom aligned
-            CustomWorldMapWithDayNight(
-              //  currentTime = currentTime,
+            // Wrap with FrostedGlassAGSLEffect to enable pinch-to-zoom frosted glass effect using AGSL
+            FrostedGlassAGSLEffect(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(2f) // 2:1 aspect ratio for the world map
-            )
+            ) {
+                CustomWorldMapWithDayNight(
+                    //  currentTime = currentTime,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(2f) // 2:1 aspect ratio for the world map
+                )
+            }
         }
     }
+}
+
+@Composable
+public fun getBitmap(drawableRes: Int): Bitmap? {
+    val context = LocalContext.current
+
+    val drawable: Drawable = context.getDrawable(drawableRes) ?: return null
+    val canvas: Canvas = Canvas()
+    val bitmap: Bitmap? =
+        Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888)
+    canvas.setBitmap(bitmap)
+    drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight())
+    drawable.draw(canvas)
+
+    return bitmap
 }
 
 @Composable
@@ -203,13 +212,32 @@ fun CustomWorldMapWithDayNight(
                 .background(Color.Transparent)
         ) {
             // World map
-            Image(
+           /* Image(
                 painter = painterResource(id = R.drawable.world),
                 contentDescription = "Earth Map",
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.FillWidth
-            )
+            )*/
 
+           // val drawable= Drawable.
+
+            val bitmap = getBitmap(R.drawable.world)!!
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                WaterEffectBitmapShader(
+                    modifier = Modifier.fillMaxSize(),
+                    bitmap = bitmap.asImageBitmap(),
+                    shaderResId = R.raw.water_shader
+                )
+            }
+            else{
+                Image(
+                    painter = painterResource(id = R.drawable.world),
+                    contentDescription = "Earth Map",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.FillWidth
+                )
+            }
 
 
             // Canvas for drawing the terminator and masking the night side

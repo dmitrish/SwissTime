@@ -9,7 +9,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.coroutines.clockwithtimezone"
+        applicationId = "com.coroutines.clockwithtimezonedebug"
         minSdk = 24
         //noinspection EditedTargetSdkVersion
         targetSdk = 36
