@@ -24,6 +24,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.coroutines.swisstime.WatchInfo
 import com.coroutines.swisstime.viewmodel.WatchViewModel
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import com.coroutines.swisstime.R
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -38,7 +42,12 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalConfiguration
 import android.content.res.Configuration
+import androidx.compose.material3.ShapeDefaults
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.asImageBitmap
 import com.coroutines.swisstime.effects.FrostedGlassAGSLEffect
+import com.coroutines.swisstime.effects.shader.WaterEffectBitmapShader
 import com.coroutines.swisstime.util.PerformanceMetrics
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
@@ -563,17 +572,47 @@ fun TimeScreen(
         }
     } else {
         // If no watches are selected, display a message prompting the user to select watches
+        // with persistence.jpg image as background
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            Text(
+            // Background image
+          /*  Image(
+                painter = painterResource(id = R.drawable.persistence),
+                contentDescription = "Persistence background",
+                modifier = Modifier.fillMaxSize().alpha(0.4f),
+                contentScale = ContentScale.Crop
+            )*/
+
+            val bitmap = getBitmap(R.drawable.meltingwatch)!!
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                WaterEffectBitmapShader(
+                    modifier = Modifier
+                        //fillMaxWidth(0.8f).fillMaxHeight(0.5f)
+                        .clip(ShapeDefaults.ExtraLarge).alpha(0.8f),
+                    bitmap = bitmap.asImageBitmap(),
+                    shaderResId = R.raw.water_shader
+                )
+            }
+            else{
+                Image(
+                    painter = painterResource(id = R.drawable.meltingwatch),
+                    contentDescription = "Persistence of Time",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.FillWidth
+                )
+            }
+
+            // Text on top of the image
+         /*   Text(
                 text = "No watches selected. Please select watches from the Watch List.",
                 style = MaterialTheme.typography.headlineMedium,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(16.dp)
-            )
+            ) */
         }
     }
 }
