@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TigerGraph Trade Schema</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .graph-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .vertex {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .vertex:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+        }
+        
+        .country { fill: #4CAF50; }
+        .company { fill: #2196F3; }
+        .product { fill: #FF9800; }
+        .tariff { fill: #9C27B0; }
+        
+        .edge {
+            stroke-width: 2;
+            transition: all 0.3s ease;
+        }
+        
+        .edge:hover {
+            stroke-width: 3;
+        }
+        
+        .purchases { stroke: #e74c3c; }
+        .located-in { stroke: #3498db; }
+        .has-tariff { stroke: #9b59b6; }
+        .supplies { stroke: #f39c12; }
+        .subject-to-tariff { stroke: #1abc9c; }
+        
+        .vertex-label {
+            font-size: 12px;
+            font-weight: bold;
+            fill: white;
+            text-anchor: middle;
+            dominant-baseline: middle;
+            pointer-events: none;
+        }
+        
+        .edge-label {
+            font-size: 10px;
+            fill: #333;
+            text-anchor: middle;
+            dominant-baseline: middle;
+            font-weight: bold;
+        }
+        
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .legend-circle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+        
+        .legend-line {
+            width: 30px;
+            height: 3px;
+            border-radius: 2px;
+        }
+        
+        .example-box {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .example-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #ffd700;
+        }
+        
+        .arrow {
+            fill: none;
+            stroke: #333;
+            stroke-width: 2;
+            marker-end: url(#arrowhead);
+        }
+        
+        .highlight-path {
+            stroke: #ff4444;
+            stroke-width: 4;
+            stroke-dasharray: 5,5;
+            animation: dash 1s linear infinite;
+        }
+        
+        @keyframes dash {
+            to {
+                stroke-dashoffset: -10;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌐 TigerGraph International Trade Schema</h1>
+        
+        <div class="graph-container">
+            <svg width="100%" height="600" viewBox="0 0 1200 600">
+                <!-- Arrowhead marker -->
+                <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="7" 
+                            refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#333" />
+                    </marker>
+                </defs>
+                
+                <!-- Countries -->
+                <circle class="vertex country" cx="150" cy="150" r="50" />
+                <text class="vertex-label" x="150" y="145">🇺🇸</text>
+                <text class="vertex-label" x="150" y="160">USA</text>
+                
+                <circle class="vertex country" cx="150" cy="450" r="50" />
+                <text class="vertex-label" x="150" y="445">🇨🇦</text>
+                <text class="vertex-label" x="150" y="460">Canada</text>
+                
+                <!-- Companies -->
+                <rect class="vertex company" x="350" y="100" width="120" height="60" rx="10" />
+                <text class="vertex-label" x="410" y="125">🏪</text>
+                <text class="vertex-label" x="410" y="145">Walmart</text>
+                
+                <rect class="vertex company" x="350" y="400" width="120" height="60" rx="10" />
+                <text class="vertex-label" x="410" y="425">🏭</text>
+                <text class="vertex-label" x="410" y="445">Canadian Supplier</text>
+                
+                <!-- Products -->
+                <ellipse class="vertex product" cx="650" cy="300" rx="60" ry="40" />
+                <text class="vertex-label" x="650" y="295">🦆</text>
+                <text class="vertex-label" x="650" y="310">Geese</text>
+                
+                <!-- Tariffs -->
+                <polygon class="vertex tariff" points="900,250 950,270 950,330 900,350 850,330 850,270" />
+                <text class="vertex-label" x="900" y="295">📋</text>
+                <text class="vertex-label" x="900" y="310">Tariff 2.5%</text>
+                
+                <!-- Edges -->
+                <!-- LOCATED_IN edges -->
+                <line class="edge located-in" x1="200" y1="150" x2="350" y2="130" marker-end="url(#arrowhead)" />
+                <text class="edge-label" x="275" y="135">LOCATED_IN</text>
+                
+                <line class="edge located-in" x1="200" y1="450" x2="350" y2="430" marker-end="url(#arrowhead)" />
+                <text class="edge-label" x="275" y="435">LOCATED_IN</text>
+                
+                <!-- PURCHASES edge -->
+                <line class="edge purchases highlight-path" x1="410" y1="160" x2="410" y2="400" marker-end="url(#arrowhead)" />
+                <text class="edge-label" x="430" y="280">PURCHASES</text>
+                
+                <!-- SUPPLIES edge -->
+                <line class="edge supplies" x1="470" y1="430" x2="590" y2="320" marker-end="url(#arrowhead)" />
+                <text class="edge-label" x="530" y="370">SUPPLIES</text>
+                
+                <!-- HAS_TARIFF edge -->
+                <line class="edge has-tariff highlight-path" x1="150" y1="400" x2="150" y2="200" marker-end="url(#arrowhead)" />
+                <text class="edge-label" x="100" y="300">HAS_TARIFF</text>
+                
+                <!-- SUBJECT_TO_TARIFF edge -->
+                <line class="edge subject-to-tariff" x1="710" y1="300" x2="850" y2="300" marker-end="url(#arrowhead)" />
+                <text class="edge-label" x="780" y="290">SUBJECT_TO_TARIFF</text>
+                
+                <!-- Additional visual elements -->
+                <rect x="50" y="50" width="1100" height="500" fill="none" stroke="rgba(255,255,255,0.3)" 
+                      stroke-width="2" stroke-dasharray="10,5" rx="20" />
+                
+                <!-- Flow indicators -->
+                <text x="600" y="40" font-size="14" fill="#333" text-anchor="middle" font-weight="bold">
+                    Trade Flow: Canada → USA (with 2.5% tariff on geese)
+                </text>
+            </svg>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-circle country"></div>
+                <span>Countries</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-circle company"></div>
+                <span>Companies</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-circle product"></div>
+                <span>Products</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-circle tariff"></div>
+                <span>Tariffs</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-line purchases"></div>
+                <span>PURCHASES</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-line located-in"></div>
+                <span>LOCATED_IN</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-line has-tariff"></div>
+                <span>HAS_TARIFF</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-line supplies"></div>
+                <span>SUPPLIES</span>
+            </div>
+        </div>
+        
+        <div class="example-box">
+            <div class="example-title">Example Scenario: Walmart Importing Geese from Canada</div>
+            <p><strong>1. Setup:</strong> Walmart (US company) wants to buy geese from Canadian supplier</p>
+            <p><strong>2. Tariff Application:</strong> Canada → USA has 2.5% import tariff on geese</p>
+            <p><strong>3. Cost Calculation:</strong> Purchase price + (Purchase price × 2.5%) = Total cost</p>
+            <p><strong>4. Graph Traversal:</strong> Company → PURCHASES → Company → LOCATED_IN → Country → HAS_TARIFF → Country</p>
+        </div>
+        
+        <div class="example-box">
+            <div class="example-title">Key Query Patterns</div>
+            <p><strong>Find Alternative Suppliers:</strong> Traverse to other countries with lower tariff rates</p>
+            <p><strong>Calculate Total Import Costs:</strong> Sum purchase amounts × applicable tariff rates</p>
+            <p><strong>Tariff Impact Analysis:</strong> Compare costs across different supplier countries</p>
+            <p><strong>Compliance Tracking:</strong> Monitor tariff changes and expiration dates</p>
+        </div>
+    </div>
+</body>
+</html>
