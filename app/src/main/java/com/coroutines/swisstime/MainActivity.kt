@@ -1,14 +1,28 @@
 package com.coroutines.swisstime
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.lifecycle.lifecycleScope
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -17,6 +31,8 @@ import com.coroutines.swisstime.ui.theme.SwissTimeTheme
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
+import com.coroutines.swisstime.update.AppUpdateManager
+import kotlinx.coroutines.launch
 import java.util.TimeZone
 
 // Data class to hold watch information
@@ -83,6 +99,9 @@ class MainActivity : ComponentActivity() {
     // Initialize the preferences repository
     private lateinit var watchPreferencesRepository: WatchPreferencesRepository
 
+    // Initialize the app update manager
+    private lateinit var appUpdateManager: AppUpdateManager
+
     // Flag to track whether content is ready to be shown
     private var isContentReady = false
 
@@ -139,6 +158,48 @@ class MainActivity : ComponentActivity() {
         // Initialize the repository
         watchPreferencesRepository = WatchPreferencesRepository(this)
 
+        // Create a coroutine scope for the activity
+        val activityScope = lifecycleScope
+
+        // Initialize the app update manager
+        appUpdateManager = AppUpdateManager(this, activityScope)
+
+        // Add the lifecycle observer to handle update checks on resume
+        lifecycle.addObserver(appUpdateManager)
+
+        // Check for updates when the app starts
+        appUpdateManager.checkForUpdate()
+
+        // Set up a listener for update status changes
+        lifecycleScope.launch {
+            appUpdateManager.updateStatus.collect { status ->
+                when (status) {
+                    is AppUpdateManager.UpdateStatus.Downloaded -> {
+                        // Show a dialog when an update has been downloaded
+                        android.app.AlertDialog.Builder(this@MainActivity)
+                            .setTitle("Update Downloaded")
+                            .setMessage("An update has been downloaded. Install now?")
+                            .setPositiveButton("RESTART") { _, _ ->
+                                appUpdateManager.completeUpdate()
+                            }
+                            .setNegativeButton("Later", null)
+                            .show()
+                    }
+                    is AppUpdateManager.UpdateStatus.Failed -> {
+                        // Show a toast when an update has failed
+                        android.widget.Toast.makeText(
+                            this@MainActivity,
+                            "Update failed: ${status.reason}",
+                            android.widget.Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    else -> {
+                        // No action needed for other states
+                    }
+                }
+            }
+        }
+
         setContent {
             SwissTimeTheme {
                WatchApp(watchPreferencesRepository)
@@ -160,6 +221,20 @@ class MainActivity : ComponentActivity() {
         // Re-apply edge-to-edge mode when activity resumes
         // This prevents content shifting when device is unlocked
         applyEdgeToEdge()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        // Pass the result to the app update manager
+        appUpdateManager.onActivityResult(requestCode, resultCode)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        // Remove the lifecycle observer
+        lifecycle.removeObserver(appUpdateManager)
     }
 }
 
