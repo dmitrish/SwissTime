@@ -13,7 +13,7 @@ android {
         minSdk = 24
         //noinspection EditedTargetSdkVersion
         targetSdk = 36
-        versionCode = 5
+        versionCode = 7
         versionName = "1.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -23,7 +23,7 @@ android {
         release {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            signingConfig = signingConfigs.getByName("debug")
+           // signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {

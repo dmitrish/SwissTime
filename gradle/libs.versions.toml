@@ -14,9 +14,14 @@ datastore = "1.0.0"
 material-icons = "1.6.0"
 splashscreen = "1.0.1"
 navigation = "2.7.7"
+wear = "1.3.0"
 
 [libraries]
+androidx-compose-foundation = { module = "androidx.wear.compose:compose-foundation", version.ref = "wear" }
+androidx-compose-material = { module = "androidx.wear.compose:compose-material", version.ref = "wear" }
+androidx-compose-navigation = { module = "androidx.wear.compose:compose-navigation", version.ref = "wear" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-wear = { module = "androidx.wear:wear", version.ref = "wear" }
 app-update = { module = "com.google.android.play:app-update", version.ref = "appUpdateKtx" }
 app-update-ktx = { module = "com.google.android.play:app-update-ktx", version.ref = "appUpdateKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
