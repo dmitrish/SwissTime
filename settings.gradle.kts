@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "SwissTime"
 include(":app")
- 
+include(":wearos")
