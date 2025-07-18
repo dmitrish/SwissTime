@@ -71,8 +71,8 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
 
     // Play Core for in-app updates
-    implementation("com.google.android.play:app-update:2.1.0")
-    implementation("com.google.android.play:app-update-ktx:2.1.0")
+    implementation(libs.app.update)
+    implementation(libs.app.update.ktx)
 
     implementation(libs.androidx.runtime.tracing)
 
