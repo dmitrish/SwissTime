@@ -36,7 +36,7 @@ import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import com.coroutines.swisstime.wearos.repository.TimeZoneInfo
 import com.coroutines.swisstime.wearos.repository.WatchFaceRepository
-import com.coroutines.swisstime.wearos.ui.CustomWorldMapWithDayNight
+import com.coroutines.worldclock.common.components.CustomWorldMapWithDayNight
 import kotlinx.coroutines.delay
 import java.util.Calendar
 import java.util.TimeZone

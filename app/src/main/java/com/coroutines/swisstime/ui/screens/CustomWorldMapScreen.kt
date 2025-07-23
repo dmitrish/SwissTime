@@ -1,5 +1,6 @@
 package com.coroutines.swisstime.ui.screens
 
+/*
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -33,6 +34,7 @@ import com.coroutines.swisstime.watchfaces.ChronomagusRegum
 import kotlinx.coroutines.delay
 import java.util.*
 import kotlin.math.*
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -497,59 +499,6 @@ fun CustomWorldMapWithDayNight(
                      }
                  }
              }
-
-
-
-
-
-
-            /*
-             // Draw the terminator curve
-             // Scale stroke width based on screen width for consistent appearance across devices
-             val strokeWidth = (width / 600).coerceIn(1f, 3f) // Min 1, max 3
-
-             // Create a new path for the terminator line that shows the complete bell shape
-             val terminatorLinePath = Path()
-
-             if (terminatorPoints.isNotEmpty()) {
-                 // Start with the first rising point
-                 terminatorLinePath.moveTo(terminatorPoints.first().first.x, terminatorPoints.first().first.y)
-
-                 // Draw the rising side (going down)
-                 for (i in 1 until terminatorPoints.size) {
-                     terminatorLinePath.lineTo(terminatorPoints[i].first.x, terminatorPoints[i].first.y)
-                 }
-
-                 // Connect to the last setting point
-                 terminatorLinePath.lineTo(terminatorPoints.last().second.x, terminatorPoints.last().second.y)
-
-                 // Draw the setting side (going up)
-                 for (i in terminatorPoints.size - 2 downTo 0) {
-                     terminatorLinePath.lineTo(terminatorPoints[i].second.x, terminatorPoints[i].second.y)
-                 }
-
-                 // Close the path to complete the bell shape
-                 terminatorLinePath.close()
-
-                 // Gold terminator line removed as per requirement
-             }
-*/
-             /*
-             // Draw sun indicator
-             // Calculate the sun's position on the map
-             // Use the same mapping logic as the terminator calculation for consistency
-             val normalizedSunLong = if (sunLong > 180f) sunLong - 360f else sunLong
-             val sunX = width * ((normalizedSunLong + 180f) / 360f)
-
-             // Scale the sun radius based on screen width for consistent appearance across devices
-             val sunRadius = (width / 120).coerceIn(5f, 15f) // Min 5, max 15
-             drawCircle(
-                 color = Color(0xFFFFD700), // Gold for sun
-                 radius = sunRadius,
-                 center = Offset(sunX, height * 0.1f) // Position sun near the top
-             )
-*/
-             // Time text removed as per requirement
          }
         }
     }
@@ -563,3 +512,4 @@ private fun rev(x: Float): Float {
 }
 
 // drawTimeText function removed as it's no longer used
+*/

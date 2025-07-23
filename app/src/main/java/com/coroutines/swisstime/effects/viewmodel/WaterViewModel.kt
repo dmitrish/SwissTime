@@ -1,5 +1,5 @@
 package com.coroutines.swisstime.effects.viewmodel
-
+/*
 import android.util.Log
 import androidx.compose.ui.geometry.Offset
 import androidx.lifecycle.ViewModel
@@ -150,3 +150,5 @@ class WaterViewModel : ViewModel() {
         )
     }
 }
+
+ */

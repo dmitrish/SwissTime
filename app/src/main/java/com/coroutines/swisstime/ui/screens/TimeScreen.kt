@@ -46,9 +46,11 @@ import androidx.compose.material3.ShapeDefaults
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
-import com.coroutines.swisstime.effects.FrostedGlassAGSLEffect
-import com.coroutines.swisstime.effects.shader.WaterEffectBitmapShader
 import com.coroutines.swisstime.util.PerformanceMetrics
+import com.coroutines.worldclock.common.components.CustomWorldMapWithDayNight
+import com.coroutines.worldclock.common.components.getBitmap
+import com.coroutines.worldclock.common.effects.shader.WaterEffectBitmapShader
+import com.coroutines.worldclock.common.effects.viewmodel.WaterViewModel
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import java.util.Calendar
@@ -593,6 +595,7 @@ fun TimeScreen(
                         //fillMaxWidth(0.8f).fillMaxHeight(0.5f)
                         .clip(ShapeDefaults.ExtraLarge).alpha(0.8f),
                     bitmap = bitmap.asImageBitmap(),
+                    viewModel = WaterViewModel(),
                     shaderResId = R.raw.water_shader
                 )
             }
