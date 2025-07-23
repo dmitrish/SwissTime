@@ -1,5 +1,6 @@
 package com.coroutines.swisstime.effects
 
+/*
 import android.graphics.RenderEffect
 import android.graphics.RuntimeShader
 import android.graphics.Shader
@@ -157,3 +158,5 @@ private fun createAGSLEffect(blurRadius: Float): androidx.compose.ui.graphics.Re
         "content"
     ).asComposeRenderEffect()
 }
+
+ */

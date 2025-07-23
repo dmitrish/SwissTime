@@ -40,6 +40,9 @@ android {
 }
 
 dependencies {
+    // Add worldclockcommon module as a dependency
+    implementation(project(":worldclockcommon"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

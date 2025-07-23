@@ -41,7 +41,6 @@ import com.coroutines.swisstime.wearos.repository.WatchFaceRepository
 import com.coroutines.swisstime.wearos.service.TimeZoneService
 import com.coroutines.swisstime.wearos.repository.TimeZoneRepository
 import com.coroutines.swisstime.wearos.repository.TimeZoneInfo
-import com.coroutines.swisstime.wearos.ui.CustomWorldMapWithDayNight
 import java.util.TimeZone
 
 class MainActivity : ComponentActivity() {
@@ -187,62 +186,8 @@ fun WatchDetailScreen(
     // Make the watchface occupy the entire screen
     if (watchFace != null) {
         Box(modifier = Modifier.fillMaxSize()) {
-            // Display the watchface
-            watchFace.composable(Modifier.fillMaxSize(), selectedTimeZone)
-
-            // Add a clickable area at the top of the screen where the timezone name is displayed
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 48.dp),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                // Get the timezone display name using the selectedTimeZoneId state
-                val timeZones = remember { watchFaceRepository.getAllTimeZones() }
-                val timeZoneInfo = remember(selectedTimeZoneId.value) {
-                    timeZones.find { it.id == selectedTimeZoneId.value } ?: TimeZoneInfo(
-                        id = selectedTimeZoneId.value,
-                        displayName = selectedTimeZoneId.value
-                    )
-                }
-
-                // Create a clickable row with the timezone name and an icon
-                Row(
-                    modifier = Modifier
-                        .clickable(onClick = onSelectTimeZone)
-                        .padding(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    // Display the timezone name
-                    Text(
-                        text = timeZoneInfo.displayName,
-                        style = MaterialTheme.typography.body2,
-                        modifier = Modifier.padding(end = 4.dp)
-                    )
-
-                    // Add an icon to indicate it's tappable
-                    Icon(
-                        imageVector = Icons.Filled.KeyboardArrowRight,
-                        contentDescription = "Change Timezone",
-                        tint = Color.White
-                    )
-                }
-            }
-
-            // Display the world map in the lower part of the screen
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
-                    .padding( 46.dp)
-                    .aspectRatio(2f)  // Maintain the aspect ratio of the world map
-            ) {
-                //Text("hi")
-                // Display the world map with day/night visualization
-                CustomWorldMapWithDayNight(
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
+            // Display the watchface with the timezone selection UI integrated
+            watchFace.composable(Modifier.fillMaxSize(), selectedTimeZone, onSelectTimeZone)
         }
     } else {
         Box(

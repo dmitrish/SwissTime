@@ -2,6 +2,7 @@ package com.coroutines.swisstime.effects.model
 
 import androidx.compose.ui.geometry.Offset
 
+/*
 data class Wave(
     val origin: Offset,
     val startTime: Float, // Changé de Long à Float pour être cohérent avec les secondes
@@ -9,3 +10,5 @@ data class Wave(
     val frequency: Float,
     val speed: Float
 )
+
+ */

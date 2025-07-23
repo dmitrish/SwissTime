@@ -1,5 +1,6 @@
 package com.coroutines.swisstime.effects.model
 
+/*
 data class WaveShaderParams(
     val numWaves: Int,
     val origins: FloatArray,
@@ -36,3 +37,5 @@ data class WaveShaderParams(
         return result
     }
 }
+
+ */

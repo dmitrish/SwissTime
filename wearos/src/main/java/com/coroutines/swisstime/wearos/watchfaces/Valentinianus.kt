@@ -2,10 +2,19 @@ package com.coroutines.swisstime.wearos.watchfaces
 
 import android.graphics.Paint
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,6 +30,13 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.wear.compose.material.Icon
+import androidx.wear.compose.material.MaterialTheme
+import androidx.wear.compose.material.Text
+import com.coroutines.swisstime.wearos.repository.TimeZoneInfo
+import com.coroutines.swisstime.wearos.repository.WatchFaceRepository
+import com.coroutines.worldclock.common.components.CustomWorldMapWithDayNight
 import com.coroutines.swisstime.wearos.ui.theme.DarkNavy
 import kotlinx.coroutines.delay
 import java.util.Calendar
@@ -40,7 +56,12 @@ private val NumbersColor = Color(0xFFB27D4B) // Rose gold numbers
 private val CenterDotColor = Color(0xFFB27D4B) // Rose gold center dot
 
 @Composable
-fun Valentinianus(modifier: Modifier = Modifier, timeZone: TimeZone = TimeZone.getDefault()) {
+fun Valentinianus(
+    modifier: Modifier = Modifier, 
+    timeZone: TimeZone = TimeZone.getDefault(),
+    watchFaceRepository: WatchFaceRepository? = null,
+    onSelectTimeZone: () -> Unit = {}
+) {
     var currentTime by remember { mutableStateOf(Calendar.getInstance(timeZone)) }
 
     val timeZoneState by rememberUpdatedState(timeZone)
@@ -53,35 +74,111 @@ fun Valentinianus(modifier: Modifier = Modifier, timeZone: TimeZone = TimeZone.g
         }
     }
 
-    // Draw the clock directly without any container
-    Canvas(modifier = modifier.fillMaxSize()) {
-        val center = Offset(size.width / 2, size.height / 2)
-        val radius = min(size.width, size.height) / 2 * 1.0f
+    Box(modifier = modifier.fillMaxSize()) {
+        // Draw the clock face at the bottom layer
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val center = Offset(size.width / 2, size.height / 2)
+            val radius = min(size.width, size.height) / 2 * 1.0f
 
-        // Draw clock face
-        drawClockFace(center, radius)
+            // Draw clock face (no transparency needed as it's the bottom layer)
+            drawClockFace(center, radius)
 
-        // Get current time values
-        val hourOfDay = currentTime.get(Calendar.HOUR_OF_DAY)
-        val hour = if (hourOfDay % 12 == 0) 12 else hourOfDay % 12
-        val minute = currentTime.get(Calendar.MINUTE)
-        val second = currentTime.get(Calendar.SECOND)
+            // Draw hour markers and numbers
+            drawHourMarkersAndNumbers(center, radius)
+        }
 
-        // Draw timezone name at the top
-        drawTimeZoneName(center, radius, timeZoneState)
+        // Add the world map component in the middle layer (bottom half)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.5f) // Take up only the bottom half of the screen
+                .align(Alignment.BottomCenter),
+            contentAlignment = Alignment.Center
+        ) {
+            CustomWorldMapWithDayNight(
+                modifier = Modifier
+                    .fillMaxWidth(0.55f) // Make the map 45% smaller in width
+                    .fillMaxHeight(0.55f) // Make the map 45% smaller in height while maintaining aspect ratio
+                    .offset(y = (-10).dp), // Raise it by approximately 10% of the bottom half's height
+                nightOverlayColor = ClockFaceColor // Use the watch face color for the night overlay
+            )
+        }
 
-        // Draw hour markers and numbers
-        drawHourMarkersAndNumbers(center, radius)
+        // Draw the timezone selection UI on top of the watchface but below the hands
+        if (watchFaceRepository != null) {
+            // Get the selected timezone
+            val selectedTimeZoneId = watchFaceRepository.getSelectedTimeZoneId().collectAsState()
 
-        // Draw clock hands
-        drawClockHands(center, radius, hour, minute, second)
+            // Get the timezone display name using the selectedTimeZoneId state
+            val timeZones = remember { watchFaceRepository.getAllTimeZones() }
+            val timeZoneInfo = remember(selectedTimeZoneId.value) {
+                timeZones.find { it.id == selectedTimeZoneId.value } ?: TimeZoneInfo(
+                    id = selectedTimeZoneId.value,
+                    displayName = selectedTimeZoneId.value
+                )
+            }
 
-        // Draw center dot
-        drawCircle(
-            color = CenterDotColor,
-            radius = radius * 0.03f,
-            center = center
-        )
+            // Add a clickable area at the top of the screen where the timezone name is displayed
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 48.dp),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                // Create a clickable row with the timezone name and an icon
+                Row(
+                    modifier = Modifier
+                        .clickable(onClick = onSelectTimeZone)
+                        .padding(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Display the timezone name
+                    Text(
+                        text = timeZoneInfo.displayName,
+                        style = MaterialTheme.typography.body2,
+                        modifier = Modifier.padding(end = 4.dp)
+                    )
+
+                    // Add an icon to indicate it's tappable
+                    Icon(
+                        imageVector = Icons.Filled.KeyboardArrowRight,
+                        contentDescription = "Change Timezone",
+                        tint = Color.White
+                    )
+                }
+            }
+        } else {
+            // Fallback to the simple timezone name display if repository is not provided
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                val center = Offset(size.width / 2, size.height / 2)
+                val radius = min(size.width, size.height) / 2 * 1.0f
+
+                // Draw timezone name at the top
+                drawTimeZoneName(center, radius, timeZoneState)
+            }
+        }
+
+        // Draw the clock hands on the top layer
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val center = Offset(size.width / 2, size.height / 2)
+            val radius = min(size.width, size.height) / 2 * 1.0f
+
+            // Get current time values
+            val hourOfDay = currentTime.get(Calendar.HOUR_OF_DAY)
+            val hour = if (hourOfDay % 12 == 0) 12 else hourOfDay % 12
+            val minute = currentTime.get(Calendar.MINUTE)
+            val second = currentTime.get(Calendar.SECOND)
+
+            // Draw clock hands
+            drawClockHands(center, radius, hour, minute, second)
+
+            // Draw center dot
+            drawCircle(
+                color = CenterDotColor,
+                radius = radius * 0.03f,
+                center = center
+            )
+        }
     }
 }
 
@@ -94,7 +191,7 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
         style = Stroke(width = 6f)
     )
 
-    // Draw inner circle (face)
+    // Draw inner circle (face) - no transparency needed as the map is now on top
     drawCircle(
         color = ClockFaceColor,
         radius = radius - 3f,
