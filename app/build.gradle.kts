@@ -23,7 +23,8 @@ android {
         release {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-           // signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("debug")
+            // signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
@@ -39,6 +40,8 @@ android {
 }
 
 dependencies {
+    // Add worldclockcommon module as a dependency
+    implementation(project(":worldclockcommon"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

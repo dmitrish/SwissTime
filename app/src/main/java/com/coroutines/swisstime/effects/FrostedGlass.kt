@@ -1,5 +1,6 @@
 package com.coroutines.swisstime.effects
 
+/*
 import android.graphics.RenderEffect
 import android.graphics.Shader
 import android.os.Build
@@ -112,3 +113,5 @@ fun FrostedGlassEffect(
         }
     }
 }
+
+ */

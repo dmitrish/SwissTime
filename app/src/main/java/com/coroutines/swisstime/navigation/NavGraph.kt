@@ -22,7 +22,7 @@ import com.coroutines.swisstime.WatchInfo
 import com.coroutines.swisstime.darken
 import com.coroutines.swisstime.getWatchFaceColor
 import com.coroutines.swisstime.ui.screens.BrandLogosScreen
-import com.coroutines.swisstime.ui.screens.CustomWorldMapScreen
+import com.coroutines.worldclock.common.components.CustomWorldMapScreen
 import com.coroutines.swisstime.ui.screens.OptimizedWorldMapScreen
 import com.coroutines.swisstime.ui.screens.SettingsScreen
 import com.coroutines.swisstime.ui.screens.TimeScreen

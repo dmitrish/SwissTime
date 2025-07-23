@@ -1,5 +1,6 @@
 package com.coroutines.swisstime.effects.shader
 
+/*
 import android.graphics.RenderEffect
 import android.graphics.RuntimeShader
 import android.os.Build
@@ -30,6 +31,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.coroutines.swisstime.effects.viewmodel.WaterViewModel
+
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
@@ -120,3 +122,5 @@ fun WaterEffectBitmapShader(
             .graphicsLayer(renderEffect = renderEffect)
     )
 }
+
+ */
