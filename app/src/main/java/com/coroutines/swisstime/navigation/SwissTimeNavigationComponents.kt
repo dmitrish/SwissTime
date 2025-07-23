@@ -3,9 +3,11 @@ package com.coroutines.swisstime.navigation
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Watch
 import androidx.compose.material.icons.outlined.AccessTime
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Watch
 import androidx.compose.material3.Icon
@@ -50,6 +52,12 @@ enum class TopLevelDestination(
         unselectedIcon = { Icon(Icons.Outlined.Settings, contentDescription = "Settings", tint = Color.White.copy(alpha = 0.7f)) },
         iconText = { Text(text = "Settings", color = Color.White) },
         route = Screen.Settings.route
+    ),
+    ABOUT(
+        selectedIcon = { Icon(Icons.Filled.Info, contentDescription = "About", tint = Color.White) },
+        unselectedIcon = { Icon(Icons.Outlined.Info, contentDescription = "About", tint = Color.White.copy(alpha = 0.7f)) },
+        iconText = { Text(text = "About", color = Color.White) },
+        route = Screen.About.route
     )
 }
 
