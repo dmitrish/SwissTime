@@ -21,6 +21,7 @@ import com.coroutines.swisstime.TimingLogger
 import com.coroutines.swisstime.WatchInfo
 import com.coroutines.swisstime.darken
 import com.coroutines.swisstime.getWatchFaceColor
+import com.coroutines.swisstime.ui.screens.AboutScreen
 import com.coroutines.swisstime.ui.screens.BrandLogosScreen
 import com.coroutines.worldclock.common.components.CustomWorldMapScreen
 import com.coroutines.swisstime.ui.screens.OptimizedWorldMapScreen
@@ -43,6 +44,7 @@ sealed class Screen(val route: String) {
     object WorldMap : Screen("worldMap")
     object CustomWorldMap : Screen("customWorldMap")
     object Settings : Screen("settings")
+    object About : Screen("about")
 }
 
 // Animation duration for transitions - extremely short duration for immediate UI updates
@@ -292,6 +294,28 @@ fun NavGraph(
                 themeViewModel = themeViewModel,
                 watchViewModel = watchViewModel
             )
+        }
+
+        composable(
+            route = Screen.About.route,
+            enterTransition = {
+                fadeIn(animationSpec = tween(ANIMATION_DURATION))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(ANIMATION_DURATION))
+            }
+        ) {
+            // Get the current context to access the activity
+            val context = LocalContext.current
+            val activity = context as? ComponentActivity
+
+            val originalColor = MaterialTheme.colorScheme.background.toArgb()
+
+            activity?.window?.setStatusBarColor(originalColor);
+            activity?.window?.setNavigationBarColor(originalColor);
+
+            // Render the AboutScreen
+            AboutScreen()
         }
     }
 }
