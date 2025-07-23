@@ -78,16 +78,13 @@ fun CenturioLuminor(
         // Draw the clock face at the bottom layer
         Canvas(modifier = Modifier.fillMaxSize()) {
             val center = Offset(size.width / 2, size.height / 2)
-            val radius = min(size.width, size.height) / 2 * 0.95f
+            val radius = min(size.width, size.height) / 2 * 1.0f
 
             // Draw clock face (no transparency needed as it's the bottom layer)
             drawClockFace(center, radius)
 
             // Draw hour markers
             drawHourMarkers(center, radius)
-
-            // Draw watch logo and year
-            drawWatchLogo(center, radius)
         }
 
         // Add the world map component in the middle layer (bottom half)
@@ -106,6 +103,13 @@ fun CenturioLuminor(
                     .offset(y = (-10).dp), // Raise it by approximately 10% of the bottom half's height
                 nightOverlayColor = ClockFaceEndColor // Use the darker watch face color for the night overlay
             )
+        }
+
+        // Draw the logo on top of the watchface and map but below the hands
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val center = Offset(size.width / 2, size.height / 2)
+            val radius = min(size.width, size.height) / 2 * 1.0f
+            drawWatchLogo(center, radius)
         }
 
         // Draw the timezone selection UI on top of the watchface but below the hands
@@ -156,7 +160,7 @@ fun CenturioLuminor(
         // Draw the clock hands on the top layer
         Canvas(modifier = Modifier.fillMaxSize()) {
             val center = Offset(size.width / 2, size.height / 2)
-            val radius = min(size.width, size.height) / 2 * 0.95f
+            val radius = min(size.width, size.height) / 2 * 1.0f
 
             // Get current time values
             val hourOfDay = currentTime.get(Calendar.HOUR_OF_DAY)
@@ -191,9 +195,9 @@ private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
         brush = Brush.radialGradient(
             colors = listOf(ClockFaceStartColor, ClockFaceEndColor),
             center = center,
-            radius = radius * 0.95f
+            radius = radius * 0.98f
         ),
-        radius = radius * 0.95f,
+        radius = radius * 0.98f,
         center = center
     )
 }
@@ -202,7 +206,7 @@ private fun DrawScope.drawHourMarkers(center: Offset, radius: Float) {
     for (i in 0 until 12) {
         val angle = Math.PI / 6 * i
         val markerLength = radius * 0.1f
-        val startRadius = radius * 0.8f
+        val startRadius = radius * 0.85f
 
         val startX = center.x + cos(angle).toFloat() * startRadius
         val startY = center.y + sin(angle).toFloat() * startRadius
@@ -230,7 +234,7 @@ private fun DrawScope.drawWatchLogo(center: Offset, radius: Float) {
     drawContext.canvas.nativeCanvas.drawText(
         "Centurio Luminor",
         center.x,
-        center.y - radius * 0.3f,
+        center.y - radius * 0.15f,
         logoPaint
     )
 
@@ -244,7 +248,7 @@ private fun DrawScope.drawWatchLogo(center: Offset, radius: Float) {
     drawContext.canvas.nativeCanvas.drawText(
         "1728",
         center.x,
-        center.y + radius * 0.4f,
+        center.y + radius * 0.6f,
         yearPaint
     )
 }
