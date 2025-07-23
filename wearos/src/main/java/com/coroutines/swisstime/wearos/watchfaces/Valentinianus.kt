@@ -83,7 +83,7 @@ fun Valentinianus(
             // Draw clock face (no transparency needed as it's the bottom layer)
             drawClockFace(center, radius)
 
-            // Draw hour markers and numbers
+            // Draw hour markers
             drawHourMarkersAndNumbers(center, radius)
         }
 
@@ -102,6 +102,13 @@ fun Valentinianus(
                     .offset(y = (-10).dp), // Raise it by approximately 10% of the bottom half's height
                 nightOverlayColor = ClockFaceColor // Use the watch face color for the night overlay
             )
+        }
+
+        // Draw the Roman numerals on top of the watchface and map but below the hands
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val center = Offset(size.width / 2, size.height / 2)
+            val radius = min(size.width, size.height) / 2 * 1.0f
+            drawRomanNumerals(center, radius)
         }
 
         // Draw the timezone selection UI on top of the watchface but below the hands
@@ -241,7 +248,9 @@ private fun DrawScope.drawHourMarkersAndNumbers(center: Offset, radius: Float) {
             cap = StrokeCap.Round
         )
     }
+}
 
+private fun DrawScope.drawRomanNumerals(center: Offset, radius: Float) {
     // Draw Roman numerals at 12, 3, 6, 9
     val romanNumerals = listOf("XII", "III", "VI", "IX")
     val textPaint = Paint().apply {

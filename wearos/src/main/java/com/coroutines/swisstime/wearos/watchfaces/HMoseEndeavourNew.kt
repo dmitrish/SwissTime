@@ -19,38 +19,35 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.drawscope.*
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
-import com.coroutines.swisstime.wearos.repository.TimeZoneInfo
-import com.coroutines.swisstime.wearos.repository.WatchFaceRepository
-import com.coroutines.worldclock.common.components.CustomWorldMapWithDayNight
-import com.coroutines.worldclock.common.watchface.BaseWatch
+import java.util.*
+import kotlin.math.*
 import com.coroutines.worldclock.common.watchface.WorldClockWatchTheme
-import java.util.TimeZone
-import kotlin.math.PI
-import kotlin.math.cos
-import kotlin.math.sin
+import com.coroutines.worldclock.common.watchface.BaseWatch
+import com.coroutines.swisstime.wearos.repository.WatchFaceRepository
+import com.coroutines.swisstime.wearos.repository.TimeZoneInfo
+import com.coroutines.worldclock.common.components.CustomWorldMapWithDayNight
 
-// Colors inspired by Chronomagus Regum
-private val ClockFaceColor = Color(0xFF000080) // Deep blue dial
-private val ClockBorderColor = Color(0xFFFFFFFF) // White gold case
-private val HourHandColor = Color(0xFFFFFFFF) // White hour hand
-private val MinuteHandColor = Color(0xFFFFFFFF) // White minute hand
-private val SecondHandColor = Color(0xFFFFFFFF) // White second hand
-private val MarkersColor = Color(0xFFFFFFFF) // White markers
-private val LogoColor =  Color(0xFFFFDE21) // White logo
 
-private object ChronomagusTheme : WorldClockWatchTheme() {
+
+private object HMoserTheme : WorldClockWatchTheme() {
+    // Colors
+    private val ClockFaceStartColor = Color(0xFF1E5631)
+    private val ClockFaceEndColor = Color(0xFF0A2714)
+    private val ClockBorderColor = Color(0xFFE0E0E0)
+    private val HourHandColor = Color(0xFFE0E0E0)
+    private val MinuteHandColor = Color(0xFFE0E0E0)
+    private val SecondHandColor = Color(0xFFE0E0E0)
+    private val MarkersColor = Color(0xFFE0E0E0)
+    private val LogoColor = Color(0xFFE0E0E0)
+
     override val staticElementsDrawer = listOf(
         { center: Offset, radius: Float -> drawClockFace(center, radius) },
         { center: Offset, radius: Float -> drawHourMarkers(center, radius) }
@@ -58,38 +55,55 @@ private object ChronomagusTheme : WorldClockWatchTheme() {
 
     override val hourHandDrawer: (Offset, Float) -> DrawScope.() -> Unit = { center, radius ->
         {
-            // Simple thin line for hour hand
-            drawLine(
-                color = HourHandColor,
-                start = center,
-                end = Offset(center.x, center.y - radius * 0.5f),
-                strokeWidth = 2f,
-                cap = StrokeCap.Round
-            )
+            val path = Path().apply {
+                moveTo(center.x, center.y - radius * 0.5f)
+                quadraticBezierTo(
+                    center.x + radius * 0.03f, center.y - radius * 0.25f,
+                    center.x + radius * 0.015f, center.y
+                )
+                quadraticBezierTo(
+                    center.x, center.y + radius * 0.05f,
+                    center.x - radius * 0.015f, center.y
+                )
+                quadraticBezierTo(
+                    center.x - radius * 0.03f, center.y - radius * 0.25f,
+                    center.x, center.y - radius * 0.5f
+                )
+                close()
+            }
+            drawPath(path, HourHandColor)
         }
     }
 
     override val minuteHandDrawer: (Offset, Float) -> DrawScope.() -> Unit = { center, radius ->
         {
-            // Simple thin line for minute hand
-            drawLine(
-                color = MinuteHandColor,
-                start = center,
-                end = Offset(center.x, center.y - radius * 0.7f),
-                strokeWidth = 1.5f,
-                cap = StrokeCap.Round
-            )
+            val path = Path().apply {
+                moveTo(center.x, center.y - radius * 0.7f)
+                quadraticBezierTo(
+                    center.x + radius * 0.025f, center.y - radius * 0.35f,
+                    center.x + radius * 0.01f, center.y
+                )
+                quadraticBezierTo(
+                    center.x, center.y + radius * 0.05f,
+                    center.x - radius * 0.01f, center.y
+                )
+                quadraticBezierTo(
+                    center.x - radius * 0.025f, center.y - radius * 0.35f,
+                    center.x, center.y - radius * 0.7f
+                )
+                close()
+            }
+            drawPath(path, MinuteHandColor)
         }
     }
 
     override val secondHandDrawer: (Offset, Float) -> DrawScope.() -> Unit = { center, radius ->
         {
-            // Ultra-thin line for second hand
             drawLine(
                 color = SecondHandColor,
-                start = center,
+                start = Offset(center.x, center.y + radius * 0.2f),
                 end = Offset(center.x, center.y - radius * 0.8f),
-                strokeWidth = 0.5f,
+                strokeWidth = 1f,
                 cap = StrokeCap.Round
             )
         }
@@ -99,7 +113,7 @@ private object ChronomagusTheme : WorldClockWatchTheme() {
         {
             drawCircle(
                 color = HourHandColor,
-                radius = radius * 0.01f,
+                radius = radius * 0.02f,
                 center = center
             )
         }
@@ -108,138 +122,83 @@ private object ChronomagusTheme : WorldClockWatchTheme() {
     private fun drawClockFace(center: Offset, radius: Float): DrawScope.() -> Unit = {
         // Scale up by 1.25 to compensate for the 0.8 scaling in BaseWatch
         val scaledRadius = radius * 1.25f
+        drawCircle(
+            brush = Brush.radialGradient(
+                colors = listOf(ClockFaceStartColor, ClockFaceEndColor),
+                center = center,
+                radius = scaledRadius
+            ),
+            radius = scaledRadius,
+            center = center
+        )
 
-        // Draw outer circle (case) - very thin to represent the ultra-thin profile
         drawCircle(
             color = ClockBorderColor,
             radius = scaledRadius,
             center = center,
-            style = Stroke(width = 4f)
-        )
-
-        // Draw inner circle (face)
-        drawCircle(
-            color = ClockFaceColor,
-            radius = scaledRadius - 2f,
-            center = center
+            style = Stroke(width = 8f)
         )
     }
 
     private fun drawHourMarkers(center: Offset, radius: Float): DrawScope.() -> Unit = {
         // Scale up by 1.25 to compensate for the 0.8 scaling in BaseWatch
         val scaledRadius = radius * 1.25f
-
-        // Chronomagus Regum typically has very minimalist hour markers
-        // Often just simple thin lines or small dots
-
         for (i in 0 until 12) {
-            val angle = PI / 6 * i
+            val angle = Math.PI / 6 * i
+            val markerLength = scaledRadius * 0.1f
+            val startRadius = scaledRadius * 0.85f
 
-            // For 3, 6, 9, and 12 o'clock, use slightly longer markers
-            val markerLength = if (i % 3 == 0) scaledRadius * 0.05f else scaledRadius * 0.03f
-            val markerWidth = if (i % 3 == 0) 1.5f else 1f
+            val startX = center.x + cos(angle).toFloat() * startRadius
+            val startY = center.y + sin(angle).toFloat() * startRadius
+            val endX = center.x + cos(angle).toFloat() * (startRadius - markerLength)
+            val endY = center.y + sin(angle).toFloat() * (startRadius - markerLength)
 
-            val startX = center.x + cos(angle).toFloat() * (scaledRadius * 0.85f)
-            val startY = center.y + sin(angle).toFloat() * (scaledRadius * 0.85f)
-            val endX = center.x + cos(angle).toFloat() * (scaledRadius * 0.85f - markerLength)
-            val endY = center.y + sin(angle).toFloat() * (scaledRadius * 0.85f - markerLength)
-
-            // Draw minimalist markers
             drawLine(
                 color = MarkersColor,
                 start = Offset(startX, startY),
                 end = Offset(endX, endY),
-                strokeWidth = markerWidth,
+                strokeWidth = if (i % 3 == 0) 3f else 1.5f,
                 cap = StrokeCap.Round
-            )
-        }
-
-        // Add small dots at each hour position for a more refined look
-        for (i in 0 until 12) {
-            val angle = PI / 6 * i
-            val dotRadius = if (i % 3 == 0) 1.5f else 1f
-
-            val dotX = center.x + cos(angle).toFloat() * (scaledRadius * 0.9f)
-            val dotY = center.y + sin(angle).toFloat() * (scaledRadius * 0.9f)
-
-            drawCircle(
-                color = MarkersColor,
-                radius = dotRadius,
-                center = Offset(dotX, dotY)
             )
         }
     }
 
-    fun drawLogo(center: Offset, radius: Float): DrawScope.() -> Unit = {
+    fun drawWatchLogo(center: Offset, radius: Float): DrawScope.() -> Unit = {
         // Scale up by 1.25 to compensate for the 0.8 scaling in BaseWatch
         val scaledRadius = radius * 1.25f
-
         val logoPaint = Paint().apply {
             color = LogoColor.hashCode()
-            textSize = scaledRadius * 0.08f
+            textSize = scaledRadius * 0.1f
             textAlign = Paint.Align.CENTER
-            isFakeBoldText = false // Chronomagus Regum logo is typically thin and elegant
             isAntiAlias = true
         }
 
-        // Draw "CHRONOMAGUS" text
         drawContext.canvas.nativeCanvas.drawText(
-            "CHRONOMAGUS",
+            "H. MOSER & CIE",
             center.x,
-            center.y - scaledRadius * 0.15f,
+            center.y - scaledRadius * 0.1f,
             logoPaint
         )
 
-        // Draw "REGIUM" text
-        val modelPaint = Paint().apply {
+        val yearPaint = Paint().apply {
             color = LogoColor.hashCode()
             textSize = scaledRadius * 0.06f
             textAlign = Paint.Align.CENTER
             isAntiAlias = true
         }
 
-       /* drawContext.canvas.nativeCanvas.drawText(
-            "REGIUM",
-            center.x,
-            center.y - scaledRadius * 0.2f,
-            modelPaint
-        )*/
-
-        // Draw "Fabricatum Romae" text
-        val swissMadePaint = Paint().apply {
-            color = LogoColor.hashCode()
-            textSize = scaledRadius * 0.04f
-            textAlign = Paint.Align.CENTER
-            isAntiAlias = true
-        }
-
         drawContext.canvas.nativeCanvas.drawText(
-            "Fabricatum Romae",
+            "1828",
             center.x,
-            center.y + scaledRadius * 0.6f,
-            swissMadePaint
-        )
-
-        // Draw "ULTRA-THIN" text
-        val ultraThinPaint = Paint().apply {
-            color = LogoColor.hashCode()
-            textSize = scaledRadius * 0.05f
-            textAlign = Paint.Align.CENTER
-            isAntiAlias = true
-        }
-
-        drawContext.canvas.nativeCanvas.drawText(
-            "ULTRA-THIN",
-            center.x,
-            center.y + scaledRadius * 0.7f,
-            ultraThinPaint
+            center.y + scaledRadius * 0.65f,
+            yearPaint
         )
     }
 }
 
 @Composable
-fun Chronomagus(
-    modifier: Modifier = Modifier,
+fun HMoserEndeavour(
+    modifier: Modifier = Modifier, 
     timeZone: TimeZone = TimeZone.getDefault(),
     watchFaceRepository: WatchFaceRepository? = null,
     onSelectTimeZone: () -> Unit = {}
@@ -249,7 +208,7 @@ fun Chronomagus(
         BaseWatch(
             modifier = Modifier.fillMaxSize(),
             timeZone = timeZone,
-            theme = ChronomagusTheme
+            theme = HMoserTheme
         )
 
         // Add the world map component in the middle layer (bottom half)
@@ -266,7 +225,7 @@ fun Chronomagus(
                     .fillMaxWidth(0.55f) // Make the map 45% smaller in width
                     .fillMaxHeight(0.55f) // Make the map 45% smaller in height while maintaining aspect ratio
                     .offset(y = (-10).dp), // Raise it by approximately 10% of the bottom half's height
-                nightOverlayColor = ClockFaceColor // Use the watch face color for the night overlay
+                nightOverlayColor = Color(0xFF0A2714) // Use the dark green color for the night overlay
             )
         }
 
@@ -274,7 +233,7 @@ fun Chronomagus(
         Canvas(modifier = Modifier.fillMaxSize()) {
             val center = Offset(size.width / 2, size.height / 2)
             val radius = size.minDimension / 2 * 0.8f
-            ChronomagusTheme.drawLogo(center, radius)(this)
+            HMoserTheme.drawWatchLogo(center, radius)(this)
         }
 
         // Draw the timezone selection UI on top of the watchface but below the hands
@@ -326,11 +285,11 @@ fun Chronomagus(
 
 @Preview(showBackground = true)
 @Composable
-fun ChronomagusPreview() {
+fun HMoserEndeavourNewPreview() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Chronomagus()
+        HMoserEndeavour()
     }
 }
