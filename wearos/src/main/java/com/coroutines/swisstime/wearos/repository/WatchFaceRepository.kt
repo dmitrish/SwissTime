@@ -9,6 +9,7 @@ import com.coroutines.swisstime.wearos.watchfaces.Chronomagus
 import com.coroutines.swisstime.wearos.watchfaces.Concordia
 import com.coroutines.swisstime.wearos.watchfaces.HMoserEndeavour
 import com.coroutines.swisstime.wearos.watchfaces.HorologiaRomanum
+import com.coroutines.swisstime.wearos.watchfaces.JurgsenZenithor
 import com.coroutines.swisstime.wearos.watchfaces.LucernaRoma
 import com.coroutines.swisstime.wearos.watchfaces.PontifexChronometra
 import com.coroutines.swisstime.wearos.watchfaces.Valentinianus
@@ -151,6 +152,19 @@ class WatchFaceRepository(
             description = "The Concordia Felicitas features a unique rectangular case with Art Deco styling and a beige/cream dial. With its distinctive blue hands and decorative corner lines, this timepiece combines elegant design with technical precision, showcasing the brand's commitment to traditional watchmaking values.",
             composable = { modifier, timeZone, onSelectTimeZone -> 
                 Concordia(
+                    modifier = modifier, 
+                    timeZone = timeZone,
+                    watchFaceRepository = this,
+                    onSelectTimeZone = onSelectTimeZone
+                ) 
+            }
+        ),
+        WatchFace(
+            id = "11",
+            name = "Jurgsen Zenithor",
+            description = "The Jurgsen Zenithor features a deep black dial with a navy blue bezel and luminous markers. This distinctive dive watch combines robust functionality with elegant design, showcasing precise timekeeping with its white hands and orange-red second hand with a distinctive circle near the tip.",
+            composable = { modifier, timeZone, onSelectTimeZone -> 
+                JurgsenZenithor(
                     modifier = modifier, 
                     timeZone = timeZone,
                     watchFaceRepository = this,
