@@ -6,8 +6,10 @@ import com.coroutines.swisstime.wearos.service.TimeZoneService
 import com.coroutines.swisstime.wearos.watchfaces.AventinusClassique
 import com.coroutines.swisstime.wearos.watchfaces.CenturioLuminor
 import com.coroutines.swisstime.wearos.watchfaces.Chronomagus
+import com.coroutines.swisstime.wearos.watchfaces.Concordia
 import com.coroutines.swisstime.wearos.watchfaces.HMoserEndeavour
 import com.coroutines.swisstime.wearos.watchfaces.HorologiaRomanum
+import com.coroutines.swisstime.wearos.watchfaces.LucernaRoma
 import com.coroutines.swisstime.wearos.watchfaces.PontifexChronometra
 import com.coroutines.swisstime.wearos.watchfaces.Valentinianus
 import com.coroutines.swisstime.wearos.watchfaces.Zeitwerk
@@ -26,6 +28,19 @@ class WatchFaceRepository(
 
     // List of available watch faces
     private val watchFaces = listOf(
+        WatchFace(
+            id = "9",
+            name = "Lucerna Roma",
+            description = "The Lucerna Roma features a distinctive tonneau (barrel) shape case and bold, colorful numerals. Known as the 'Master of Inventions', Lucerna Roma combines avant-garde design with traditional Swiss watchmaking expertise to create timepieces that are both technically impressive and visually striking.",
+            composable = { modifier, timeZone, onSelectTimeZone -> 
+                LucernaRoma(
+                    modifier = modifier, 
+                    timeZone = timeZone,
+                    watchFaceRepository = this,
+                    onSelectTimeZone = onSelectTimeZone
+                ) 
+            }
+        ),
         WatchFace(
             id = "1",
             name = "Valentinianus Classique",
@@ -129,6 +144,19 @@ class WatchFaceRepository(
                     onSelectTimeZone = onSelectTimeZone
                 ) 
             }
+        ),
+        WatchFace(
+            id = "10",
+            name = "Concordia Felicitas",
+            description = "The Concordia Felicitas features a unique rectangular case with Art Deco styling and a beige/cream dial. With its distinctive blue hands and decorative corner lines, this timepiece combines elegant design with technical precision, showcasing the brand's commitment to traditional watchmaking values.",
+            composable = { modifier, timeZone, onSelectTimeZone -> 
+                Concordia(
+                    modifier = modifier, 
+                    timeZone = timeZone,
+                    watchFaceRepository = this,
+                    onSelectTimeZone = onSelectTimeZone
+                ) 
+            }
         )
         // More watch faces will be added here
     )
@@ -139,16 +167,29 @@ class WatchFaceRepository(
 
     /**
      * Get all available watch faces
+     * @param isScreenRound Whether the screen is round or rectangular
      */
-    fun getWatchFaces(): List<WatchFace> {
-        return watchFaces
+    fun getWatchFaces(isScreenRound: Boolean = true): List<WatchFace> {
+        return if (isScreenRound) {
+            // For round screens, return all watch faces except rectangular ones (Lucerna Roma and Concordia)
+            watchFaces.filter { it.id != "9" && it.id != "10" }
+        } else {
+            // For rectangular screens, return only rectangular watches (Lucerna Roma and Concordia)
+            watchFaces.filter { it.id == "9" || it.id == "10" }
+        }
     }
 
     /**
      * Get a watch face by ID
+     * @param id The ID of the watch face to get
+     * @param isScreenRound Whether the screen is round or rectangular
      */
-    fun getWatchFaceById(id: String): WatchFace? {
-        return watchFaces.find { it.id == id }
+    fun getWatchFaceById(id: String, isScreenRound: Boolean = true): WatchFace? {
+        // Get available watch faces based on screen shape
+        val availableWatchFaces = getWatchFaces(isScreenRound)
+
+        // Find the watch face with the given ID among the available watch faces
+        return availableWatchFaces.find { it.id == id }
     }
 
     /**
@@ -160,10 +201,22 @@ class WatchFaceRepository(
 
     /**
      * Get the currently selected watch face
+     * @param isScreenRound Whether the screen is round or rectangular
      */
-    fun getSelectedWatchFace(): WatchFace? {
-        val id = _selectedWatchFaceId.value ?: return watchFaces.firstOrNull()
-        return getWatchFaceById(id)
+    fun getSelectedWatchFace(isScreenRound: Boolean = true): WatchFace? {
+        val id = _selectedWatchFaceId.value
+
+        // Get available watch faces based on screen shape
+        val availableWatchFaces = getWatchFaces(isScreenRound)
+
+        // If no watch face is selected or the selected watch face is not available for this screen shape,
+        // return the first available watch face
+        if (id == null || availableWatchFaces.none { it.id == id }) {
+            return availableWatchFaces.firstOrNull()
+        }
+
+        // Return the selected watch face
+        return getWatchFaceById(id, isScreenRound)
     }
 
     /**
