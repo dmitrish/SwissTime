@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -106,7 +107,12 @@ fun WatchListScreen(
     watchFaceRepository: WatchFaceRepository,
     onWatchSelected: (String) -> Unit
 ) {
-    val watchFaces = remember { watchFaceRepository.getWatchFaces() }
+    // Get the screen shape information
+    val configuration = LocalConfiguration.current
+    val isScreenRound = configuration.isScreenRound
+
+    // Get watch faces based on screen shape
+    val watchFaces = remember(isScreenRound) { watchFaceRepository.getWatchFaces(isScreenRound) }
 
     Scaffold(
         timeText = { /* TimeText() */}
@@ -173,8 +179,12 @@ fun WatchDetailScreen(
     watchId: String,
     onSelectTimeZone: () -> Unit = {}
 ) {
-    val watchFace = remember(watchId) { 
-        watchFaceRepository.getWatchFaceById(watchId) ?: watchFaceRepository.getWatchFaces().firstOrNull() 
+    // Get the screen shape information
+    val configuration = LocalConfiguration.current
+    val isScreenRound = configuration.isScreenRound
+
+    val watchFace = remember(watchId, isScreenRound) { 
+        watchFaceRepository.getWatchFaceById(watchId, isScreenRound) ?: watchFaceRepository.getWatchFaces(isScreenRound).firstOrNull() 
     }
 
     // Get the selected timezone
