@@ -143,8 +143,8 @@ private object ZeitwerkTheme : WorldClockWatchTheme() {
     }
 
     private fun drawClockFace(center: Offset, radius: Float): DrawScope.() -> Unit = {
-        // Scale up by 1.25 to compensate for the 0.8 scaling in BaseWatch
-        val scaledRadius = radius * 1.25f
+        // Scale up to compensate for the scaling in BaseWatch
+        val scaledRadius = radius * 1.1f
 
         // Draw outer circle (border) - stainless steel case
         drawCircle(
@@ -163,8 +163,8 @@ private object ZeitwerkTheme : WorldClockWatchTheme() {
     }
 
     private fun drawHourMarkersAndNumbers(center: Offset, radius: Float): DrawScope.() -> Unit = {
-        // Scale up by 1.25 to compensate for the 0.8 scaling in BaseWatch
-        val scaledRadius = radius * 1.25f
+        // Scale up to compensate for the scaling in BaseWatch
+        val scaledRadius = radius * 1.1f
 
         // Ahoi uses simple line markers for hours
         for (i in 0 until 12) {
@@ -255,8 +255,8 @@ private object ZeitwerkTheme : WorldClockWatchTheme() {
     }
 
     fun drawLogo(center: Offset, radius: Float): DrawScope.() -> Unit = {
-        // Scale up by 1.25 to compensate for the 0.8 scaling in BaseWatch
-        val scaledRadius = radius * 1.25f
+        // Scale up to compensate for the scaling in BaseWatch
+        val scaledRadius = radius * 1.1f
 
         val logoPaint = Paint().apply {
             color = LogoColor.hashCode()
@@ -344,7 +344,7 @@ fun Zeitwerk(
         // Draw static elements of the watch face
         Canvas(modifier = Modifier.fillMaxSize()) {
             val center = Offset(size.width / 2, size.height / 2)
-            val radius = size.minDimension / 2 * 0.8f
+            val radius = size.minDimension / 2 * 1.0f
 
             // Draw static elements
             ZeitwerkTheme.staticElementsDrawer.forEach { drawer ->
@@ -356,16 +356,16 @@ fun Zeitwerk(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.5f) // Take up only the bottom half of the screen
+                .fillMaxHeight(0.7f) // Take up 70% of the screen
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 30.dp), // Add bottom padding of 30.dp
+                .padding(bottom = 10.dp), // Minimal bottom padding
             contentAlignment = Alignment.Center
         ) {
             CustomWorldMapWithDayNight(
                 modifier = Modifier
-                    .fillMaxWidth(0.55f) // Make the map 45% smaller in width
-                    .fillMaxHeight(0.55f) // Make the map 45% smaller in height while maintaining aspect ratio
-                    .offset(y = (-10).dp), // Raise it by approximately 10% of the bottom half's height
+                    .fillMaxWidth(0.7f) // Make the map 90% of the width
+                    .fillMaxHeight(0.7f) // Make the map 90% of the height while maintaining aspect ratio
+                    .offset(y = (-5).dp), // Raise it slightly
                 nightOverlayColor = ClockFaceColor // Use the watch face color for the night overlay
             )
         }
@@ -373,7 +373,7 @@ fun Zeitwerk(
         // Draw the logo on top of the watchface and map but below the hands
         Canvas(modifier = Modifier.fillMaxSize()) {
             val center = Offset(size.width / 2, size.height / 2)
-            val radius = size.minDimension / 2 * 0.8f
+            val radius = size.minDimension / 2 * 1.0f
             ZeitwerkTheme.drawLogo(center, radius)(this)
         }
 
@@ -425,7 +425,7 @@ fun Zeitwerk(
         // Draw the clock hands on the top layer (after the map)
         Canvas(modifier = Modifier.fillMaxSize()) {
             val center = Offset(size.width / 2, size.height / 2)
-            val radius = size.minDimension / 2 * 0.8f
+            val radius = size.minDimension / 2 * 1.0f
 
             // Get current time values
             val hourOfDay = currentTime.get(Calendar.HOUR_OF_DAY)

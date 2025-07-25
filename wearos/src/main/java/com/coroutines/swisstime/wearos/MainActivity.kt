@@ -1,5 +1,6 @@
 package com.coroutines.swisstime.wearos
 
+import AnimatedCardList
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -69,6 +70,7 @@ fun WatchApp(watchFaceRepository: WatchFaceRepository) {
             startDestination = "watch_list"
         ) {
             composable("watch_list") {
+
                 WatchListScreen(
                     watchFaceRepository = watchFaceRepository,
                     onWatchSelected = { watchId ->
@@ -114,6 +116,8 @@ fun WatchListScreen(
     // Get watch faces based on screen shape
     val watchFaces = remember(isScreenRound) { watchFaceRepository.getWatchFaces(isScreenRound) }
 
+    AnimatedCardList(watchFaces, onWatchSelected)
+    /*
     Scaffold(
         timeText = { /* TimeText() */}
     ) {
@@ -124,7 +128,7 @@ fun WatchListScreen(
         ) {
             item {
                 Text(
-                    text = "Swiss Time Watch Faces",
+                    text = "World Timezone Watch Faces",
                     style = MaterialTheme.typography.title1,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
@@ -141,6 +145,8 @@ fun WatchListScreen(
             }
         }
     }
+
+     */
 }
 
 @Composable
