@@ -266,12 +266,12 @@ private object ZeitwerkTheme : WorldClockWatchTheme() {
             isAntiAlias = true
         }
 
-        drawContext.canvas.nativeCanvas.drawText(
+       /* drawContext.canvas.nativeCanvas.drawText(
             "Zeitwerk",
             center.x,
             center.y - scaledRadius * 0.3f,
             logoPaint
-        )
+        )*/
 
         // Draw "Alpenglühen" text
         val locationPaint = Paint().apply {
@@ -285,7 +285,7 @@ private object ZeitwerkTheme : WorldClockWatchTheme() {
         drawContext.canvas.nativeCanvas.drawText(
             "Alpenglühen",
             center.x,
-            center.y - scaledRadius * 0.2f,
+            center.y - scaledRadius * 0.25f,
             locationPaint
         )
 
@@ -395,14 +395,14 @@ fun Zeitwerk(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 48.dp),
+                    .padding(top = 28.dp),
                 contentAlignment = Alignment.TopCenter
             ) {
                 // Create a clickable row with the timezone name and an icon
                 Row(
                     modifier = Modifier
                         .clickable(onClick = onSelectTimeZone)
-                        .padding(8.dp),
+                        .padding(15.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     // Display the timezone name
@@ -413,11 +413,11 @@ fun Zeitwerk(
                     )
 
                     // Add an icon to indicate it's tappable
-                    Icon(
+                  /*  Icon(
                         imageVector = Icons.Filled.KeyboardArrowRight,
                         contentDescription = "Change Timezone",
                         tint = Color.White
-                    )
+                    )*/
                 }
             }
         }
