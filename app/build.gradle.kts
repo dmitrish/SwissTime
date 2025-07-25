@@ -73,9 +73,11 @@ dependencies {
     // Navigation
     implementation(libs.androidx.navigation.compose)
 
-    // Play Core for in-app updates
+    // Play Core for in-app updates and reviews
     implementation(libs.app.update)
     implementation(libs.app.update.ktx)
+    implementation(libs.play.review)
+    implementation(libs.play.review.ktx)
 
     implementation(libs.androidx.runtime.tracing)
 
