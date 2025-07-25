@@ -27,7 +27,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.widget.Toast
 import com.coroutines.swisstime.utils.AppReviewManager
 
@@ -65,8 +67,43 @@ fun AboutScreen(
             Column(
                 modifier = Modifier.padding(16.dp)
             ) {
-                Text(
+               /* Text(
                     text = "About",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+                Spacer(modifier = Modifier.height(8.dp)) */
+
+                Text(
+                    text = "World Timezone Clock with Fun Mechanical Watchfaces",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = "World Timezone Clock is an elegant app that displays the time across different timezones with beautifully crafted mechanical watch faces. Each watch face is designed with attention to detail, mimicking the craftsmanship of real luxury timepieces.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                )
+            }
+        }
+
+        // Rate the App section
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            )
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+             //   horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Rate the App",
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -74,18 +111,29 @@ fun AboutScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = "World Timezone Clock with Fun Mechanical Watchfaces",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface
+                    text = "Enjoying World Timezone Clock App? Let us know what you think!",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Text(
-                    text = "Swiss Time is an elegant app that displays the time across different timezones with beautifully crafted mechanical watch faces. Each watch face is designed with attention to detail, mimicking the craftsmanship of real luxury timepieces.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                )
+                // Rate the app button
+                Column (
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally) {
+                    Button(
+                        onClick = {
+                            // Use the AppReviewManager to request a review
+                            // This will use the Google Play In-App Review API in production
+                            val reviewManager = AppReviewManager(context)
+                            reviewManager.requestReview()
+                        },
+                        modifier = Modifier.fillMaxWidth(0.6f)
+                    ) {
+                        Text(text = "Rate the App")
+                    }
+                }
             }
         }
 
@@ -107,32 +155,27 @@ fun AboutScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
+                // Get version information from PackageManager
+                val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+                val versionName = packageInfo.versionName
+                val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    packageInfo.longVersionCode.toInt()
+                } else {
+                    @Suppress("DEPRECATION")
+                    packageInfo.versionCode
+                }
+
                 Text(
-                    text = "Version 1.4 (7)",
+                    text = "Version $versionName ($versionCode)",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Row for buttons
-                androidx.compose.foundation.layout.Row(
+                Column (
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    // Rate the app button
-                    Button(
-                        onClick = {
-                            // Use the AppReviewManager to request a review
-                            // This will use the Google Play In-App Review API in production
-                            val reviewManager = AppReviewManager(context)
-                            reviewManager.requestReview()
-                        },
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text(text = "Rate the App")
-                    }
-
+                    horizontalAlignment = Alignment.CenterHorizontally) {
                     // Check for updates button
                     Button(
                         onClick = {
@@ -145,7 +188,7 @@ fun AboutScreen(
                             ).show()
                             // In a real implementation, we would call appUpdateManager.checkForUpdate()
                         },
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.fillMaxWidth(0.6f),
                         enabled = !isCheckingForUpdates
                     ) {
                         Text(text = "Check for Updates")

@@ -587,7 +587,7 @@ fun TimeScreen(
                 contentScale = ContentScale.Crop
             )*/
 
-            val bitmap = getBitmap(R.drawable.meltingwatch)!!
+           /* val bitmap = getBitmap(R.drawable.meltingwatch)!!
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 WaterEffectBitmapShader(
@@ -608,14 +608,16 @@ fun TimeScreen(
                 )
             }
 
+            */
+
             // Text on top of the image
-         /*   Text(
+            Text(
                 text = "No watches selected. Please select watches from the Watch List.",
                 style = MaterialTheme.typography.headlineMedium,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(16.dp)
-            ) */
+            )
         }
     }
 }
