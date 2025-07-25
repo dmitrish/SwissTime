@@ -173,7 +173,7 @@ fun WatchApp(watchPreferencesRepository: WatchPreferencesRepository) {
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Swiss Time",
+                            text = "World Timezone Clock",
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold
                         )
@@ -303,22 +303,22 @@ private fun getWatches(): List<WatchInfo> {
             composable = { modifier, timeZone -> HorologiaRomanum(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
        ),
 
-        WatchInfo(
+      /*  WatchInfo(
             name = "Temporis B",
             description = "The Temporis B, introduced in 1952, features a distinctive slide rule bezel designed for pilots to perform flight calculations. With its busy dial and technical appearance, it has become an icon of aviation watches and a symbol of precision.",
             composable = { modifier, timeZone -> TemporisB(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
-        ),
+        ), */
 
-      WatchInfo(
+     /* WatchInfo(
           name = "Tokinoha",
           description = "The Tokinoha, designed in 1953, was inspired by the dangerous Panamericana race. With its clean dial and emphasis on legibility, it revolutionized chronograph design and continues to be a symbol of motorsport heritage.",
           composable = { modifier, timeZone -> Tokinoha(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
-      ),
-      WatchInfo(
+      ), */
+     /* WatchInfo(
           name = "Zenith El Primero",
           description = "The Zenith El Primero, introduced in 1969, was the first automatic chronograph movement with a high-beat frequency of 36,000 vibrations per hour. Known for its precision and reliability, it remains one of the most respected chronograph movements in watchmaking.",
           composable = { modifier, timeZone -> ZenithElPrimero(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
-      ),
+      ), */
       WatchInfo(
           name = "Leonard Automatic Collection",
           description = "The Leonard Automaic showcases the brand's heritage of elegance and precision. With its classic design featuring roman numerals and a moonphase display, it represents Leonards' commitment to traditional watchmaking values and timeless aesthetics.",
@@ -430,11 +430,11 @@ private fun getWatches(): List<WatchInfo> {
           description = "The Chronomagus Regum is celebrated for its ultra-thin profile and minimalist design. Since the 1950s, Chronomagus has been a pioneer in creating incredibly slim watches, with the Regum line showcasing the brand's expertise in producing elegant timepieces that combine technical innovation with refined aesthetics.",
           composable = { modifier, timeZone -> ChronomagusRegum(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
       ),
-      WatchInfo(
+     /* WatchInfo(
           name = "Tokinoha",
           description = "The Tokinoha, first introduced in 1963, is a legendary chronograph designed for racing drivers. With its clean dial layout, distinctive subdials, and robust construction, it embodies Tokinoha's connection to motorsport and their commitment to precision timing in high-speed environments.",
           composable = { modifier, timeZone -> Tokinoha(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
-      ),
+      ), */
      /* WatchInfo(
           name = "Zenith El Primero",
           description = "The Zenith El Primero, introduced in 1969, was one of the world's first automatic chronograph movements. Known for its high-frequency 36,000 vibrations per hour and distinctive tri-color subdials, it represents Zenith's technical innovation and has become an icon of Swiss watchmaking excellence.",

@@ -203,13 +203,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             SwissTimeTheme {
                WatchApp(watchPreferencesRepository)
-                // Mark content as ready after a delay to give animation time to play
-                // This will dismiss the splash screen
                 SideEffect {
-                    // Delay setting isContentReady to true to match the animation duration
                     android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
                         isContentReady = true
-                    }, 500) // 2 second delay to match the animation duration
+                    }, 500)
                 }
             }
         }
