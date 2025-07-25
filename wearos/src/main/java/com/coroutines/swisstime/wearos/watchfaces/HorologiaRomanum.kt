@@ -177,7 +177,7 @@ private object HorologiaRomanumTheme : WorldClockWatchTheme() {
         }
 
         val hours = listOf(12, 1, 2, 3, 4, 5, 7, 8, 9, 10, 11)
-        val positions = listOf(0, 1, 2, 3, 4, 5, 7, 8, 9, 10, 11)
+        val positions = listOf(9, 10, 11, 0, 1, 2, 4, 5, 6, 7, 8)
 
         for (i in hours.indices) {
             val angle = Math.PI / 6 * positions[i]
@@ -272,12 +272,12 @@ private object HorologiaRomanumTheme : WorldClockWatchTheme() {
             isAntiAlias = true
         }
 
-        drawContext.canvas.nativeCanvas.drawText(
+        /*drawContext.canvas.nativeCanvas.drawText(
             "ROMANUM",
             center.x,
             center.y - scaledRadius * 0.2f,
             originPaint
-        )
+        )*/
     }
 
     fun drawSubdialSecondHand(center: Offset, radius: Float, seconds: Int): DrawScope.() -> Unit = {
@@ -339,7 +339,7 @@ fun HorologiaRomanum(
 
         // 2. Add the world map component - centered vertically
         Box(
-            modifier = Modifier.fillMaxSize(), // Use full size of the parent
+            modifier = Modifier.fillMaxWidth().fillMaxHeight(0.7f), // Use full size of the parent
             contentAlignment = Alignment.Center // Center the map in the box
         ) {
             CustomWorldMapWithDayNight(
