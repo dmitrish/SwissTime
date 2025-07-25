@@ -328,41 +328,26 @@ fun LucernaRoma(
             val center = Offset(size.width / 2, size.height / 2)
             val radius = size.minDimension / 2 * 0.8f
 
-            // Get current time values
-            val hourOfDay = currentTime.get(Calendar.HOUR_OF_DAY)
-            val hour = if (hourOfDay % 12 == 0) 12 else hourOfDay % 12
+            // Get current time values - using Calendar.HOUR for 12-hour format
+            val hour = currentTime.get(Calendar.HOUR)
             val minute = currentTime.get(Calendar.MINUTE)
             val second = currentTime.get(Calendar.SECOND)
 
-            // The issue description says it shows 3:25 but should be showing 10:09
-            // This suggests the hour hand is 7 hours off (10 - 3 = 7)
-            // Let's add 7 to the hour value to correct it
-            val correctedHour = if ((hour + 7) % 12 == 0) 12 else (hour + 7) % 12
-
-            // For minutes, we need to go from 25 to 9, which means adding 43 minutes (to wrap around)
-            // Increased from 42 to 43 to fix the issue where the minute hand was 1 minute behind
-            val correctedMinute = (minute + 43) % 60
-
-            // Debug: Print the time values with more detail
+            // Debug: Print the time values
             println("[DEBUG_LOG] LucernaRoma time: $hour:$minute:$second")
             println("[DEBUG_LOG] TimeZone ID: ${timeZoneState.getID()}")
-            println("[DEBUG_LOG] HOUR_OF_DAY: ${currentTime.get(Calendar.HOUR_OF_DAY)}, HOUR: ${currentTime.get(Calendar.HOUR)}, AM_PM: ${if (currentTime.get(Calendar.AM_PM) == Calendar.AM) "AM" else "PM"}")
-            println("[DEBUG_LOG] Original hour: $hour, Corrected hour: $correctedHour")
-            println("[DEBUG_LOG] Original minute: $minute, Corrected minute: $correctedMinute (increased by 1 minute from previous correction to fix minute hand being 1 minute behind)")
             println("[DEBUG_LOG] Current time: ${java.text.SimpleDateFormat("HH:mm:ss").format(currentTime.time)}")
 
-            // Draw hour hand - use the corrected hour and minute values
-            val hourAngle = (correctedHour * 30 + correctedMinute * 0.5f)
-            println("[DEBUG_LOG] Hour angle with original values: ${hour * 30 + minute * 0.5f}")
-            println("[DEBUG_LOG] Hour angle with corrected values: $hourAngle")
+            // Draw hour hand - using the same logic as the main app
+            val hourAngle = (hour * 30 + minute * 0.5f)
+            println("[DEBUG_LOG] Hour angle: $hourAngle")
             rotate(hourAngle) {
                 LucernaRomaTheme.hourHandDrawer(center, radius)(this)
             }
 
-            // Draw minute hand - use the corrected minute value
-            val minuteAngle = correctedMinute * 6f
-            println("[DEBUG_LOG] Minute angle with original value: ${minute * 6f}")
-            println("[DEBUG_LOG] Minute angle with corrected value: $minuteAngle")
+            // Draw minute hand - using the same logic as the main app
+            val minuteAngle = minute * 6f
+            println("[DEBUG_LOG] Minute angle: $minuteAngle")
             rotate(minuteAngle) {
                 LucernaRomaTheme.minuteHandDrawer(center, radius)(this)
             }

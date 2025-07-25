@@ -328,6 +328,8 @@ fun Chronomagus(
                     // Display the timezone name
                     Text(
                         text = timeZoneInfo.displayName,
+                        maxLines = 1,
+                        overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.body2,
                         modifier = Modifier.padding(end = 4.dp)
                     )

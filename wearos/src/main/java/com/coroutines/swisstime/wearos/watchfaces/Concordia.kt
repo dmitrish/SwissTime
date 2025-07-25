@@ -415,33 +415,24 @@ fun Concordia(
                 val minute = currentTime.get(Calendar.MINUTE)
                 val second = currentTime.get(Calendar.SECOND)
 
-                // The issue description says minutes show 15 when they should be 58
-                // This suggests the minute hand is 43 minutes (258 degrees) off
-                // Let's add 43 to the minute value to correct it
-                val correctedMinute = (minute + 43) % 60
-
-                // The issue description says the hour is at 3 (15) but should be at 10 (22)
-                // This suggests the hour hand is 7 hours off (10 - 3 = 7)
-                // Let's add 7 to the hour value to correct it
-                val correctedHour = if ((hour + 7) % 12 == 0) 12 else (hour + 7) % 12
+                // Use the actual minute and hour values directly
+                val correctedMinute = minute
+                val correctedHour = if (hour == 0) 12 else hour
 
                 // Debug: Print the time values with more detail
                 println("[DEBUG_LOG] Concordia time: $hour:$minute:$second")
                 println("[DEBUG_LOG] TimeZone ID: ${timeZoneState.getID()}")
                 println("[DEBUG_LOG] HOUR_OF_DAY: ${currentTime.get(Calendar.HOUR_OF_DAY)}, HOUR: ${currentTime.get(Calendar.HOUR)}, AM_PM: ${if (currentTime.get(Calendar.AM_PM) == Calendar.AM) "AM" else "PM"}")
                 println("[DEBUG_LOG] Calendar.MINUTE: ${currentTime.get(Calendar.MINUTE)}")
-                println("[DEBUG_LOG] Original minute: $minute, Corrected minute: $correctedMinute")
-                println("[DEBUG_LOG] Original minute angle: ${minute * 6f}, Corrected minute angle: ${correctedMinute * 6f}")
-                println("[DEBUG_LOG] Original hour: $hour, Corrected hour: $correctedHour")
-                println("[DEBUG_LOG] Current time millis: ${currentTime.timeInMillis}")
+                println("[DEBUG_LOG] Minute: $minute, Minute angle: ${minute * 6f}")
+                println("[DEBUG_LOG] Hour: $hour")
                 println("[DEBUG_LOG] Current time: ${java.text.SimpleDateFormat("HH:mm:ss").format(currentTime.time)}")
 
                 // Draw hour hand - Art Deco style with diamond shape
-                // Use the corrected hour and minute values for the hour hand angle calculation
-                val hourAngle = (correctedHour * 30 + correctedMinute * 0.5f)
-                println("[DEBUG_LOG] Hour angle with original values: ${hour * 30 + minute * 0.5f}")
-                println("[DEBUG_LOG] Hour angle with corrected minute only: ${hour * 30 + correctedMinute * 0.5f}")
-                println("[DEBUG_LOG] Hour angle with corrected hour and minute: $hourAngle")
+                // Calculate the hour hand angle based on hour and minute
+                // Add 90 degrees to align the hour hand correctly with 12 o'clock at the top
+                val hourAngle = (correctedHour * 30 + correctedMinute * 0.5f) + 90f
+                println("[DEBUG_LOG] Hour angle: $hourAngle")
                 rotate(hourAngle) {
                     val path = Path().apply {
                         moveTo(center.x, center.y - radius * 0.5f) // Tip
@@ -455,10 +446,10 @@ fun Concordia(
                 }
 
                 // Minute hand - Art Deco style with elongated diamond shape
-                // Use the corrected minute value defined above
-                val minuteAngle = correctedMinute * 6f
-                println("[DEBUG_LOG] Original minute: $minute, Corrected minute: $correctedMinute")
-                println("[DEBUG_LOG] Original angle: ${minute * 6f}, Corrected angle: $minuteAngle")
+                // Calculate the minute hand angle
+                // Subtract 90 degrees to align 12 o'clock with vertical top (0 degrees in standard watch convention)
+                val minuteAngle = (correctedMinute * 6f) - 90f
+                println("[DEBUG_LOG] Minute angle: $minuteAngle")
 
                 rotate(minuteAngle) {
                     val path = Path().apply {
@@ -473,7 +464,8 @@ fun Concordia(
                 }
 
                 // Second hand - thin with a small circle counterbalance
-                val secondAngle = second * 6f
+                // Subtract 90 degrees to align 12 o'clock with vertical top (0 degrees in standard watch convention)
+                val secondAngle = (second * 6f) - 90f
                 rotate(secondAngle) {
                     // Main second hand
                     drawLine(
