@@ -18,6 +18,11 @@ navigation = "2.7.7"
 wear = "1.3.0"
 appcompat = "1.7.1"
 material = "1.10.0"
+kaspresso = "1.5.3"
+compose-ui-test = "1.6.0"
+shot = "6.0.0"
+androidTestRunner = "1.5.2"
+
 
 [libraries]
 androidx-compose-foundation = { module = "androidx.wear.compose:compose-foundation", version.ref = "wear" }
@@ -52,9 +57,14 @@ androidx-runtime = {group = "androidx.compose.runtime", name = "runtime"}
 androidx-runtime-tracing = {group = "androidx.compose.runtime", name = "runtime-tracing"}
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+kaspresso = { group = "com.kaspersky.android-components", name = "kaspresso", version.ref = "kaspresso" }
+shot = { module = "com.karumi:shot", version.ref = "shot" }
+androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidTestRunner" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+shot = { id = "shot", version.ref = "shot" }

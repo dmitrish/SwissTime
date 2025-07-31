@@ -9,6 +9,8 @@ pluginManagement {
         }
         mavenCentral()
         gradlePluginPortal()
+        maven(url = "https://jitpack.io")  // Add this
+
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     }
 }
@@ -17,6 +19,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven(url = "https://jitpack.io")  //
+
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     }
 }
