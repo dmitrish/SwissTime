@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.coroutines.swisstime", appContext.packageName)
+        assertEquals("com.coroutines.clockwithtimezone", appContext.packageName)
     }
 }

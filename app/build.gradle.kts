@@ -4,19 +4,21 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
+apply(plugin = "shot")
+
 android {
     namespace = "com.coroutines.swisstime"
     compileSdk = 36
 
     defaultConfig {
         applicationId = "com.coroutines.clockwithtimezone"
-        minSdk = 24
+        minSdk = 26  // Temporarily increased from 24 to 26 to resolve Scala and JSON4s library issues
         //noinspection EditedTargetSdkVersion
         targetSdk = 36
         versionCode = 8
         versionName = "1.41"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.karumi.shot.ShotTestRunner"
     }
 
     buildTypes {
@@ -88,4 +90,14 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    androidTestImplementation(libs.kaspresso)
+    androidTestImplementation("com.karumi:shot:6.0.0")
+    androidTestImplementation("androidx.test:runner:1.5.2")
+    androidTestImplementation(libs.material)
+    androidTestImplementation(libs.androidx.material3)
+    androidTestImplementation("androidx.compose.material:material:1.6.0")
+    androidTestImplementation("androidx.drawerlayout:drawerlayout:1.0.0")
+
+
+
 }

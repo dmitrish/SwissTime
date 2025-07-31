@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import android.content.Intent
@@ -59,7 +60,9 @@ fun AboutScreen(
 
         // About section
         Card(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("about_section_card"),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface
             )
@@ -93,7 +96,9 @@ fun AboutScreen(
 
         // Rate the App section
         Card(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("rate_app_section_card"),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface
             )
@@ -129,7 +134,9 @@ fun AboutScreen(
                             val reviewManager = AppReviewManager(context)
                             reviewManager.requestReview()
                         },
-                        modifier = Modifier.fillMaxWidth(0.6f)
+                        modifier = Modifier
+                            .fillMaxWidth(0.6f)
+                            .testTag("rate_app_button")
                     ) {
                         Text(text = "Rate the App")
                     }
@@ -139,7 +146,9 @@ fun AboutScreen(
 
         // App Version section
         Card(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("version_section_card"),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface
             )
