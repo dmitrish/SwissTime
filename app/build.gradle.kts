@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("app.cash.paparazzi") version "2.0.0-alpha02"
 }
 
 apply(plugin = "shot")
@@ -42,9 +43,7 @@ android {
 }
 
 dependencies {
-    // Add worldclockcommon module as a dependency
     implementation(project(":worldclockcommon"))
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -55,12 +54,6 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material.icons.extended)
 
-    // Foundation for Pager component
-   // implementation("androidx.compose.foundation:foundation")
-   // implementation("androidx.compose.foundation:foundation-layout")
-
-    // Use Jetpack Compose Pager
-   // implementation("androidx.compose.foundation:foundation-pager:1.0.0")
 
     // Glance for App Widgets
     implementation(libs.androidx.glance)
@@ -91,7 +84,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     androidTestImplementation(libs.kaspresso)
-    androidTestImplementation("com.karumi:shot:6.0.0")
+    androidTestImplementation(libs.shot)
     androidTestImplementation("androidx.test:runner:1.5.2")
     androidTestImplementation(libs.material)
     androidTestImplementation(libs.androidx.material3)
