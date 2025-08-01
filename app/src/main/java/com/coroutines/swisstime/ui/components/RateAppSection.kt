@@ -46,7 +46,8 @@ fun RateAppSection(
             Text(
                 text = "Enjoying World Timezone Clock App? Let us know what you think!",
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                modifier = Modifier.testTag("rate_app_description")
             )
 
             Spacer(modifier = Modifier.height(16.dp))

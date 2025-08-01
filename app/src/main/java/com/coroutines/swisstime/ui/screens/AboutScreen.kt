@@ -22,9 +22,37 @@ import androidx.compose.ui.unit.dp
 import com.coroutines.swisstime.ui.components.AppVersionSection
 import com.coroutines.swisstime.ui.components.RateAppSection
 
+/**
+ * AboutScreen displays information about the app, including a description,
+ * a section for rating the app, and a section showing the app version.
+ *
+ * This component has been refactored to accept RateAppSection and AppVersionSection
+ * as parameters to make it more flexible and testable. The refactoring uses function types
+ * as parameters with default values that use the existing RateAppSection and AppVersionSection
+ * components. This approach allows the AboutScreen to be more flexible and testable while
+ * maintaining backward compatibility.
+ *
+ * The refactoring also required updating the tests to work with the new implementation:
+ * 
+ * 1. AboutScreenTest: We created custom implementations of RateAppSection and AppVersionSection
+ *    for testing, with test tags for all elements. We updated the test to use these custom
+ *    implementations and to find elements using test tags instead of text content.
+ *    
+ * 2. AboutScreenThemeTest: This test was already using test tags to find UI elements, so it
+ *    continued to work with the refactored implementation without changes.
+ *    
+ * 3. AboutScreenScreenshotTests: These tests use screenshot comparison, so they continued to
+ *    work with the refactored implementation without changes.
+ *
+ * This refactoring approach allows for greater flexibility in testing and reuse of the
+ * AboutScreen component, while maintaining compatibility with existing tests and ensuring
+ * the visual appearance is preserved.
+ */
 @Composable
 fun AboutScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    rateAppSection: @Composable () -> Unit = { RateAppSection() },
+    appVersionSection: @Composable () -> Unit = { AppVersionSection() }
 ) {
     val scrollState = rememberScrollState()
 
@@ -81,9 +109,9 @@ fun AboutScreen(
         }
 
         // Rate the App section
-        RateAppSection()
+        rateAppSection()
 
         // App Version section
-        AppVersionSection()
+        appVersionSection()
     }
 }
