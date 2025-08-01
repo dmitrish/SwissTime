@@ -65,15 +65,66 @@ import com.coroutines.swisstime.viewmodel.WatchViewModel
  * 
  * It also includes a ThemeSelectionDialog that appears when the user clicks on the theme option.
  *
+ * This component has been refactored to accept the card components and dialog as parameters
+ * to make it more flexible and testable. The refactoring uses function types as parameters
+ * with default values that use the existing components. This approach allows the SettingsScreen
+ * to be more flexible and testable while maintaining backward compatibility.
+ *
  * @param themeViewModel ViewModel for theme-related settings
  * @param watchViewModel ViewModel for watch-related settings
  * @param modifier Optional modifier for the screen
+ * @param themeSettingsCard Function that renders the theme settings card
+ * @param timeFormatSettingsCard Function that renders the time format settings card
+ * @param watchRemovalGestureSettingsCard Function that renders the watch removal gesture settings card
+ * @param themeSelectionDialog Function that renders the theme selection dialog when showThemeDialog is true
  */
 @Composable
 fun SettingsScreen(
     themeViewModel: ThemeViewModel,
     watchViewModel: WatchViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    themeSettingsCard: @Composable (
+        themeMode: ThemeMode,
+        darkMode: Boolean,
+        onThemeClick: () -> Unit,
+        onDarkModeChange: (Boolean) -> Unit
+    ) -> Unit = { themeMode, darkMode, onThemeClick, onDarkModeChange ->
+        ThemeSettingsCard(
+            themeMode = themeMode,
+            darkMode = darkMode,
+            onThemeClick = onThemeClick,
+            onDarkModeChange = onDarkModeChange
+        )
+    },
+    timeFormatSettingsCard: @Composable (
+        useUsTimeFormat: Boolean,
+        onTimeFormatChange: (Boolean) -> Unit
+    ) -> Unit = { useUsTimeFormat, onTimeFormatChange ->
+        TimeFormatSettingsCard(
+            useUsTimeFormat = useUsTimeFormat,
+            onTimeFormatChange = onTimeFormatChange
+        )
+    },
+    watchRemovalGestureSettingsCard: @Composable (
+        useDoubleTapForRemoval: Boolean,
+        onRemovalGestureChange: (Boolean) -> Unit
+    ) -> Unit = { useDoubleTapForRemoval, onRemovalGestureChange ->
+        WatchRemovalGestureSettingsCard(
+            useDoubleTapForRemoval = useDoubleTapForRemoval,
+            onRemovalGestureChange = onRemovalGestureChange
+        )
+    },
+    themeSelectionDialog: @Composable (
+        themeMode: ThemeMode,
+        onThemeModeChange: (ThemeMode) -> Unit,
+        onDismiss: () -> Unit
+    ) -> Unit = { themeMode, onThemeModeChange, onDismiss ->
+        ThemeSelectionDialog(
+            themeMode = themeMode,
+            onThemeModeChange = onThemeModeChange,
+            onDismiss = onDismiss
+        )
+    }
 ) {
     // Collect theme preferences from the ViewModel
     val themeMode by themeViewModel.themeMode.collectAsState()
@@ -104,32 +155,32 @@ fun SettingsScreen(
         Divider()
 
         // Theme settings card
-        ThemeSettingsCard(
-            themeMode = themeMode,
-            darkMode = darkMode,
-            onThemeClick = { showThemeDialog = true },
-            onDarkModeChange = { themeViewModel.saveDarkMode(it) }
+        themeSettingsCard(
+            themeMode, 
+            darkMode, 
+            { showThemeDialog = true }, 
+            { themeViewModel.saveDarkMode(it) }
         )
 
         // Time format settings card
-        TimeFormatSettingsCard(
-            useUsTimeFormat = useUsTimeFormat,
-            onTimeFormatChange = { watchViewModel.saveTimeFormat(it) }
+        timeFormatSettingsCard(
+            useUsTimeFormat, 
+            { watchViewModel.saveTimeFormat(it) }
         )
 
         // Watch removal gesture settings card
-        WatchRemovalGestureSettingsCard(
-            useDoubleTapForRemoval = useDoubleTapForRemoval,
-            onRemovalGestureChange = { watchViewModel.saveWatchRemovalGesture(it) }
+        watchRemovalGestureSettingsCard(
+            useDoubleTapForRemoval, 
+            { watchViewModel.saveWatchRemovalGesture(it) }
         )
     }
 
     // Theme selection dialog
     if (showThemeDialog) {
-        ThemeSelectionDialog(
-            themeMode = themeMode,
-            onThemeModeChange = { themeViewModel.saveThemeMode(it) },
-            onDismiss = { showThemeDialog = false }
+        themeSelectionDialog(
+            themeMode,
+            { themeViewModel.saveThemeMode(it) },
+            { showThemeDialog = false }
         )
     }
 }
