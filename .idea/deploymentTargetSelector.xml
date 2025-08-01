@@ -27,9 +27,6 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="AboutScreenScreenshotTest">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="testAboutScreenLightTheme()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
@@ -45,6 +42,9 @@
         <DialogSelection />
       </SelectionState>
       <SelectionState runConfigName="testAboutScreenDarkTheme()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="AboutScreenTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
