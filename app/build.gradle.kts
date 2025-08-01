@@ -77,6 +77,8 @@ dependencies {
     implementation(libs.androidx.runtime.tracing)
 
     testImplementation(libs.junit)
+    // MockK for mocking in tests
+    testImplementation("io.mockk:mockk:1.13.8")
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
