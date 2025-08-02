@@ -54,6 +54,7 @@ import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.text.style.TextOverflow
 import com.coroutines.swisstime.WatchInfo
 import com.coroutines.swisstime.darken
+import com.coroutines.swisstime.ui.components.WatchListItem
 import com.coroutines.swisstime.ui.screens.BrandLogo
 import com.coroutines.swisstime.ui.screens.getBrandLogos
 import java.util.TimeZone
@@ -193,82 +194,3 @@ fun WatchListScreen(
     }
 }
 
-@Composable
-fun WatchListItem(
-    watch: WatchInfo,
-    onClick: () -> Unit,
-    onTitleClick: (WatchInfo) -> Unit,
-    isSelectedForWidget: Boolean = false,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier
-            .clickable(onClick = onClick)
-            .padding(8.dp),
-        colors = androidx.compose.material3.CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.background
-        )
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            verticalAlignment = Alignment.Top // Align tops of image and content
-        ) {
-            // Watch face on the left
-            Box(
-                modifier = Modifier
-                    .size(80.dp) // Reduced from 120.dp to 80.dp
-                    .padding(end = 8.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                watch.composable(Modifier.fillMaxSize(), TimeZone.getDefault())
-            }
-
-            // Column for title and description on the right
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-                // Title row
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = watch.name,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier
-                            .weight(1f)
-                            .clickable(onClick = { onClick() })
-                    )
-
-                    // Widget selection icon
-                    IconButton(
-                        onClick = { onTitleClick(watch) },
-                        modifier = Modifier.size(40.dp)
-                    ) {
-                        Icon(
-                            imageVector = if (isSelectedForWidget) Icons.Filled.Check else Icons.Outlined.AddToHomeScreen,
-                            contentDescription = if (isSelectedForWidget) "Selected for widget" else "Add to widget",
-                            tint = if (isSelectedForWidget) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(4.dp))
-
-                // Description below the title
-                Text(
-                    text = watch.description,
-                    style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 5,
-                    overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
-                )
-            }
-        }
-    }
-}
