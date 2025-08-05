@@ -167,7 +167,6 @@ fun WatchTimeManager(watchViewModel: WatchViewModel, selectedWatches: List<Watch
  * A screen that displays a horizontal pager of watches, allowing the user to swipe between them.
  * Each watch is associated with its own timezone.
  */
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TimeScreen(
     watchViewModel: WatchViewModel,
