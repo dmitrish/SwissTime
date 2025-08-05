@@ -16,7 +16,7 @@ android {
         minSdk = 26  // Temporarily increased from 24 to 26 to resolve Scala and JSON4s library issues
         //noinspection EditedTargetSdkVersion
         targetSdk = 36
-        versionCode = 8
+        versionCode = 7
         versionName = "1.41"
 
         testInstrumentationRunner = "com.karumi.shot.ShotTestRunner"
@@ -73,12 +73,15 @@ dependencies {
     implementation(libs.app.update.ktx)
     implementation(libs.play.review)
     implementation(libs.play.review.ktx)
+    //implementation ("com.google.android.play:core:1.7.2")
 
     implementation(libs.androidx.runtime.tracing)
 
     testImplementation(libs.junit)
     // MockK for mocking in tests
     testImplementation("io.mockk:mockk:1.13.8")
+    // Play Core testing library for FakeAppUpdateManager
+       //. androidTestImplementation("com.google.android.play:app-update-testing:2.1.0")
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
