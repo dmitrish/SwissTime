@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -81,6 +82,13 @@ fun SwissTimeNavigationBar(
                 it.route == destination.route 
             } == true
 
+            // Add a test tag for the About destination to make it easier to find in tests
+            val itemModifier = if (destination == TopLevelDestination.ABOUT) {
+                modifier.testTag("about_menu_option")
+            } else {
+                modifier
+            }
+            
             SwissTimeNavigationBarItem(
                 selected = selected,
                 onClick = {
@@ -106,7 +114,8 @@ fun SwissTimeNavigationBar(
                         destination.unselectedIcon()
                     }
                 },
-                label = destination.iconText
+                label = destination.iconText,
+                modifier = itemModifier
             )
         }
     }

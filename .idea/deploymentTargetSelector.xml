@@ -27,13 +27,13 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="AboutScreenTest">
+      <SelectionState runConfigName="AppUpdateTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="AboutScreenThemeTest">
+      <SelectionState runConfigName="testImmediateUpdate_Completes()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="AboutScreenScreenshotTest">
+      <SelectionState runConfigName="testFlexibleUpdate_Completes()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
