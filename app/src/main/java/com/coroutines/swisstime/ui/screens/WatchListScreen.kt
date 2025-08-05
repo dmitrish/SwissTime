@@ -60,55 +60,8 @@ import com.coroutines.swisstime.ui.screens.getBrandLogos
 import java.util.TimeZone
 
 
-// Composable for a single brand logo item in the horizontal row
-@Composable
-fun BrandLogoRowItem(
-    brandLogo: BrandLogo,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
 
-            .background(MaterialTheme.colorScheme.background.darken(0.25f), MaterialTheme.shapes.medium)
-            .padding(horizontal = 8.dp)
-            .clickable(onClick = onClick),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        // Logo image
-        Image(
-            painter = painterResource(id = brandLogo.resourceId),
-            contentDescription = brandLogo.name,
-            modifier = Modifier
-                .width(175.dp)
-                .height(110.dp)
-                .padding(16.dp)
-        )
-    }
-}
 
-// Composable for the horizontal row of brand logos
-@Composable
-fun BrandLogosRow(
-    brandLogos: List<BrandLogo>,
-    onClick: (BrandLogo) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    LazyRow(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        contentPadding = PaddingValues(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        items(brandLogos) { brandLogo ->
-            BrandLogoRowItem(
-                brandLogo = brandLogo,
-                onClick = { onClick(brandLogo) }
-            )
-        }
-    }
-}
 
 @Composable
 fun WatchListScreen(
@@ -119,10 +72,10 @@ fun WatchListScreen(
     modifier: Modifier = Modifier,
     listState: LazyListState
 ) {
-    // Capture the background color
+
     val backgroundColor = MaterialTheme.colorScheme.background
     val context = LocalContext.current
-   // val brandLogos = getBrandLogos(context)
+
 
     // Use a Surface that fills the entire screen including the status bar area
     Surface(
@@ -140,40 +93,6 @@ fun WatchListScreen(
                     .windowInsetsPadding(WindowInsets.statusBars)
             )
 
-            // Determine if brand logos row should be visible based on scroll position
-          /*  val isRowVisible by remember {
-                derivedStateOf {
-                    // Show row when close to the top of the list for smoother transition
-                    listState.firstVisibleItemIndex == 0 && listState.firstVisibleItemScrollOffset < 50
-                }
-            }
-
-            // Add the horizontal row of brand logos with animation
-            AnimatedVisibility(
-                visible = isRowVisible,
-                enter = slideInVertically(
-                    initialOffsetY = { -it },
-                    animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioLowBouncy,
-                        stiffness = Spring.StiffnessLow
-                    )
-                ),
-                exit = slideOutVertically(
-                    targetOffsetY = { -it },
-                    animationSpec = tween(
-                        durationMillis = 300,
-                        easing = EaseIn
-                    )
-                )
-            ) {
-                BrandLogosRow(
-                    brandLogos = brandLogos,
-                    onClick = { /* Optional: Handle click on logo */ },
-                    modifier = Modifier.background(backgroundColor)
-                )
-            } */
-
-            // Main content
             LazyColumn(
                 state = listState,
                 modifier = Modifier.fillMaxSize(),
