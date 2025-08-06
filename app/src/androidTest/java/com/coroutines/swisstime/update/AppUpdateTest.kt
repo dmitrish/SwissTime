@@ -53,6 +53,58 @@ class AppUpdateTest {
         )
     }
 
+
+    @Test
+    fun testPrep(){
+        runBlocking {
+
+            fakeAppUpdateManager.setUpdateAvailable(2) // Higher version code
+            fakeAppUpdateManager.setUpdatePriority(2) // Medium priority (will trigger flexible update)
+
+            composeTestRule.onNodeWithTag("about_menu_option", useUnmergedTree = true)
+                .assertExists()
+                .assertIsEnabled()
+                .performClick()
+
+            composeTestRule.awaitIdle()
+
+            composeTestRule.waitUntil(timeoutMillis = 10000) {
+                try {
+                    // Try to find the version_section_card and ensure it's displayed
+                    val nodes = composeTestRule.onAllNodesWithTag("about_section_card")
+                        .fetchSemanticsNodes()
+                    nodes.isNotEmpty()
+                } catch (e: Exception) {
+                    false
+                }
+            }
+
+
+            composeTestRule.onNodeWithText("Check for Updates").assertIsDisplayed()
+
+            // Verify that the version section card is displayed
+
+
+            // Find and click the "Check for Updates" button
+            composeTestRule.onNodeWithText("Check for Updates").performClick()
+
+            composeTestRule.awaitIdle()
+
+            // Verify that update status message changes to "Checking for updates..."
+            composeTestRule.waitUntil(timeoutMillis = 10000) {
+                try {
+                    val nodes =  composeTestRule.onAllNodesWithText("Checking for updates...").fetchSemanticsNodes()
+
+                    nodes.isNotEmpty()
+                } catch (e: Exception) {
+                    false
+                }
+            }
+
+
+        }
+
+    }
     /**
      * Tests a flexible update flow where the update completes successfully.
      * This test verifies both the update manager state and the UI interactions.
@@ -72,13 +124,17 @@ class AppUpdateTest {
                 .performClick()
             
             // Add a fixed delay to ensure navigation has time to complete
-            kotlinx.coroutines.delay(5000) // 2 second delay
+           // kotlinx.coroutines.delay(5000) // 2 second delay
+
+            composeTestRule.awaitIdle()
+
+            composeTestRule.onNodeWithText("Check for Updates").assertIsDisplayed()
             
             // Wait for navigation to complete and the version section card to be displayed with increased timeout
             composeTestRule.waitUntil(timeoutMillis = 10000) {
                 try {
                     // Try to find the version_section_card and ensure it's displayed
-                    val nodes = composeTestRule.onAllNodesWithTag("version_section_card")
+                    val nodes = composeTestRule.onAllNodesWithTag("about_section_card")
                         .fetchSemanticsNodes()
                     nodes.isNotEmpty()
                 } catch (e: Exception) {
