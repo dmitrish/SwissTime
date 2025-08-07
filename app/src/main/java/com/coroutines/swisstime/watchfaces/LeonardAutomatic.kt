@@ -230,7 +230,7 @@ private fun DrawScope.drawHourMarkersAndNumbers(center: Offset, radius: Float, t
         // Skip VI (6 o'clock) where the moonphase is
         if (i == 5) continue
         
-        val angle = Math.PI / 6 * i
+        val angle = Math.PI / 6 * i - Math.PI/3
         val numberRadius = radius * 0.75f
         val numberX = center.x + cos(angle).toFloat() * numberRadius
         val numberY = center.y + sin(angle).toFloat() * numberRadius + textPaint.textSize / 3
