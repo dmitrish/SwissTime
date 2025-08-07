@@ -209,7 +209,7 @@ private fun DrawScope.drawHourMarkersAndNumbers(center: Offset, radius: Float) {
     }
     
     for (i in 0..3) {
-        val angle = Math.PI / 2 * i
+        val angle = Math.PI / 2 * i - Math.PI / 2
         val numberRadius = radius * 0.45f
         val numberX = center.x + cos(angle).toFloat() * numberRadius
         val numberY = center.y + sin(angle).toFloat() * numberRadius + textPaint.textSize / 3
