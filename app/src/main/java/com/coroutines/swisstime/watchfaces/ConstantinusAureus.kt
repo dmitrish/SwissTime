@@ -323,9 +323,9 @@ private fun DrawScope.drawHourMarkersAndNumbers(center: Offset, radius: Float) {
     // Draw Roman numerals
     for (i in 0 until 12) {
         // Skip VI (6 o'clock) and XII (12 o'clock) where the date window and power reserve are
-        if (i == 6 || i == 0) continue
+        if (i == 5 || i == 0) continue
 
-        val angle = Math.PI / 6 * i
+        val angle = Math.PI / 6 * i - Math.PI / 3
         val numberRadius = radius * 0.7f
         val numberX = center.x + cos(angle).toFloat() * numberRadius
         val numberY = center.y + sin(angle).toFloat() * numberRadius + textPaint.textSize / 3

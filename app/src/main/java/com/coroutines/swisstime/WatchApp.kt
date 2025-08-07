@@ -65,6 +65,7 @@ import com.coroutines.swisstime.watchfaces.KandinskyEvening
 import com.coroutines.swisstime.watchfaces.PontifexChronometra
 import com.coroutines.swisstime.watchfaces.ChronomagusRegum
 import com.coroutines.swisstime.watchfaces.ConstantinusAureusChronometer
+import com.coroutines.swisstime.watchfaces.Knot
 import com.coroutines.swisstime.watchfaces.LeonardAutomatic
 import com.coroutines.swisstime.watchfaces.TemporisB
 import com.coroutines.swisstime.watchfaces.Tokinoha
@@ -343,6 +344,11 @@ private fun getWatches(): List<WatchInfo> {
           name = "Kandinsky Evening",
           description = "The Kandinsky Evening watch face is inspired by Wassily Kandinsky's famous 'Circles in a Circle' painting. It features a light background with multiple colored circles of various sizes and intersecting lines, creating a vibrant and artistic timepiece that celebrates the abstract art movement.",
           composable = { modifier, timeZone -> KandinskyEvening(modifier = modifier, timeZone = timeZone) }
+      ),
+      WatchInfo(
+          name = "Knot Urushi",
+          description = "The Knot Urushi is a collaboration between modern watchmaking and traditional Japanese craftsmanship. Its deep jet black dial is created through the meticulous Urushi lacquer technique, involving repeated painting, drying, and sharpening by skilled artisans. The dial is adorned with gold powder scraped from gold ingots, creating a subtle shimmer effect as light plays across the surface. With its minimalist silver hands and markers, this timepiece exemplifies the perfect harmony between Japanese aesthetics and precision timekeeping.",
+          composable = { modifier, timeZone -> Knot(modifier = modifier, timeZone = timeZone) }
       ),
       /*  WatchInfo(
             name = "Oris Aquis",
