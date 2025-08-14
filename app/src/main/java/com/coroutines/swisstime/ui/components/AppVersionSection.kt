@@ -28,6 +28,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.coroutines.swisstime.update.AppUpdateManager
+import com.coroutines.swisstime.utils.getApplicationVersionInfo
 
 /**
  * A composable that displays the app version information and provides a button to check for updates.
@@ -144,15 +145,7 @@ fun AppVersionSection(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Get version information from PackageManager
-            val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-            val versionName = packageInfo.versionName
-            val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                packageInfo.longVersionCode.toInt()
-            } else {
-                @Suppress("DEPRECATION")
-                packageInfo.versionCode
-            }
+            val (versionName, versionCode) = getApplicationVersionInfo(context)
 
             Text(
                 text = "Version $versionName ($versionCode)",
@@ -199,3 +192,4 @@ fun AppVersionSection(
         }
     }
 }
+
