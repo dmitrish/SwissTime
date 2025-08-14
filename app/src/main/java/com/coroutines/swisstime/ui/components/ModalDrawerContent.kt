@@ -36,10 +36,14 @@ import com.coroutines.swisstime.darken
 import com.coroutines.swisstime.ui.theme.DarkNavy
 import com.coroutines.swisstime.utils.getApplicationVersionInfo
 import androidx.compose.ui.platform.LocalContext
+import com.coroutines.swisstime.ui.theme.DarkGold
+import com.coroutines.swisstime.ui.theme.DarkSilver
+import com.coroutines.swisstime.ui.theme.LightGold
+import com.coroutines.swisstime.ui.theme.LightSilver
 
 @Composable
 fun ModalDrawerContent(){
-    ModalDrawerSheet (drawerContainerColor = DarkNavy.darken(0.6f)) {
+    ModalDrawerSheet (drawerContainerColor = DarkNavy.darken(0.45f)) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -70,7 +74,7 @@ fun ModalDrawerContent(){
                 supportingContent = { Text("Version $versionName") },
                 colors = ListItemDefaults.colors(
                     containerColor = Color.Transparent,
-                    supportingColor = Color.Yellow,
+                    supportingColor = DarkGold,
                     leadingIconColor = Color.White),
 
                 leadingContent = {
@@ -86,7 +90,7 @@ fun ModalDrawerContent(){
                 supportingContent = { Text(AboutAppText) },
                 colors = ListItemDefaults.colors(
                     containerColor = Color.Transparent,
-                    supportingColor = Color.Yellow,
+                    supportingColor = DarkGold,
                     leadingIconColor = Color.White),
                 leadingContent = {
                     Icon(

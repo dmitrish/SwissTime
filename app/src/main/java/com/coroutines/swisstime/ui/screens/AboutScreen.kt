@@ -20,8 +20,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.coroutines.swisstime.darken
 import com.coroutines.swisstime.ui.components.AppVersionSection
 import com.coroutines.swisstime.ui.components.RateAppSection
+import com.coroutines.swisstime.ui.theme.DarkNavy
 
 /**
  * AboutScreen displays information about the app, including a description,
@@ -79,7 +81,7 @@ fun AboutScreen(
                 .fillMaxWidth()
                 .testTag("about_section_card"),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface
+                containerColor = DarkNavy.darken(0.3f)// MaterialTheme.colorScheme.surface
             )
         ) {
             Column(
