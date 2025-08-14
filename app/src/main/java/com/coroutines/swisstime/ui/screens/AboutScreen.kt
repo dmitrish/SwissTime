@@ -1,5 +1,6 @@
 package com.coroutines.swisstime.ui.screens
 
+import AboutAppText
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -101,7 +102,7 @@ fun AboutScreen(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "World Timezone Clock is an elegant app that displays the time across different timezones with beautifully crafted mechanical watch faces. Each watch face is designed with attention to detail, mimicking the craftsmanship of real luxury timepieces.",
+                    text = AboutAppText,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                 )
