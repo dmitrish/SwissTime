@@ -39,6 +39,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import android.content.res.Configuration
+import androidx.compose.material3.DrawerDefaults
+import androidx.compose.ui.graphics.Color
 import androidx.glance.appwidget.updateAll
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -48,6 +50,7 @@ import com.coroutines.swisstime.data.TimeZoneService
 import com.coroutines.swisstime.data.WatchPreferencesRepository
 import com.coroutines.swisstime.navigation.NavGraph
 import com.coroutines.swisstime.navigation.SwissTimeNavigationBar
+import com.coroutines.swisstime.ui.components.ModalDrawerContent
 import com.coroutines.swisstime.ui.theme.SwissTimeTheme
 import com.coroutines.swisstime.viewmodel.ThemeViewModel
 import com.coroutines.swisstime.viewmodel.WatchViewModel
@@ -159,53 +162,8 @@ fun WatchApp(watchPreferencesRepository: WatchPreferencesRepository) {
         ModalNavigationDrawer(
             drawerState = drawerState,
             drawerContent = {
-                ModalDrawerSheet {
-                    // App logo in the top section
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                            contentDescription = "App Logo",
-                            modifier = Modifier.size(80.dp)
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "World Timezone Clock",
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-
-                    Divider()
-
-                    // Menu items
-                    // Version item
-                    ListItem(
-                        headlineContent = { Text("Application Version") },
-                        supportingContent = { Text("Version 1.4") },
-                        leadingContent = { 
-                            Icon(
-                                imageVector = Icons.Default.Numbers,
-                                contentDescription = "Version"
-                            )
-                        }
-                    )
-
-                    // About item
-                    ListItem(
-                        headlineContent = { Text("About") },
-                        supportingContent = { Text("World Timezone Clock") },
-                        leadingContent = { 
-                            Icon(
-                                imageVector = Icons.Default.Info,
-                                contentDescription = "About"
-                            )
-                        }
-                    )
+                ModalDrawerSheet (drawerShape = DrawerDefaults.shape,   drawerContainerColor = Color.Transparent) {
+                    ModalDrawerContent()
                 }
             }
         ) {
