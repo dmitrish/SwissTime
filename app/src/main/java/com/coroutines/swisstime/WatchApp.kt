@@ -39,7 +39,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import android.content.res.Configuration
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.DrawerDefaults
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.Color
 import androidx.glance.appwidget.updateAll
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -79,6 +81,8 @@ import com.coroutines.swisstime.watchfaces.ZenithElPrimero
 import com.coroutines.swisstime.widget.WatchWidget
 import kotlinx.coroutines.launch
 import java.util.TimeZone
+import com.coroutines.systemuicontroller.SystemUiController
+import com.coroutines.systemuicontroller.rememberSystemUiController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -135,6 +139,20 @@ fun WatchApp(watchPreferencesRepository: WatchPreferencesRepository) {
     // Create a drawer state
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
+    val uiController = rememberSystemUiController()
+
+    LaunchedEffect(drawerState.isOpen) {
+        when (drawerState.isOpen) {
+            true -> {
+                uiController.setStatusBarColor(Color.Transparent)
+            }
+
+            false -> {
+                uiController.setStatusBarColor(Color.Transparent)
+            }
+        }
+    }
+
     // Function to select a watch for the widget
     val selectWatchForWidget = { watch: WatchInfo ->
         coroutineScope.launch {
@@ -162,7 +180,12 @@ fun WatchApp(watchPreferencesRepository: WatchPreferencesRepository) {
         ModalNavigationDrawer(
             drawerState = drawerState,
             drawerContent = {
-                ModalDrawerSheet (drawerShape = DrawerDefaults.shape,   drawerContainerColor = Color.Transparent) {
+                ModalDrawerSheet (
+                    modifier = Modifier.fillMaxSize(),
+                    drawerShape = DrawerDefaults.shape,
+                    drawerContainerColor = Color.Transparent,
+                    windowInsets = WindowInsets(0, 160, 0, 160),
+                    ) {
                     ModalDrawerContent()
                 }
             }
