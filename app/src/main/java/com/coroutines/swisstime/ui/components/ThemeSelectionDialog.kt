@@ -17,6 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.coroutines.swisstime.darken
+import com.coroutines.swisstime.ui.theme.DarkNavy
 import com.coroutines.swisstime.ui.theme.ThemeMode
 
 /**
@@ -41,7 +43,7 @@ fun ThemeSelectionDialog(
                 .padding(16.dp),
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface
+                containerColor = DarkNavy.darken(0.3f)// MaterialTheme.colorScheme.surface
             )
         ) {
             Column(
