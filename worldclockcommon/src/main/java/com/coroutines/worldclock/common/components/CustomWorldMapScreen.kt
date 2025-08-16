@@ -136,7 +136,7 @@ fun CustomWorldMapWithDayNight(
     nightOverlayColor: Color = Color(DarkNavy.toArgb()),
     updateIntervalMillis: Long = 6000 // Default to 6 seconds
 ) {
-    var currentTime = Calendar.getInstance()
+    var currentTime = Calendar.getInstance(TimeZone.getTimeZone("America/New_York"))
 
     LaunchedEffect(true){
         while(true) {
