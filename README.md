@@ -34,12 +34,12 @@ World Clock with timezones is a mighty little app that adds fun to timekeeping. 
   <tr>
     <th>Round Watch</th>
     <th>Square Watch</th> 
-
+    <th>Round Watch</th>
   </tr>
   <tr>
-    <td style="width:50%"><img src="https://github.com/dmitrish/SwissTime/blob/main/art/roundwatch.gif"/></td>
-    <td style="width:50%"><img src="https://github.com/dmitrish/SwissTime/blob/main/art/watchsquare.gif"></td> 
- 
+    <td style="width:33%"><img src="https://github.com/dmitrish/SwissTime/blob/main/art/roundwatch.gif"/></td>
+    <td style="width:33%"><img src="https://github.com/dmitrish/SwissTime/blob/main/art/watchsquare.gif"></td> 
+   <td style="width:33%"><img src="https://github.com/dmitrish/SwissTime/blob/main/art/chronomaguswatch.gif"></td>
   
   </tr>
   
