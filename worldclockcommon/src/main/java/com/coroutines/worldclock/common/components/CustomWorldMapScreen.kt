@@ -131,16 +131,16 @@ public fun getBitmap(drawableRes: Int): Bitmap? {
 
 @Composable
 fun CustomWorldMapWithDayNight(
-   // currentTime: Calendar,
+    //currentTime: Calendar,
     modifier: Modifier = Modifier,
     nightOverlayColor: Color = Color(DarkNavy.toArgb()),
     updateIntervalMillis: Long = 6000 // Default to 6 seconds
 ) {
-    var currentTime = Calendar.getInstance(TimeZone.getTimeZone("America/New_York"))
+    var currentTime by remember {mutableStateOf( Calendar.getInstance(TimeZone.getTimeZone("America/New_York")))}
 
     LaunchedEffect(true){
         while(true) {
-            currentTime = Calendar.getInstance()
+            currentTime = Calendar.getInstance(TimeZone.getTimeZone("America/New_York"))
             delay(updateIntervalMillis)
         }
     }
