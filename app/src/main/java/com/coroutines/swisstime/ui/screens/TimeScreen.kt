@@ -568,7 +568,7 @@ fun TimeScreen(
                 )
 
                 // World map
-                CustomWorldMapWithDayNight()
+                CustomWorldMapWithDayNight( )
             }
         }
     } else {
