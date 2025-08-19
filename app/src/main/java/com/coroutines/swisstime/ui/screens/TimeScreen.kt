@@ -22,39 +22,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.coroutines.swisstime.WatchInfo
 import com.coroutines.swisstime.viewmodel.WatchViewModel
-import androidx.compose.foundation.Image
-import androidx.compose.ui.res.painterResource
-import com.coroutines.swisstime.R
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalConfiguration
 import android.content.res.Configuration
-import androidx.compose.material3.ShapeDefaults
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.asImageBitmap
 import com.coroutines.swisstime.util.PerformanceMetrics
 import com.coroutines.worldclock.common.components.CustomWorldMapWithDayNight
-import com.coroutines.worldclock.common.components.getBitmap
-import com.coroutines.worldclock.common.effects.shader.WaterEffectBitmapShader
-import com.coroutines.worldclock.common.effects.viewmodel.WaterViewModel
+import com.coroutines.worldclock.common.model.WatchInfo
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
-import java.util.Calendar
-import java.util.TimeZone
+
 
 /**
  * A composable that manages the time for all watches.

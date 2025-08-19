@@ -38,10 +38,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import com.coroutines.swisstime.R
 import com.coroutines.swisstime.TimingLogger
-import com.coroutines.swisstime.WatchInfo
 import com.coroutines.swisstime.ui.theme.DarkNavy
 import com.coroutines.swisstime.watchfaces.ChronomagusRegum
 import com.coroutines.swisstime.watchfaces.ZenithElPrimero
+import com.coroutines.worldclock.common.model.WatchInfo
 //import kotlinx.datetime.TimeZone
 import kotlinx.coroutines.delay
 import java.util.Calendar

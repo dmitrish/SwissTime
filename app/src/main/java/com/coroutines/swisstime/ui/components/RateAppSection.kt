@@ -16,9 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import com.coroutines.swisstime.darken
 import com.coroutines.swisstime.ui.theme.DarkNavy
 import com.coroutines.swisstime.utils.AppReviewManager
+import com.coroutines.swisstime.utils.darken
 
 @Composable
 fun RateAppSection(

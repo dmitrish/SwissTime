@@ -17,9 +17,6 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.coroutines.swisstime.TimingLogger
-import com.coroutines.swisstime.WatchInfo
-import com.coroutines.swisstime.darken
 import com.coroutines.swisstime.getWatchFaceColor
 import com.coroutines.swisstime.ui.screens.AboutScreen
 import com.coroutines.swisstime.ui.screens.BrandLogosScreen
@@ -30,8 +27,10 @@ import com.coroutines.swisstime.ui.screens.TimeScreen
 import com.coroutines.swisstime.ui.screens.WatchDetailScreen
 import com.coroutines.swisstime.ui.screens.WatchListScreen
 import com.coroutines.swisstime.ui.screens.WorldMapScreen
+import com.coroutines.swisstime.utils.darken
 import com.coroutines.swisstime.viewmodel.ThemeViewModel
 import com.coroutines.swisstime.viewmodel.WatchViewModel
+import com.coroutines.worldclock.common.model.WatchInfo
 
 // Define the routes for the app
 sealed class Screen(val route: String) {
