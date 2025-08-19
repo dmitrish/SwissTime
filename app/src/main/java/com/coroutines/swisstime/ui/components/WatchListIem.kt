@@ -25,7 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.coroutines.swisstime.WatchInfo
+import com.coroutines.worldclock.common.model.WatchInfo
 import java.util.TimeZone
 
 @Composable
