@@ -32,15 +32,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
 import com.coroutines.swisstime.update.AppUpdateManager
+import com.coroutines.swisstime.utils.isDark
 import kotlinx.coroutines.launch
 import java.util.TimeZone
 
 // Data class to hold watch information
-data class WatchInfo(
-    val name: String,
-    val description: String,
-    val composable: @Composable (Modifier, TimeZone) -> Unit
-)
+
 
 // Function to get the watch face color based on the watch name
 fun getWatchFaceColor(watchName: String): Color {
@@ -76,19 +73,7 @@ fun getWatchFaceColor(watchName: String): Color {
     }
 }
 
-// Function to darken a color by a factor
-fun Color.darken(factor: Float = 0.2f): Color {
-    val alpha = this.alpha
-    val red = this.red * (1 - factor)
-    val green = this.green * (1 - factor)
-    val blue = this.blue * (1 - factor)
-    return Color(red, green, blue, alpha)
-}
 
-// Function to determine if a color is dark
-fun Color.isDark(): Boolean {
-    return this.luminance() < 0.5f
-}
 
 // Function to get appropriate text color for a background
 fun getTextColorForBackground(backgroundColor: Color): Color {
@@ -96,16 +81,13 @@ fun getTextColorForBackground(backgroundColor: Color): Color {
 }
 
 class MainActivity : ComponentActivity() {
-    // Initialize the preferences repository
+
     private lateinit var watchPreferencesRepository: WatchPreferencesRepository
 
-    // Initialize the app update manager
     private lateinit var appUpdateManager: AppUpdateManager
 
-    // Flag to track whether content is ready to be shown
     private var isContentReady = false
 
-    // Method to apply edge-to-edge mode with consistent system bar styles
     private fun applyEdgeToEdge() {
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(Color.Transparent.toArgb()),
@@ -118,44 +100,11 @@ class MainActivity : ComponentActivity() {
         val splashScreen = installSplashScreen()
 
         super.onCreate(savedInstanceState)
-
         // Apply edge-to-edge mode
         applyEdgeToEdge()
-
         // Keep the splash screen visible until the app is fully loaded
         splashScreen.setKeepOnScreenCondition { !isContentReady }
 
-        /*
-        // Let the Splash Screen API handle the animation automatically
-        // We only need to set up a custom exit animation for the fade out
-        splashScreen.setOnExitAnimationListener { splashScreenViewProvider ->
-            // Get the splash screen view
-            val splashScreenView = splashScreenViewProvider.view
-
-            // Create a fade out animation with longer duration
-            val fadeOut = android.animation.ObjectAnimator.ofFloat(
-                splashScreenView,
-                android.view.View.ALPHA,
-                1f,
-                0f
-            )
-            fadeOut.interpolator = android.view.animation.DecelerateInterpolator()
-            fadeOut.duration = 1500L // 1.5 seconds for fade out to give animation more time
-
-            // Start the animation and remove the splash screen once it's done
-            fadeOut.addListener(object : android.animation.AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: android.animation.Animator) {
-                    // Remove the splash screen immediately after fade out
-                    splashScreenViewProvider.remove()
-                }
-            })
-
-            // Start the animation
-            fadeOut.start()
-        }
-        */
-
-        // Initialize the repository
         watchPreferencesRepository = WatchPreferencesRepository(this)
 
         // Create a coroutine scope for the activity
@@ -214,7 +163,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-
         // Re-apply edge-to-edge mode when activity resumes
         // This prevents content shifting when device is unlocked
         applyEdgeToEdge()
@@ -223,14 +171,11 @@ class MainActivity : ComponentActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        // Pass the result to the app update manager
         appUpdateManager.onActivityResult(requestCode, resultCode)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-
-        // Remove the lifecycle observer
         lifecycle.removeObserver(appUpdateManager)
     }
 }
@@ -238,16 +183,40 @@ class MainActivity : ComponentActivity() {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun WatchAppPreview() {
-    // Create a mock repository for preview
+
     val context = LocalContext.current
     val mockRepository = remember { WatchPreferencesRepository(context) }
 
     SwissTimeTheme {
-       /* Box(
-            Modifier.fillMaxSize().wrapContentSize(Alignment.Center),
-            contentAlignment = Alignment.Center) {
-            Text("hi")
-        }*/
        WatchApp(mockRepository)
     }
 }
+
+
+/*
+        splashScreen.setOnExitAnimationListener { splashScreenViewProvider ->
+            // Get the splash screen view
+            val splashScreenView = splashScreenViewProvider.view
+
+            // Create a fade out animation with longer duration
+            val fadeOut = android.animation.ObjectAnimator.ofFloat(
+                splashScreenView,
+                android.view.View.ALPHA,
+                1f,
+                0f
+            )
+            fadeOut.interpolator = android.view.animation.DecelerateInterpolator()
+            fadeOut.duration = 1500L // 1.5 seconds for fade out to give animation more time
+
+            // Start the animation and remove the splash screen once it's done
+            fadeOut.addListener(object : android.animation.AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: android.animation.Animator) {
+                    // Remove the splash screen immediately after fade out
+                    splashScreenViewProvider.remove()
+                }
+            })
+
+            // Start the animation
+            fadeOut.start()
+        }
+        */

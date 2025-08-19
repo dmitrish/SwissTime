@@ -16,8 +16,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.coroutines.swisstime.darken
 import com.coroutines.swisstime.ui.theme.DarkNavy
+import com.coroutines.swisstime.utils.darken
 
 /**
  * A card component that displays time format settings.

@@ -28,10 +28,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.coroutines.swisstime.WatchInfo
 import com.coroutines.swisstime.ui.theme.DarkNavyTriadic
 import com.coroutines.swisstime.viewmodel.WatchViewModel
 import com.coroutines.swisstime.watchfaces.ChronomagusRegum
+import com.coroutines.worldclock.common.model.WatchInfo
 import kotlinx.coroutines.delay
 import java.time.ZoneId
 import java.time.ZonedDateTime

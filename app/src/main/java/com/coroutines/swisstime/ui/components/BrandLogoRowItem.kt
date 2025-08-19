@@ -13,8 +13,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.coroutines.swisstime.darken
 import com.coroutines.swisstime.ui.screens.BrandLogo
+import com.coroutines.swisstime.utils.darken
 
 // Composable for a single brand logo item in the horizontal row
 @Composable

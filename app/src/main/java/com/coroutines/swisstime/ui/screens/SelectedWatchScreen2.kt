@@ -58,9 +58,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.ui.input.pointer.pointerInput
-import com.coroutines.swisstime.WatchInfo
 import com.coroutines.swisstime.ui.theme.DarkNavyTriadic
 import com.coroutines.swisstime.viewmodel.WatchViewModel
+import com.coroutines.worldclock.common.model.WatchInfo
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter

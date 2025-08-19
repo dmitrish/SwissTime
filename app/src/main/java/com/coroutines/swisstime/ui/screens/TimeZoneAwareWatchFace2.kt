@@ -5,7 +5,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import com.coroutines.swisstime.WatchInfo
 import com.coroutines.swisstime.viewmodel.WatchViewModel
 import com.coroutines.swisstime.watchfaces.AventinusClassique
 import com.coroutines.swisstime.watchfaces.JurgsenZenithor
@@ -28,6 +27,7 @@ import com.coroutines.swisstime.watchfaces.ZenithElPrimero
 import com.coroutines.swisstime.watchfaces.KandinskyEvening
 import com.coroutines.swisstime.watchfaces.LeonardAutomatic
 import com.coroutines.swisstime.watchfaces.Zeitwerk
+import com.coroutines.worldclock.common.model.WatchInfo
 import java.util.TimeZone
 
 // Map of watch name prefixes to their corresponding composable functions
