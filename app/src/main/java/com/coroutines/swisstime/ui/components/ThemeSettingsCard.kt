@@ -29,9 +29,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.coroutines.swisstime.darken
 import com.coroutines.swisstime.ui.theme.DarkNavy
 import com.coroutines.swisstime.ui.theme.ThemeMode
+import com.coroutines.swisstime.utils.darken
 
 
 /**

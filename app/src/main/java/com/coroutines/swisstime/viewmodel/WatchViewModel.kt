@@ -3,12 +3,10 @@ package com.coroutines.swisstime.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.coroutines.swisstime.WatchInfo
 import com.coroutines.swisstime.data.TimeZoneInfo
 import com.coroutines.swisstime.data.TimeZoneRepository
 import com.coroutines.swisstime.data.WatchPreferencesRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharedFlow
+import com.coroutines.worldclock.common.model.WatchInfo
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map

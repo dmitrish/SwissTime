@@ -1,5 +1,6 @@
 package com.coroutines.swisstime.ui.components
 
+import android.app.Activity
 import android.content.Context
 import android.os.Build
 import android.widget.Toast
@@ -27,9 +28,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import com.coroutines.swisstime.darken
 import com.coroutines.swisstime.ui.theme.DarkNavy
 import com.coroutines.swisstime.update.AppUpdateManager
+import com.coroutines.swisstime.utils.darken
 import com.coroutines.swisstime.utils.getApplicationVersionInfo
 
 /**
@@ -60,7 +61,7 @@ fun AppVersionSection(
     // Create an instance of AppUpdateManager with the current activity and coroutine scope
     // The AppUpdateManager needs an Activity to show the update dialog and a CoroutineScope
     // to launch coroutines for asynchronous operations
-    val appUpdateManager = remember { AppUpdateManager(context as android.app.Activity, coroutineScope) }
+    val appUpdateManager = remember { AppUpdateManager(context as Activity, coroutineScope) }
     
     // State for tracking update status and displaying appropriate UI
     var isCheckingForUpdates by remember { mutableStateOf(false) }

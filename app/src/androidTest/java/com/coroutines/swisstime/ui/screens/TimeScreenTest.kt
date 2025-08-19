@@ -11,8 +11,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.coroutines.swisstime.WatchInfo
 import com.coroutines.swisstime.viewmodel.WatchViewModel
+import com.coroutines.worldclock.common.model.WatchInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.junit.Before
