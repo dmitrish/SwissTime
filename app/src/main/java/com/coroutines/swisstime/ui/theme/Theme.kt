@@ -10,11 +10,8 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import com.coroutines.worldclock.common.theme.ThemeMode
 
-// Theme mode enum to support Day, Night, and System themes
-enum class ThemeMode {
-    DAY, NIGHT, SYSTEM
-}
 
 private val DarkColorScheme = darkColorScheme(
     primary = DarkGold,

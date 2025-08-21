@@ -18,8 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.coroutines.swisstime.ui.theme.DarkNavy
-import com.coroutines.swisstime.ui.theme.ThemeMode
 import com.coroutines.swisstime.utils.darken
+import com.coroutines.worldclock.common.theme.ThemeMode
 
 /**
  * A dialog that allows the user to select a theme mode.
