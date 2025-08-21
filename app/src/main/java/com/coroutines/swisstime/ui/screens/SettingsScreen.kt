@@ -46,13 +46,9 @@ import androidx.compose.ui.window.Dialog
 import com.coroutines.swisstime.ui.components.ThemeSelectionDialog
 import com.coroutines.swisstime.ui.components.ThemeSettingsCard
 import com.coroutines.swisstime.ui.components.TimeFormatSettingsCard
-import com.coroutines.swisstime.ui.theme.ThemeMode
 import com.coroutines.swisstime.viewmodel.ThemeViewModel
 import com.coroutines.swisstime.viewmodel.WatchViewModel
-
-
-
-
+import com.coroutines.worldclock.common.theme.ThemeMode
 
 
 /**
