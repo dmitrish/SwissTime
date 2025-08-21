@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.sp
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import com.coroutines.swisstime.ui.components.ThemeSettingsCard
-import com.coroutines.swisstime.ui.theme.ThemeMode
+import com.coroutines.worldclock.common.theme.ThemeMode
 import org.junit.Rule
 import org.junit.Test
 

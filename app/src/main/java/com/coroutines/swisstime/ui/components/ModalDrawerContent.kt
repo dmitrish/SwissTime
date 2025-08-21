@@ -30,12 +30,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.coroutines.swisstime.R
 import com.coroutines.swisstime.ui.theme.SwissTimeTheme
-import com.coroutines.swisstime.ui.theme.ThemeMode
 import com.coroutines.swisstime.ui.theme.DarkNavy
 import com.coroutines.swisstime.utils.getApplicationVersionInfo
 import androidx.compose.ui.platform.LocalContext
 import com.coroutines.swisstime.ui.theme.DarkGold
 import com.coroutines.swisstime.utils.darken
+import com.coroutines.worldclock.common.theme.ThemeMode
 
 @Composable
 fun ModalDrawerContent(){

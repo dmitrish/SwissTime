@@ -3,8 +3,8 @@ package com.coroutines.swisstime.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.coroutines.swisstime.data.ThemePreferencesRepository
-import com.coroutines.swisstime.ui.theme.ThemeMode
+import com.coroutines.worldclock.common.repository.ThemePreferencesRepository
+import com.coroutines.worldclock.common.theme.ThemeMode
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
