@@ -1,5 +1,6 @@
 package com.coroutines.swisstime.data
 
+/*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.util.Date
@@ -66,3 +67,4 @@ data class TimeZoneInfo(
     val id: String,
     val displayName: String
 )
+*/

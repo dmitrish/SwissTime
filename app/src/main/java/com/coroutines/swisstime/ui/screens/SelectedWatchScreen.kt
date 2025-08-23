@@ -1,5 +1,5 @@
 package com.coroutines.swisstime.ui.screens
-
+/*
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
@@ -268,3 +268,5 @@ fun SelectedWatchScreen(
         }
     }
 }
+
+ */
