@@ -37,7 +37,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import com.coroutines.swisstime.R
-import com.coroutines.swisstime.TimingLogger
+import com.coroutines.swisstime.utils.TimingLogger
 import com.coroutines.swisstime.ui.theme.DarkNavy
 import com.coroutines.swisstime.watchfaces.ChronomagusRegum
 import com.coroutines.swisstime.watchfaces.ZenithElPrimero
