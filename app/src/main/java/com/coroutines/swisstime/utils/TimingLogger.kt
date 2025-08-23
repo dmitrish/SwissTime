@@ -1,4 +1,4 @@
-package com.coroutines.swisstime
+package com.coroutines.swisstime.utils
 
 import android.util.Log
 
