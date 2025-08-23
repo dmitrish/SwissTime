@@ -1,5 +1,6 @@
 package com.coroutines.swisstime.data
 
+/*
 import java.util.TimeZone
 
 /**
@@ -33,4 +34,4 @@ class TimeZoneService {
     fun getCurrentTimeZoneId(): String {
         return TimeZone.getDefault().id
     }
-}
+}*/
