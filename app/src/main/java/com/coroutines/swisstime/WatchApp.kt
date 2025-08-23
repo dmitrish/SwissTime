@@ -46,9 +46,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.glance.appwidget.updateAll
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.coroutines.swisstime.data.TimeZoneRepository
-import com.coroutines.swisstime.data.TimeZoneService
-import com.coroutines.swisstime.data.WatchPreferencesRepository
+//import com.coroutines.swisstime.data.TimeZoneRepository
+//import com.coroutines.swisstime.data.TimeZoneService
+//import com.coroutines.swisstime.data.WatchPreferencesRepository
 import com.coroutines.swisstime.navigation.NavGraph
 import com.coroutines.swisstime.navigation.SwissTimeNavigationBar
 import com.coroutines.swisstime.ui.components.ModalDrawerContent
@@ -84,6 +84,9 @@ import com.coroutines.systemuicontroller.SystemUiController
 import com.coroutines.systemuicontroller.rememberSystemUiController
 import com.coroutines.worldclock.common.model.WatchInfo
 import com.coroutines.worldclock.common.repository.ThemePreferencesRepository
+import com.coroutines.worldclock.common.repository.TimeZoneRepository
+import com.coroutines.worldclock.common.repository.WatchPreferencesRepository
+import com.coroutines.worldclock.common.service.TimeZoneService
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
