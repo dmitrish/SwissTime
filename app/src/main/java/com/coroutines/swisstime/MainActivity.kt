@@ -26,13 +26,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import com.coroutines.swisstime.data.WatchPreferencesRepository
+//import com.coroutines.swisstime.data.WatchPreferencesRepository
 import com.coroutines.swisstime.ui.theme.SwissTimeTheme
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
 import com.coroutines.swisstime.update.AppUpdateManager
 import com.coroutines.swisstime.utils.isDark
+import com.coroutines.worldclock.common.repository.WatchPreferencesRepository
 import kotlinx.coroutines.launch
 import java.util.TimeZone
 
