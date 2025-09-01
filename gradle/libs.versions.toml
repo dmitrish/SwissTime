@@ -1,5 +1,5 @@
 [versions]
-agp = "8.11.1"
+agp = "8.10.0"
 appUpdateKtx = "2.1.0"
 playReview = "2.0.2"
 kotlin = "2.2.10"
