@@ -90,7 +90,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     androidTestImplementation(libs.kaspresso)
     androidTestImplementation(libs.shot)
-    androidTestImplementation("androidx.test:runner:1.5.2")
+    androidTestImplementation(libs.androidx.runner.v152)
     androidTestImplementation(libs.material)
     androidTestImplementation(libs.androidx.material3)
     androidTestImplementation("androidx.compose.material:material:1.6.0")
