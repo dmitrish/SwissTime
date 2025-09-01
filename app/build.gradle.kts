@@ -79,7 +79,7 @@ dependencies {
 
     testImplementation(libs.junit)
     // MockK for mocking in tests
-    testImplementation("io.mockk:mockk:1.13.8")
+    testImplementation(libs.mockk)
     // Play Core testing library for FakeAppUpdateManager
        //. androidTestImplementation("com.google.android.play:app-update-testing:2.1.0")
     androidTestImplementation(libs.androidx.junit)

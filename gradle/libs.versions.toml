@@ -1,6 +1,7 @@
 [versions]
 agp = "8.10.0"
 appUpdateKtx = "2.1.0"
+mockk = "1.13.8"
 playReview = "2.0.2"
 kotlin = "2.2.10"
 coreKtx = "1.17.0"
@@ -32,6 +33,7 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-wear = { module = "androidx.wear:wear", version.ref = "wear" }
 app-update = { module = "com.google.android.play:app-update", version.ref = "appUpdateKtx" }
 app-update-ktx = { module = "com.google.android.play:app-update-ktx", version.ref = "appUpdateKtx" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 play-review = { module = "com.google.android.play:review", version.ref = "playReview" }
 play-review-ktx = { module = "com.google.android.play:review-ktx", version.ref = "playReview" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
