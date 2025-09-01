@@ -1,6 +1,8 @@
 [versions]
 agp = "8.10.0"
 appUpdateKtx = "2.1.0"
+drawerlayout = "1.0.0"
+materialVersion = "1.6.0"
 mockk = "1.13.8"
 playReview = "2.0.2"
 kotlin = "2.2.10"
@@ -31,6 +33,8 @@ androidx-compose-foundation = { module = "androidx.wear.compose:compose-foundati
 androidx-compose-material = { module = "androidx.wear.compose:compose-material", version.ref = "wear" }
 androidx-compose-navigation = { module = "androidx.wear.compose:compose-navigation", version.ref = "wear" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-drawerlayout = { module = "androidx.drawerlayout:drawerlayout", version.ref = "drawerlayout" }
+androidx-material = { module = "androidx.compose.material:material", version.ref = "materialVersion" }
 androidx-runner-v152 = { module = "androidx.test:runner", version.ref = "runner" }
 androidx-wear = { module = "androidx.wear:wear", version.ref = "wear" }
 app-update = { module = "com.google.android.play:app-update", version.ref = "appUpdateKtx" }

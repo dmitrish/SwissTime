@@ -93,8 +93,8 @@ dependencies {
     androidTestImplementation(libs.androidx.runner.v152)
     androidTestImplementation(libs.material)
     androidTestImplementation(libs.androidx.material3)
-    androidTestImplementation("androidx.compose.material:material:1.6.0")
-    androidTestImplementation("androidx.drawerlayout:drawerlayout:1.0.0")
+    androidTestImplementation(libs.androidx.material)
+    androidTestImplementation(libs.androidx.drawerlayout)
 
 
 
