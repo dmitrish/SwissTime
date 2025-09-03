@@ -76,6 +76,7 @@ import com.coroutines.swisstime.watchfaces.Tokinoha
 
 import com.coroutines.swisstime.watchfaces.Valentinianus
 import com.coroutines.swisstime.watchfaces.ChantDuTemps
+import com.coroutines.swisstime.watchfaces.VostokRussianMilitary
 import com.coroutines.swisstime.watchfaces.ZenithElPrimero
 import com.coroutines.swisstime.widget.WatchWidget
 import kotlinx.coroutines.launch
@@ -435,7 +436,13 @@ private fun getWatches(): List<WatchInfo> {
           name = "Alpenglühen Zeitwerk",
           description = "The Alpenglühen Zeitwerk features a deep blue dial inspired by the Atlantic Ocean. This German-made timepiece combines Bauhaus minimalism with dive watch functionality, featuring a waterproof design, luminous markers, and the distinctive red seconds hand that is a signature of Alpenglühen Zeitwerk watches.",
           composable = { modifier, timeZone -> Zeitwerk(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
-      )
+      ),
+
+        WatchInfo(
+            name = "Vostok Military",
+            description = "The Alpenglühen Zeitwerk features a deep blue dial inspired by the Atlantic Ocean. This German-made timepiece combines Bauhaus minimalism with dive watch functionality, featuring a waterproof design, luminous markers, and the distinctive red seconds hand that is a signature of Alpenglühen Zeitwerk watches.",
+            composable = { modifier, timeZone -> VostokRussianMilitary(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+        )
 
 
     )
