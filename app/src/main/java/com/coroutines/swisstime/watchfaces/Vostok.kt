@@ -1,10 +1,12 @@
 package com.coroutines.swisstime.watchfaces
 
+import android.app.Activity
 import android.graphics.Paint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,7 +25,13 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.coroutines.swisstime.eventbus.Event
+import com.coroutines.swisstime.eventbus.EventBus
 import com.coroutines.swisstime.ui.theme.SwissTimeTheme
 import kotlinx.coroutines.delay
 import java.util.Calendar
@@ -31,6 +39,8 @@ import java.util.TimeZone
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
+
+import android.view.Window
 
 // Colors for Vostok Russian Military Automatik Diver Watch
 private val VostokBlueDialColor = Color(0xFF0A3875) // Deep blue dial color
@@ -48,6 +58,105 @@ fun VostokRussianMilitary(
     modifier: Modifier = Modifier,
     timeZone: TimeZone = TimeZone.getDefault()
 ) {
+
+    var refreshKey by remember { mutableStateOf(0) }
+    var currentTime by remember { mutableStateOf(Calendar.getInstance(timeZone)) }
+    val timeZoneX by rememberUpdatedState(timeZone)
+    val context = LocalContext.current
+
+// Update time every second
+    LaunchedEffect(key1 = refreshKey) {
+        while (true) {
+            currentTime = Calendar.getInstance(timeZoneX)
+            delay(1000) // Update every second
+        }
+    }
+
+// Listen for screen events - this fires before lifecycle events
+    DisposableEffect(Unit) {
+        val receiver = object : android.content.BroadcastReceiver() {
+            override fun onReceive(context: android.content.Context?, intent: android.content.Intent?) {
+                when (intent?.action) {
+                    android.content.Intent.ACTION_SCREEN_ON -> {
+                        // Screen turned on - update immediately
+                        currentTime = Calendar.getInstance(timeZoneX)
+                        refreshKey++
+                    }
+                    android.content.Intent.ACTION_USER_PRESENT -> {
+                        // Backup - when user unlocks
+                        currentTime = Calendar.getInstance(timeZoneX)
+                        refreshKey++
+                    }
+                }
+            }
+        }
+
+        val filter = android.content.IntentFilter().apply {
+            addAction(android.content.Intent.ACTION_SCREEN_ON)
+            addAction(android.content.Intent.ACTION_USER_PRESENT)
+        }
+
+        context.registerReceiver(receiver, filter)
+
+        onDispose {
+            context.unregisterReceiver(receiver)
+        }
+    }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_START) {
+                currentTime = Calendar.getInstance(timeZoneX)
+                refreshKey++
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
+   /* var currentTime by remember { mutableStateOf(Calendar.getInstance(timeZone)) }
+    val timeZoneX by rememberUpdatedState(timeZone)
+    var isResumed by remember { mutableStateOf(true) }
+
+    // Only update time when app is resumed (visible and active)
+    LaunchedEffect(isResumed) {
+        while (isResumed) {
+            currentTime = Calendar.getInstance(timeZoneX)
+            delay(1000)
+        }
+    }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_START -> {
+                    // This happens before the UI becomes visible
+                    currentTime = Calendar.getInstance(timeZoneX)
+                    isResumed = true
+                }
+                Lifecycle.Event.ON_RESUME -> {
+                    isResumed = true
+                }
+                Lifecycle.Event.ON_PAUSE -> {
+                    isResumed = false
+                }
+                else -> {}
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
+
+    */
+
+    /*
     var currentTime by remember { mutableStateOf(Calendar.getInstance(timeZone)) }
     val timeZoneX by rememberUpdatedState(timeZone)
     
@@ -58,6 +167,88 @@ fun VostokRussianMilitary(
             delay(1000) // Update every second
         }
     }
+
+
+    //val screenStateManager = remember { ScreenStateManager(LocalContext.current) }
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_START) {
+                currentTime = Calendar.getInstance(timeZoneX)
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
+
+     */
+   /* var refreshKey by remember { mutableStateOf(0) }
+    var currentTime by remember { mutableStateOf(Calendar.getInstance(timeZone)) }
+    val timeZoneX by rememberUpdatedState(timeZone)
+
+    // Update time every second
+    LaunchedEffect(key1 = refreshKey) {
+        while (true) {
+            currentTime = Calendar.getInstance(timeZoneX)
+            delay(1000) // Update every second
+        }
+    }
+
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_START) {
+                currentTime = Calendar.getInstance(timeZoneX)
+                refreshKey++
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
+    */
+
+   /* DisposableEffect(Unit) {
+        val activity = context as Activity
+        val originalCallback = activity.window.callback
+
+        activity.window.callback = object : Window.Callback by originalCallback {
+            override fun onWindowFocusChanged(hasFocus: Boolean) {
+                originalCallback?.onWindowFocusChanged(hasFocus)
+                if (hasFocus) {
+                    currentTime = Calendar.getInstance(timeZoneX)
+                    // App regained focus - could be from unlock
+                  //  data = fetchUpdatedData()
+                }
+            }
+        }
+
+        onDispose {
+            activity.window.callback = originalCallback
+        }
+    }
+
+    */
+    /*LaunchedEffect(Unit) {
+        EventBus.events.collect { event ->
+            when (event) {
+                is Event.NotificationReceived -> {
+                    currentTime = Calendar.getInstance(timeZoneX)
+                   // handleNotification(event.data)
+                }
+
+                is Event.BroadcastReceived -> {
+                  //  handleBroadcast(event.action, event.extras)
+                }
+            }
+        }
+    }*/
     
     Box(
         modifier = modifier.fillMaxSize(),
