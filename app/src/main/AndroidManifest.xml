@@ -28,7 +28,13 @@
             </intent-filter>
         </activity>
 
-
+        <receiver android:name="com.coroutines.swisstime.broadcast.ScreenUnlockReceiver"
+                  android:enabled="true"
+                  android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.USER_PRESENT" />
+            </intent-filter>
+        </receiver>
 
         <!-- Widget Receiver -->
         <receiver
