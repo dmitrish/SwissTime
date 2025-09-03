@@ -1,6 +1,7 @@
 package com.coroutines.swisstime
 
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -31,6 +32,7 @@ import com.coroutines.swisstime.ui.theme.SwissTimeTheme
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
+import com.coroutines.swisstime.broadcast.ScreenUnlockReceiver
 import com.coroutines.swisstime.update.AppUpdateManager
 import com.coroutines.swisstime.utils.isDark
 import com.coroutines.worldclock.common.repository.WatchPreferencesRepository
@@ -83,6 +85,8 @@ fun getTextColorForBackground(backgroundColor: Color): Color {
 
 class MainActivity : ComponentActivity() {
 
+    private lateinit var screenUnlockReceiver: ScreenUnlockReceiver
+
     private lateinit var watchPreferencesRepository: WatchPreferencesRepository
 
     private lateinit var appUpdateManager: AppUpdateManager
@@ -105,6 +109,16 @@ class MainActivity : ComponentActivity() {
         applyEdgeToEdge()
         // Keep the splash screen visible until the app is fully loaded
         splashScreen.setKeepOnScreenCondition { !isContentReady }
+
+        screenUnlockReceiver = ScreenUnlockReceiver()
+
+        val intentFilter = IntentFilter().apply {
+            addAction("android.intent.action.USER_PRESENT")
+           // addAction("com.example.CUSTOM_ACTION")
+            // Add other actions
+        }
+
+        registerReceiver(screenUnlockReceiver, intentFilter)
 
         watchPreferencesRepository = WatchPreferencesRepository(this)
 
@@ -177,6 +191,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        unregisterReceiver(screenUnlockReceiver)
         lifecycle.removeObserver(appUpdateManager)
     }
 }
