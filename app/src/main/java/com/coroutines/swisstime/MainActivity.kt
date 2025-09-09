@@ -100,6 +100,11 @@ class MainActivity : ComponentActivity() {
         )
     }
 
+    override fun onRestart() {
+        val test = "hij"
+        super.onRestart()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         // Install splash screen before calling super.onCreate()
         val splashScreen = installSplashScreen()

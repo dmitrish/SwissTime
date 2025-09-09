@@ -3,6 +3,7 @@ package com.coroutines.swisstime.ui.components
 import AboutAppText
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Numbers
+import androidx.compose.material.icons.filled.Wallpaper
 import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -35,6 +37,8 @@ import com.coroutines.swisstime.utils.getApplicationVersionInfo
 import androidx.compose.ui.platform.LocalContext
 import com.coroutines.swisstime.ui.theme.DarkGold
 import com.coroutines.swisstime.utils.darken
+import com.coroutines.swisstime.wallpaper.DigitalClockWallpaperCard
+import com.coroutines.swisstime.wallpaper.launchDigitalClockWallpaperPicker
 import com.coroutines.worldclock.common.theme.ThemeMode
 
 @Composable
@@ -92,6 +96,29 @@ fun ModalDrawerContent(){
                     Icon(
                         imageVector = Icons.Default.Info,
                         contentDescription = "About"
+                    )
+                }
+            )
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            HorizontalDivider()
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            // Digital Clock Wallpaper item
+            ListItem(
+                modifier = Modifier.clickable { 
+                    launchDigitalClockWallpaperPicker(context) 
+                },
+                headlineContent = { Text("Digital Clock Wallpaper") },
+                supportingContent = { Text("Set a live wallpaper showing the current time") },
+                colors = ListItemDefaults.colors(
+                    containerColor = Color.Transparent,
+                    supportingColor = DarkGold,
+                    leadingIconColor = Color.White),
+                leadingContent = {
+                    Icon(
+                        imageVector = Icons.Default.Wallpaper,
+                        contentDescription = "Wallpaper"
                     )
                 }
             )
