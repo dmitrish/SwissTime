@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="digital_clock_wallpaper_name">Digital Clock Wallpaper</string>
+    <string name="digital_clock_wallpaper_description">A simple digital clock live wallpaper</string>
+</resources>
