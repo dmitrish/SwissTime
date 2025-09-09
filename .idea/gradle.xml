@@ -11,6 +11,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/livewallpaper" />
             <option value="$PROJECT_DIR$/wearos" />
             <option value="$PROJECT_DIR$/worldclockcommon" />
           </set>
