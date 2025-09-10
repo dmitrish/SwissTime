@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.coroutines.livewallpaper.DigitalClockWallpaperService
+import com.coroutines.livewallpaper.service.PagerWallpaperService
 
 /**
  * Launches the live wallpaper picker for the digital clock wallpaper
@@ -30,7 +31,7 @@ fun launchDigitalClockWallpaperPicker(context: Context) {
     val intent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER)
     intent.putExtra(
         WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
-        ComponentName(context.packageName, DigitalClockWallpaperService::class.java.name)
+        ComponentName(context.packageName, PagerWallpaperService::class.java.name)
     )
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     context.startActivity(intent)
