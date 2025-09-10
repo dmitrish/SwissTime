@@ -59,7 +59,7 @@
                 android:enabled="true"
                 android:exported="true" >
             <intent-filter>
-                <action android:name="android.service.wallpaper.PagerWallpaperService" />
+                <action android:name="android.service.wallpaper.WallpaperService" />
             </intent-filter>
             <meta-data
                     android:name="android.service.wallpaper"
