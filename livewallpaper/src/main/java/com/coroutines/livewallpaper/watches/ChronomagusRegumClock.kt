@@ -88,28 +88,28 @@ class ChronomagusRegumClock(private val context: Context, private val handler: H
         color = logoColor
         textAlign = Paint.Align.CENTER
         isAntiAlias = true
-        Paint.setTypeface = Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL)
+        typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL)
     }
 
     private val modelPaint = Paint().apply {
         color = logoColor
         textAlign = Paint.Align.CENTER
         isAntiAlias = true
-        Paint.setTypeface = Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL)
+        typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL)
     }
 
     private val swissMadePaint = Paint().apply {
         color = logoColor
         textAlign = Paint.Align.CENTER
         isAntiAlias = true
-        Paint.setTypeface = Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL)
+        typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL)
     }
 
     private val ultraThinPaint = Paint().apply {
         color = logoColor
         textAlign = Paint.Align.CENTER
         isAntiAlias = true
-        Paint.setTypeface = Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL)
+        typeface= Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL)
     }
 
     // For backward compatibility
@@ -117,7 +117,7 @@ class ChronomagusRegumClock(private val context: Context, private val handler: H
         color = Color.WHITE
         textAlign = Paint.Align.CENTER
         isAntiAlias = true
-        Paint.setTypeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
+        typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
     }
 
     private val timeFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
