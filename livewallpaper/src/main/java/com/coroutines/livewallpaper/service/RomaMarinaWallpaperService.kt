@@ -1,6 +1,5 @@
-package com.coroutines.livewallpaper
+package com.coroutines.livewallpaper.service
 
-import android.content.Context
 import android.graphics.Canvas
 import android.os.Handler
 import android.os.Looper
@@ -9,22 +8,22 @@ import android.view.SurfaceHolder
 import com.coroutines.livewallpaper.watches.RomaMarinaClock
 
 /**
- * A live wallpaper service that displays the Pontifex Chronometra watch face.
+ * A live wallpaper service that displays the Roma Marina watch face.
  */
-class DigitalClockWallpaperService : WallpaperService() {
+class RomaMarinaWallpaperService : WallpaperService() {
 
     override fun onCreateEngine(): Engine {
         return ClockEngine()
     }
 
     /**
-     * The engine that handles rendering the Pontifex Chronometra watch face.
+     * The engine that handles rendering the Roma Marina watch face.
      */
     inner class ClockEngine : Engine() {
         private val handler = Handler(Looper.getMainLooper())
         private var visible = false
         private lateinit var clock: RomaMarinaClock
-        
+
         private val timeUpdateRunnable = object : Runnable {
             override fun run() {
                 drawFrame()
@@ -37,7 +36,7 @@ class DigitalClockWallpaperService : WallpaperService() {
 
         override fun onCreate(surfaceHolder: SurfaceHolder) {
             super.onCreate(surfaceHolder)
-            clock = RomaMarinaClock(this@DigitalClockWallpaperService, handler)
+            clock = RomaMarinaClock(this@RomaMarinaWallpaperService, handler)
         }
 
         override fun onDestroy() {
@@ -58,10 +57,10 @@ class DigitalClockWallpaperService : WallpaperService() {
 
         override fun onSurfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
             super.onSurfaceChanged(holder, format, width, height)
-            
+
             // Adjust text size based on surface dimensions
             clock.updateTextSizes(width)
-            
+
             drawFrame()
         }
 
@@ -74,7 +73,7 @@ class DigitalClockWallpaperService : WallpaperService() {
         private fun drawFrame() {
             val holder = surfaceHolder
             var canvas: Canvas? = null
-            
+
             try {
                 canvas = holder.lockCanvas()
                 if (canvas != null) {
