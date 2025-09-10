@@ -1,29 +1,33 @@
-package com.coroutines.livewallpaper
+package com.coroutines.livewallpaper.service
 
-import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.os.Handler
 import android.os.Looper
 import android.service.wallpaper.WallpaperService
+import android.view.MotionEvent
 import android.view.SurfaceHolder
+import com.coroutines.livewallpaper.PontifexChronometraClock
+import com.coroutines.livewallpaper.RomaMarinaClock
+import com.coroutines.livewallpaper.common.BaseClock
+import com.coroutines.livewallpaper.components.WallpaperHorizontalPager
 
-/**
- * A live wallpaper service that displays the Pontifex Chronometra watch face.
- */
-class DigitalClockWallpaperService : WallpaperService() {
+class PagerWallpaperService : WallpaperService() {
 
     override fun onCreateEngine(): Engine {
-        return ClockEngine()
+        return PagerEngine()
     }
 
-    /**
-     * The engine that handles rendering the Pontifex Chronometra watch face.
-     */
-    inner class ClockEngine : Engine() {
+    inner class PagerEngine : Engine() {
         private val handler = Handler(Looper.getMainLooper())
         private var visible = false
-        private lateinit var clock: RomaMarinaClock
-        
+
+        // List of clocks/pages to display
+        private val clocks = mutableListOf<BaseClock>()
+
+        // The horizontal pager
+        private lateinit var pager: WallpaperHorizontalPager
+
         private val timeUpdateRunnable = object : Runnable {
             override fun run() {
                 drawFrame()
@@ -36,13 +40,37 @@ class DigitalClockWallpaperService : WallpaperService() {
 
         override fun onCreate(surfaceHolder: SurfaceHolder) {
             super.onCreate(surfaceHolder)
-            clock = RomaMarinaClock(this@DigitalClockWallpaperService, handler)
+
+            // Initialize clocks
+            clocks.add(PontifexChronometraClock(this@PagerWallpaperService, handler))
+            clocks.add(RomaMarinaClock(this@PagerWallpaperService, handler))
+            // Add more clocks as needed
+
+            // Initialize pager
+            pager = WallpaperHorizontalPager(
+                context = this@PagerWallpaperService,
+                pageCount = clocks.size,
+                onPageChanged = { page ->
+                    // Optional: Handle page change events
+                }
+            )
+
+            // Set up redraw listener
+            pager.setOnPageOffsetChangedListener { _ ->
+                drawFrame()
+            }
         }
 
         override fun onDestroy() {
             super.onDestroy()
             handler.removeCallbacks(timeUpdateRunnable)
-            clock.destroy()
+            clocks.forEach { it.destroy() }
+        }
+
+        override fun onTouchEvent(event: MotionEvent) {
+            // Pass touch events to the pager
+            pager.onTouchEvent(event)
+            return super.onTouchEvent(event)
         }
 
         override fun onVisibilityChanged(visible: Boolean) {
@@ -57,10 +85,10 @@ class DigitalClockWallpaperService : WallpaperService() {
 
         override fun onSurfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
             super.onSurfaceChanged(holder, format, width, height)
-            
-            // Adjust text size based on surface dimensions
-            clock.updateTextSizes(width)
-            
+
+            // Update all clocks
+            clocks.forEach { it.updateTextSizes(width) }
+
             drawFrame()
         }
 
@@ -73,11 +101,18 @@ class DigitalClockWallpaperService : WallpaperService() {
         private fun drawFrame() {
             val holder = surfaceHolder
             var canvas: Canvas? = null
-            
+
             try {
                 canvas = holder.lockCanvas()
                 if (canvas != null) {
-                    clock.draw(canvas)
+                    // Clear background
+                    canvas.drawColor(Color.BLACK)
+
+                    // Draw pager with all pages
+                    pager.draw(canvas) { pageCanvas, pageIndex, pageOffset ->
+                        // Draw the clock for this page
+                        clocks[pageIndex].draw(pageCanvas)
+                    }
                 }
             } finally {
                 if (canvas != null) {
