@@ -498,7 +498,7 @@ class DigitalClockWallpaperService : WallpaperService() {
                     
                     // Calculate center and radius
                     val centerX = width / 2f
-                    val centerY = height / 2f
+                    val centerY = height / 1.9f
                     val radius = min(width, height) / 2 * 0.8f
                     
                     // Draw Pontifex Chronometra watch face
