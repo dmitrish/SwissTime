@@ -37,8 +37,8 @@ World Clock with timezones is a mighty little app that adds fun to timekeeping. 
     <th>List of Watches</th> 
   </tr>
   <tr>
-    <td style="width:50%"><img src="https://github.com/dmitrish/SwissTime/blob/main/art/livewallpaper-homescreen.gif"/></td>
-    <td style="width:50%"><img src="https://github.com/dmitrish/SwissTime/blob/main/art/Screenshot_20250706_194254_Timezone%20Clock.jpg"/></td> 
+    <td><img src="https://github.com/dmitrish/SwissTime/blob/main/art/livewallpaper-homescreen.gif"/></td>
+    <td><img src="https://github.com/dmitrish/SwissTime/blob/main/art/Screenshot_20250706_194254_Timezone%20Clock.jpg"/></td> 
   
   </tr>
   
