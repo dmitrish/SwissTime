@@ -31,7 +31,7 @@
         </service>
         
         <service
-            android:name=".RomaMarinaWallpaperService"
+            android:name=".service.RomaMarinaWallpaperService"
             android:label="@string/roma_marina_wallpaper_name"
             android:exported="true">
             <intent-filter>
@@ -40,6 +40,30 @@
             <meta-data
                 android:name="android.service.wallpaper"
                 android:resource="@xml/roma_marina_wallpaper" />
+        </service>
+        
+        <service
+            android:name=".service.ChronomagusRegumWallpaperService"
+            android:label="@string/chronomagus_regum_wallpaper_name"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.service.wallpaper.WallpaperService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.service.wallpaper"
+                android:resource="@xml/chronomagus_regum_wallpaper" />
+        </service>
+        
+        <service
+            android:name=".service.ZeitwerkWallpaperService"
+            android:label="@string/zeitwerk_wallpaper_name"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.service.wallpaper.WallpaperService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.service.wallpaper"
+                android:resource="@xml/zeitwerk_wallpaper" />
         </service>
     </application>
 

@@ -7,8 +7,11 @@ import android.os.Looper
 import android.service.wallpaper.WallpaperService
 import android.view.MotionEvent
 import android.view.SurfaceHolder
-import com.coroutines.livewallpaper.PontifexChronometraClock
-import com.coroutines.livewallpaper.RomaMarinaClock
+import com.coroutines.livewallpaper.watches.ChronomagusRegumClock
+import com.coroutines.livewallpaper.watches.KnotClock
+import com.coroutines.livewallpaper.watches.PontifexChronometraClock
+import com.coroutines.livewallpaper.watches.RomaMarinaClock
+import com.coroutines.livewallpaper.watches.ZeitwerkClock
 import com.coroutines.livewallpaper.common.BaseClock
 import com.coroutines.livewallpaper.components.WallpaperHorizontalPager
 
@@ -44,6 +47,9 @@ class PagerWallpaperService : WallpaperService() {
             // Initialize clocks
             clocks.add(PontifexChronometraClock(this@PagerWallpaperService, handler))
             clocks.add(RomaMarinaClock(this@PagerWallpaperService, handler))
+            clocks.add(ChronomagusRegumClock(this@PagerWallpaperService, handler))
+            clocks.add(KnotClock(this@PagerWallpaperService, handler))
+            clocks.add(ZeitwerkClock(this@PagerWallpaperService, handler))
             // Add more clocks as needed
 
             // Initialize pager
