@@ -17,6 +17,30 @@
                 android:name="android.service.wallpaper"
                 android:resource="@xml/digital_clock_wallpaper" />
         </service>
+
+        <service
+                android:name=".service.PagerWallpaperService"
+                android:label="@string/digital_clock_wallpaper_name"
+                android:exported="true">
+            <intent-filter>
+                <action android:name="android.service.wallpaper.service.PagerWallpaperService" />
+            </intent-filter>
+            <meta-data
+                    android:name="android.service.wallpaper"
+                    android:resource="@xml/digital_clock_wallpaper" />
+        </service>
+        
+        <service
+            android:name=".RomaMarinaWallpaperService"
+            android:label="@string/roma_marina_wallpaper_name"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.service.wallpaper.WallpaperService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.service.wallpaper"
+                android:resource="@xml/roma_marina_wallpaper" />
+        </service>
     </application>
 
 </manifest>

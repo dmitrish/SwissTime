@@ -53,13 +53,13 @@
         </receiver>
 
         <service
-                android:name="com.coroutines.livewallpaper.DigitalClockWallpaperService"
+                android:name="com.coroutines.livewallpaper.service.PagerWallpaperService"
                 android:permission="android.permission.BIND_WALLPAPER"
                 android:label="@string/digital_clock_wallpaper_name"
                 android:enabled="true"
                 android:exported="true" >
             <intent-filter>
-                <action android:name="android.service.wallpaper.WallpaperService" />
+                <action android:name="android.service.wallpaper.PagerWallpaperService" />
             </intent-filter>
             <meta-data
                     android:name="android.service.wallpaper"
