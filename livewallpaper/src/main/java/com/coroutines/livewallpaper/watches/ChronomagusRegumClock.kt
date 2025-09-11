@@ -144,10 +144,10 @@ class ChronomagusRegumClock(private val context: Context, private val handler: H
      */
     override fun updateTextSizes(width: Int) {
         val timeTextSize = width * 0.15f
-        val logoTextSize = width * 0.08f
-        val modelTextSize = width * 0.06f
+        val logoTextSize = width * 0.04f
+        val modelTextSize = width * 0.03f
         val swissMadeTextSize = width * 0.04f
-        val ultraThinTextSize = width * 0.05f
+        val ultraThinTextSize = width * 0.04f
 
         timePaint.textSize = timeTextSize
         logoPaint.textSize = logoTextSize
@@ -269,7 +269,7 @@ class ChronomagusRegumClock(private val context: Context, private val handler: H
         canvas.drawText(
             "CHRONOMAGUS",
             centerX,
-            centerY - radius * 0.3f,
+            centerY - radius * 0.4f,
             logoPaint
         )
 
@@ -293,7 +293,7 @@ class ChronomagusRegumClock(private val context: Context, private val handler: H
         canvas.drawText(
             "ULTRA-THIN",
             centerX,
-            centerY + radius * 0.2f,
+            centerY + radius * 0.3f,
             ultraThinPaint
         )
     }
