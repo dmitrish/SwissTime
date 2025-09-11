@@ -39,14 +39,13 @@ World Clock with timezones is a mighty little app that adds fun to timekeeping. 
   <tr>
     <td>
       <img src="https://github.com/dmitrish/SwissTime/blob/main/art/livewallpaper-homescreen.gif"/>
-
     </td>
-<td>
-
+    <td>
         <img src="https://github.com/dmitrish/SwissTime/blob/main/art/lockedscreen.gif" />
     </td>
   </tr>
 </table>
+
 <p></p>
 <table style="width:100%">
   <tr>
