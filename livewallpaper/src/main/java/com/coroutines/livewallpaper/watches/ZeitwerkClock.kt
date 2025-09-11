@@ -162,11 +162,11 @@ class ZeitwerkClock(private val context: Context, private val handler: Handler) 
      */
     override fun updateTextSizes(width: Int) {
         val timeTextSize = width * 0.15f
-        val logoTextSize = width * 0.12f
-        val locationTextSize = width * 0.06f
-        val modelTextSize = width * 0.08f
-        val subModelTextSize = width * 0.06f
-        val dateTextSize = width * 0.08f
+        val logoTextSize = width * 0.05f
+        val locationTextSize = width * 0.04f
+        val modelTextSize = width * 0.06f
+        val subModelTextSize = width * 0.04f
+        val dateTextSize = width * 0.04f
 
         timePaint.textSize = timeTextSize
         logoPaint.textSize = logoTextSize
@@ -225,7 +225,7 @@ class ZeitwerkClock(private val context: Context, private val handler: Handler) 
         canvas.drawText(
             "Zeitwerk",
             centerX,
-            centerY - radius * 0.15f,
+            centerY - radius * 0.28f,
             logoPaint
         )
 
@@ -233,7 +233,7 @@ class ZeitwerkClock(private val context: Context, private val handler: Handler) 
         canvas.drawText(
             "Alpenglühen",
             centerX,
-            centerY - radius * 0.05f,
+            centerY - radius * 0.13f,
             locationPaint
         )
 
@@ -241,7 +241,7 @@ class ZeitwerkClock(private val context: Context, private val handler: Handler) 
         canvas.drawText(
             "ZEIT",
             centerX,
-            centerY + radius * 0.6f,
+            centerY + radius * 0.4f,
             modelPaint
         )
 
@@ -249,7 +249,7 @@ class ZeitwerkClock(private val context: Context, private val handler: Handler) 
         canvas.drawText(
             "AUTOMATIC",
             centerX,
-            centerY + radius * 0.8f,
+            centerY + radius * 0.6f,
             subModelPaint
         )
 
