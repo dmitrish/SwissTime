@@ -166,10 +166,10 @@ class KnotClock(private val context: Context, private val handler: Handler) : Ba
      * Updates the text sizes based on the surface dimensions.
      */
     override fun updateTextSizes(width: Int) {
-        val timeTextSize = width * 0.15f
-        val logoTextSize = width * 0.08f
-        val subtitleTextSize = width * 0.05f
-        val dateTextSize = width * 0.08f
+        val timeTextSize = width * 0.12f
+        val logoTextSize = width * 0.06f
+        val subtitleTextSize = width * 0.03f
+        val dateTextSize = width * 0.04f
 
         timePaint.textSize = timeTextSize
         logoPaint.textSize = logoTextSize
