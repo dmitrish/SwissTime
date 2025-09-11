@@ -31,7 +31,7 @@ World Clock with timezones is a mighty little app that adds fun to timekeeping. 
   </tr>
 </table>
 
-<table style="width:100%; table-layout: fixed;">
+<table style="width:100%">
   <tr>
     <th>Live Wallpaper Home Screen</th>
     <th>Live Wallpaper Lock Screen</th>
