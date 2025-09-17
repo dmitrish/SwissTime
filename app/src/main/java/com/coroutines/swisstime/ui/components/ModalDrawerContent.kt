@@ -22,6 +22,8 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,8 +40,11 @@ import androidx.compose.ui.platform.LocalContext
 import com.coroutines.swisstime.ui.theme.DarkGold
 import com.coroutines.swisstime.utils.darken
 import com.coroutines.swisstime.wallpaper.DigitalClockWallpaperCard
+import com.coroutines.swisstime.wallpaper.WallPaperWatchesHorizontalPager
 import com.coroutines.swisstime.wallpaper.launchDigitalClockWallpaperPicker
 import com.coroutines.worldclock.common.theme.ThemeMode
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
 
 @Composable
 fun ModalDrawerContent(){
@@ -103,13 +108,19 @@ fun ModalDrawerContent(){
             Spacer(modifier = Modifier.height(16.dp))
             HorizontalDivider()
             Spacer(modifier = Modifier.height(16.dp))
+
+            var showDetails by remember { mutableStateOf(false) }
             
             // Digital Clock Wallpaper item
             ListItem(
-                modifier = Modifier.clickable { 
-                    launchDigitalClockWallpaperPicker(context) 
+                modifier = Modifier.clickable {
+                    showDetails = !showDetails // Toggle the state
                 },
-                headlineContent = { Text("Digital Clock Wallpaper") },
+                /*modifier = Modifier.clickable {
+                    WallPaperWatchesHorizontalPager()
+                   // launchDigitalClockWallpaperPicker(context)
+                },*/
+                headlineContent = { Text("World Clock Wallpaper") },
                 supportingContent = { Text("Set a live wallpaper showing the current time") },
                 colors = ListItemDefaults.colors(
                     containerColor = Color.Transparent,
@@ -122,6 +133,10 @@ fun ModalDrawerContent(){
                     )
                 }
             )
+
+            if (showDetails) {
+                WallPaperWatchesHorizontalPager()
+            }
         }
 
 

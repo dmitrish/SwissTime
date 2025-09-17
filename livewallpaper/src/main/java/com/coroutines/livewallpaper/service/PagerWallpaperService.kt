@@ -14,8 +14,8 @@ import com.coroutines.livewallpaper.watches.RomaMarinaClock
 import com.coroutines.livewallpaper.watches.ZeitwerkClock
 import com.coroutines.livewallpaper.common.BaseClock
 import com.coroutines.livewallpaper.components.WallpaperHorizontalPager
-import com.coroutines.livewallpaper.watches.AventinusClassiqueClock
-import com.coroutines.livewallpaper.watches.LeonardAutomaticClock
+//import com.coroutines.livewallpaper.watches.AventinusClassiqueClock
+//import com.coroutines.livewallpaper.watches.LeonardAutomaticClock
 
 class PagerWallpaperService : WallpaperService() {
 
@@ -52,8 +52,8 @@ class PagerWallpaperService : WallpaperService() {
             clocks.add(ChronomagusRegumClock(this@PagerWallpaperService, handler))
             clocks.add(KnotClock(this@PagerWallpaperService, handler))
             clocks.add(ZeitwerkClock(this@PagerWallpaperService, handler))
-            clocks.add(AventinusClassiqueClock(this@PagerWallpaperService, handler))
-            clocks.add(LeonardAutomaticClock(this@PagerWallpaperService, handler))
+           // clocks.add(AventinusClassiqueClock(this@PagerWallpaperService, handler))
+          //  clocks.add(LeonardAutomaticClock(this@PagerWallpaperService, handler))
             // Add more clocks as needed
 
             // Initialize pager
