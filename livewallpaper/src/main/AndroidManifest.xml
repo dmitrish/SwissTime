@@ -65,30 +65,6 @@
                 android:name="android.service.wallpaper"
                 android:resource="@xml/zeitwerk_wallpaper" />
         </service>
-        
-        <service
-            android:name=".service.LeonardAutomaticWallpaperService"
-            android:label="@string/leonard_automatic_wallpaper_name"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.service.wallpaper.WallpaperService" />
-            </intent-filter>
-            <meta-data
-                android:name="android.service.wallpaper"
-                android:resource="@xml/leonard_automatic_wallpaper" />
-        </service>
-        
-        <service
-            android:name=".service.AventinusClassiqueWallpaperService"
-            android:label="@string/aventinus_classique_wallpaper_name"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.service.wallpaper.WallpaperService" />
-            </intent-filter>
-            <meta-data
-                android:name="android.service.wallpaper"
-                android:resource="@xml/aventinus_classique_wallpaper" />
-        </service>
     </application>
 
 </manifest>
