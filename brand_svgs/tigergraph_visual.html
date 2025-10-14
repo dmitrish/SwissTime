@@ -3,282 +3,483 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TigerGraph Trade Schema</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
-            min-height: 100vh;
-        }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
-        
-        h1 {
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
-        
-        .graph-container {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-        }
-        
-        .vertex {
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .vertex:hover {
-            transform: scale(1.05);
-            filter: brightness(1.1);
-        }
-        
-        .country { fill: #4CAF50; }
-        .company { fill: #2196F3; }
-        .product { fill: #FF9800; }
-        .tariff { fill: #9C27B0; }
-        
-        .edge {
-            stroke-width: 2;
-            transition: all 0.3s ease;
-        }
-        
-        .edge:hover {
-            stroke-width: 3;
-        }
-        
-        .purchases { stroke: #e74c3c; }
-        .located-in { stroke: #3498db; }
-        .has-tariff { stroke: #9b59b6; }
-        .supplies { stroke: #f39c12; }
-        .subject-to-tariff { stroke: #1abc9c; }
-        
-        .vertex-label {
-            font-size: 12px;
-            font-weight: bold;
-            fill: white;
-            text-anchor: middle;
-            dominant-baseline: middle;
-            pointer-events: none;
-        }
-        
-        .edge-label {
-            font-size: 10px;
-            fill: #333;
-            text-anchor: middle;
-            dominant-baseline: middle;
-            font-weight: bold;
-        }
-        
-        .legend {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
-            margin-top: 20px;
-        }
-        
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 10px 15px;
-            border-radius: 10px;
-            backdrop-filter: blur(5px);
-        }
-        
-        .legend-circle {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-        }
-        
-        .legend-line {
-            width: 30px;
-            height: 3px;
-            border-radius: 2px;
-        }
-        
-        .example-box {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 20px;
-            margin-top: 20px;
-            backdrop-filter: blur(5px);
-        }
-        
-        .example-title {
-            font-size: 1.3em;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #ffd700;
-        }
-        
-        .arrow {
-            fill: none;
-            stroke: #333;
-            stroke-width: 2;
-            marker-end: url(#arrowhead);
-        }
-        
-        .highlight-path {
-            stroke: #ff4444;
-            stroke-width: 4;
-            stroke-dasharray: 5,5;
-            animation: dash 1s linear infinite;
-        }
-        
-        @keyframes dash {
-            to {
-                stroke-dashoffset: -10;
-            }
-        }
-    </style>
+    <title>DataHub - Enterprise Data Architecture Platform</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>🌐 TigerGraph International Trade Schema</h1>
-        
-        <div class="graph-container">
-            <svg width="100%" height="600" viewBox="0 0 1200 600">
-                <!-- Arrowhead marker -->
-                <defs>
-                    <marker id="arrowhead" markerWidth="10" markerHeight="7" 
-                            refX="9" refY="3.5" orient="auto">
-                        <polygon points="0 0, 10 3.5, 0 7" fill="#333" />
-                    </marker>
-                </defs>
-                
-                <!-- Countries -->
-                <circle class="vertex country" cx="150" cy="150" r="50" />
-                <text class="vertex-label" x="150" y="145">🇺🇸</text>
-                <text class="vertex-label" x="150" y="160">USA</text>
-                
-                <circle class="vertex country" cx="150" cy="450" r="50" />
-                <text class="vertex-label" x="150" y="445">🇨🇦</text>
-                <text class="vertex-label" x="150" y="460">Canada</text>
-                
-                <!-- Companies -->
-                <rect class="vertex company" x="350" y="100" width="120" height="60" rx="10" />
-                <text class="vertex-label" x="410" y="125">🏪</text>
-                <text class="vertex-label" x="410" y="145">Walmart</text>
-                
-                <rect class="vertex company" x="350" y="400" width="120" height="60" rx="10" />
-                <text class="vertex-label" x="410" y="425">🏭</text>
-                <text class="vertex-label" x="410" y="445">Canadian Supplier</text>
-                
-                <!-- Products -->
-                <ellipse class="vertex product" cx="650" cy="300" rx="60" ry="40" />
-                <text class="vertex-label" x="650" y="295">🦆</text>
-                <text class="vertex-label" x="650" y="310">Geese</text>
-                
-                <!-- Tariffs -->
-                <polygon class="vertex tariff" points="900,250 950,270 950,330 900,350 850,330 850,270" />
-                <text class="vertex-label" x="900" y="295">📋</text>
-                <text class="vertex-label" x="900" y="310">Tariff 2.5%</text>
-                
-                <!-- Edges -->
-                <!-- LOCATED_IN edges -->
-                <line class="edge located-in" x1="200" y1="150" x2="350" y2="130" marker-end="url(#arrowhead)" />
-                <text class="edge-label" x="275" y="135">LOCATED_IN</text>
-                
-                <line class="edge located-in" x1="200" y1="450" x2="350" y2="430" marker-end="url(#arrowhead)" />
-                <text class="edge-label" x="275" y="435">LOCATED_IN</text>
-                
-                <!-- PURCHASES edge -->
-                <line class="edge purchases highlight-path" x1="410" y1="160" x2="410" y2="400" marker-end="url(#arrowhead)" />
-                <text class="edge-label" x="430" y="280">PURCHASES</text>
-                
-                <!-- SUPPLIES edge -->
-                <line class="edge supplies" x1="470" y1="430" x2="590" y2="320" marker-end="url(#arrowhead)" />
-                <text class="edge-label" x="530" y="370">SUPPLIES</text>
-                
-                <!-- HAS_TARIFF edge -->
-                <line class="edge has-tariff highlight-path" x1="150" y1="400" x2="150" y2="200" marker-end="url(#arrowhead)" />
-                <text class="edge-label" x="100" y="300">HAS_TARIFF</text>
-                
-                <!-- SUBJECT_TO_TARIFF edge -->
-                <line class="edge subject-to-tariff" x1="710" y1="300" x2="850" y2="300" marker-end="url(#arrowhead)" />
-                <text class="edge-label" x="780" y="290">SUBJECT_TO_TARIFF</text>
-                
-                <!-- Additional visual elements -->
-                <rect x="50" y="50" width="1100" height="500" fill="none" stroke="rgba(255,255,255,0.3)" 
-                      stroke-width="2" stroke-dasharray="10,5" rx="20" />
-                
-                <!-- Flow indicators -->
-                <text x="600" y="40" font-size="14" fill="#333" text-anchor="middle" font-weight="bold">
-                    Trade Flow: Canada → USA (with 2.5% tariff on geese)
-                </text>
-            </svg>
-        </div>
-        
-        <div class="legend">
-            <div class="legend-item">
-                <div class="legend-circle country"></div>
-                <span>Countries</span>
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState } = React;
+
+        const DataHub = () => {
+          const [view, setView] = useState('home');
+          const [model, setModel] = useState(null);
+          const [entity, setEntity] = useState(null);
+          const [source, setSource] = useState(null);
+          const [unified, setUnified] = useState(false);
+          const [mode, setMode] = useState('metadata');
+          const [editing, setEditing] = useState(null);
+          const [hovered, setHovered] = useState('client');
+          const [rules, setRules] = useState({
+            UnifiedClientId: 'Synthetic Key generated using UUID algorithm',
+            FirstName: 'Taken from CED Client table by default, unless empty, in which case falls back on SF Client table',
+            LastName: 'Primary source is SF Client table; if null, use WCC Client table; if still null, use CED Client table',
+            Email: 'Validated email from CED Client table with preference order: CED → WCC → SF, excluding invalid formats'
+          });
+
+          const models = [
+            { id: 'udm-gb', name: 'Unified Data Model GB' },
+            { id: 'model-2', name: 'Model 2' },
+            { id: 'model-3', name: 'Model 3' }
+          ];
+
+          const graph = {
+            nodes: [
+              { id: 'associate', label: 'Associate', x: 300, y: 250 },
+              { id: 'client', label: 'Client', x: 500, y: 250 },
+              { id: 'coverage', label: 'Coverage', x: 400, y: 400 }
+            ],
+            edges: [
+              { from: 'associate', to: 'client', label: 'manages' },
+              { from: 'client', to: 'coverage', label: 'has' },
+              { from: 'associate', to: 'coverage', label: 'responsible for' }
+            ]
+          };
+
+          const unifiedModel = {
+            name: 'Unified Client Data Model',
+            table: 'UnifiedClient',
+            fields: [
+              { name: 'UnifiedClientId', type: 'VARCHAR(36)', metadata: 'Globally unique identifier for the client across all source systems' },
+              { name: 'FirstName', type: 'VARCHAR(100)', metadata: 'Harmonized first name consolidated from all source systems' },
+              { name: 'LastName', type: 'VARCHAR(100)', metadata: 'Harmonized last name representing single source of truth' },
+              { name: 'Email', type: 'VARCHAR(255)', metadata: 'Master email address deduplicated and validated across all systems' }
+            ],
+            sampleData: [
+              { UnifiedClientId: 'UC-001-2024', FirstName: 'John', LastName: 'Smith', Email: 'john.smith@unified.com' },
+              { UnifiedClientId: 'UC-002-2024', FirstName: 'Sarah', LastName: 'Johnson', Email: 'sarah.johnson@unified.com' },
+              { UnifiedClientId: 'UC-003-2024', FirstName: 'Michael', LastName: 'Chen', Email: 'michael.chen@unified.com' },
+              { UnifiedClientId: 'UC-004-2024', FirstName: 'Emily', LastName: 'Rodriguez', Email: 'emily.rodriguez@unified.com' },
+              { UnifiedClientId: 'UC-005-2024', FirstName: 'David', LastName: 'Williams', Email: 'david.williams@unified.com' },
+              { UnifiedClientId: 'UC-006-2024', FirstName: 'Jessica', LastName: 'Brown', Email: 'jessica.brown@unified.com' },
+              { UnifiedClientId: 'UC-007-2024', FirstName: 'Robert', LastName: 'Davis', Email: 'robert.davis@unified.com' },
+              { UnifiedClientId: 'UC-008-2024', FirstName: 'Amanda', LastName: 'Martinez', Email: 'amanda.martinez@unified.com' },
+              { UnifiedClientId: 'UC-009-2024', FirstName: 'James', LastName: 'Garcia', Email: 'james.garcia@unified.com' },
+              { UnifiedClientId: 'UC-010-2024', FirstName: 'Linda', LastName: 'Wilson', Email: 'linda.wilson@unified.com' }
+            ]
+          };
+
+          const dataSources = {
+            CED: {
+              name: 'CED', table: 'Client',
+              fields: [
+                { name: 'FirstName', type: 'VARCHAR(100)', metadata: 'Given name of the client for informal contexts' },
+                { name: 'LastName', type: 'VARCHAR(100)', metadata: 'Family name for formal identification' },
+                { name: 'Email', type: 'VARCHAR(255)', metadata: 'Primary electronic communication address' },
+                { name: 'Title', type: 'VARCHAR(50)', metadata: 'Professional designation or job position' }
+              ],
+              sampleData: [
+                { FirstName: 'John', LastName: 'Smith', Email: 'john.smith@acmecorp.com', Title: 'CEO' },
+                { FirstName: 'Sarah', LastName: 'Johnson', Email: 'sarah.j@techstart.io', Title: 'CFO' },
+                { FirstName: 'Michael', LastName: 'Chen', Email: 'mchen@globalinc.com', Title: 'VP Operations' },
+                { FirstName: 'Emily', LastName: 'Rodriguez', Email: 'emily.r@innovate.co', Title: 'Director' },
+                { FirstName: 'David', LastName: 'Williams', Email: 'dwilliams@enterprise.net', Title: 'Managing Partner' },
+                { FirstName: 'Jessica', LastName: 'Brown', Email: 'jbrown@ventures.com', Title: 'President' },
+                { FirstName: 'Robert', LastName: 'Davis', Email: 'robert.davis@holdings.org', Title: 'Chairman' },
+                { FirstName: 'Amanda', LastName: 'Martinez', Email: 'amartinez@capital.com', Title: 'VP Finance' },
+                { FirstName: 'James', LastName: 'Garcia', Email: 'jgarcia@solutions.io', Title: 'COO' },
+                { FirstName: 'Linda', LastName: 'Wilson', Email: 'lwilson@group.com', Title: 'Executive Director' }
+              ]
+            },
+            SF: {
+              name: 'Salesforce', table: 'Client',
+              fields: [
+                { name: 'FirstName', type: 'VARCHAR(100)', metadata: 'First name in CRM for personalized communication' },
+                { name: 'LastName', type: 'VARCHAR(100)', metadata: 'Surname for account management' },
+                { name: 'Email', type: 'VARCHAR(255)', metadata: 'Contact email synchronized across CRM' },
+                { name: 'Title', type: 'VARCHAR(50)', metadata: 'Business title reflecting decision-making capacity' }
+              ],
+              sampleData: [
+                { FirstName: 'Christopher', LastName: 'Taylor', Email: 'ctaylor@bizcorp.com', Title: 'Founder & CEO' },
+                { FirstName: 'Michelle', LastName: 'Anderson', Email: 'manderson@startup.io', Title: 'CTO' },
+                { FirstName: 'Daniel', LastName: 'Thomas', Email: 'dthomas@enterprises.net', Title: 'VP Sales' },
+                { FirstName: 'Jennifer', LastName: 'Moore', Email: 'jmoore@industries.com', Title: 'CMO' },
+                { FirstName: 'Matthew', LastName: 'Jackson', Email: 'mjackson@partners.co', Title: 'Senior Partner' },
+                { FirstName: 'Lisa', LastName: 'White', Email: 'lwhite@consulting.com', Title: 'Managing Director' },
+                { FirstName: 'Kevin', LastName: 'Harris', Email: 'kharris@invest.io', Title: 'Portfolio Manager' },
+                { FirstName: 'Nancy', LastName: 'Martin', Email: 'nmartin@advisory.com', Title: 'Senior Advisor' },
+                { FirstName: 'Brian', LastName: 'Thompson', Email: 'bthompson@fund.com', Title: 'General Partner' },
+                { FirstName: 'Susan', LastName: 'Lee', Email: 'slee@equity.io', Title: 'Principal' }
+              ]
+            },
+            WCC: {
+              name: 'WCC', table: 'Client',
+              fields: [
+                { name: 'FirstName', type: 'VARCHAR(100)', metadata: 'Preferred first name for wealth management' },
+                { name: 'LastName', type: 'VARCHAR(100)', metadata: 'Legal surname for wealth accounts' },
+                { name: 'Email', type: 'VARCHAR(255)', metadata: 'Secure email for wealth advisory' },
+                { name: 'Title', type: 'VARCHAR(50)', metadata: 'Professional or honorary title' }
+              ],
+              sampleData: [
+                { FirstName: 'Richard', LastName: 'Clark', Email: 'rclark@wealth.com', Title: 'Chairman & CEO' },
+                { FirstName: 'Patricia', LastName: 'Lewis', Email: 'plewis@fortune.io', Title: 'CIO' },
+                { FirstName: 'Thomas', LastName: 'Robinson', Email: 'trobinson@assets.com', Title: 'Managing Partner' },
+                { FirstName: 'Barbara', LastName: 'Walker', Email: 'bwalker@capital.net', Title: 'VP Private Banking' },
+                { FirstName: 'Charles', LastName: 'Hall', Email: 'chall@trust.com', Title: 'Trustee' },
+                { FirstName: 'Elizabeth', LastName: 'Allen', Email: 'eallen@foundation.org', Title: 'Executive Director' },
+                { FirstName: 'Joseph', LastName: 'Young', Email: 'jyoung@estate.com', Title: 'Estate Manager' },
+                { FirstName: 'Maria', LastName: 'King', Email: 'mking@holdings.io', Title: 'Family Office Director' },
+                { FirstName: 'Steven', LastName: 'Wright', Email: 'swright@portfolio.com', Title: 'Wealth Advisor' },
+                { FirstName: 'Margaret', LastName: 'Lopez', Email: 'mlopez@legacy.com', Title: 'Senior Consultant' }
+              ]
+            }
+          };
+
+          if (view === 'home') {
+            return (
+              <div className="flex min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+                <div className="w-80 bg-gradient-to-b from-slate-800 to-slate-900 p-8 shadow-2xl">
+                  <div className="mb-12">
+                    <div className="flex items-center mb-2">
+                      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-blue-400 mr-3">
+                        <path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/>
+                        <path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/>
+                        <path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/>
+                      </svg>
+                      <h2 className="text-2xl font-bold text-white">DataHub</h2>
+                    </div>
+                    <p className="text-slate-400 text-sm">Enterprise Data Platform</p>
+                  </div>
+                  <nav className="space-y-3">
+                    <button onClick={() => setView('models')} className="w-full flex items-center justify-between p-4 rounded-lg bg-slate-700 hover:bg-slate-600 transition-all text-left">
+                      <div className="flex items-center">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-blue-400 mr-3">
+                          <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/>
+                        </svg>
+                        <div><h3 className="text-white font-semibold">Model Explorer</h3><p className="text-slate-400 text-xs">Browse models</p></div>
+                      </div>
+                    </button>
+                    <button onClick={() => setView('domains')} className="w-full flex items-center justify-between p-4 rounded-lg bg-slate-700 hover:bg-slate-600 transition-all text-left">
+                      <div className="flex items-center">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-green-400 mr-3">
+                          <rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/><path d="M15 3v18"/>
+                        </svg>
+                        <div><h3 className="text-white font-semibold">Domain Explorer</h3><p className="text-slate-400 text-xs">Explore domains</p></div>
+                      </div>
+                    </button>
+                    <button onClick={() => setView('products')} className="w-full flex items-center justify-between p-4 rounded-lg bg-slate-700 hover:bg-slate-600 transition-all text-left">
+                      <div className="flex items-center">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-purple-400 mr-3">
+                          <path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>
+                        </svg>
+                        <div><h3 className="text-white font-semibold">Data Product Explorer</h3><p className="text-slate-400 text-xs">Discover products</p></div>
+                      </div>
+                    </button>
+                  </nav>
+                </div>
+                <div className="flex-1 flex items-center justify-center">
+                  <div className="text-center">
+                    <svg width="200" height="200" viewBox="0 0 200 200" className="mx-auto mb-8">
+                      <polygon points="100,20 170,60 170,140 100,180 30,140 30,60" fill="none" stroke="#3b82f6" strokeWidth="4"/>
+                      <polygon points="100,40 150,70 150,130 100,160 50,130 50,70" fill="#3b82f6" opacity="0.2"/>
+                      <circle cx="100" cy="70" r="8" fill="#3b82f6"/><circle cx="130" cy="100" r="8" fill="#10b981"/><circle cx="100" cy="130" r="8" fill="#8b5cf6"/><circle cx="70" cy="100" r="8" fill="#f59e0b"/>
+                      <line x1="100" y1="70" x2="130" y2="100" stroke="#3b82f6" strokeWidth="2" opacity="0.5"/>
+                      <line x1="130" y1="100" x2="100" y2="130" stroke="#10b981" strokeWidth="2" opacity="0.5"/>
+                      <line x1="100" y1="130" x2="70" y2="100" stroke="#8b5cf6" strokeWidth="2" opacity="0.5"/>
+                      <line x1="70" y1="100" x2="100" y2="70" stroke="#f59e0b" strokeWidth="2" opacity="0.5"/>
+                      <circle cx="100" cy="100" r="12" fill="#1e40af"/><circle cx="100" cy="100" r="6" fill="white"/>
+                    </svg>
+                    <h1 className="text-6xl font-bold text-slate-800 mb-4">DataHub</h1>
+                    <p className="text-xl text-slate-600 mb-8">Enterprise Data Architecture Platform</p>
+                    <div className="flex items-center justify-center gap-2 text-slate-500">
+                      <div className="w-2 h-2 bg-blue-600 rounded-full"></div><span className="text-sm">Unified</span>
+                      <div className="w-2 h-2 bg-green-600 rounded-full ml-4"></div><span className="text-sm">Connected</span>
+                      <div className="w-2 h-2 bg-purple-600 rounded-full ml-4"></div><span className="text-sm">Scalable</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          if (view === 'models') {
+            return (
+              <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8">
+                <div className="max-w-6xl mx-auto">
+                  <button onClick={() => setView('home')} className="flex items-center text-blue-600 hover:text-blue-800 mb-6">← Back to Home</button>
+                  <h1 className="text-4xl font-bold text-slate-800 mb-2">Model List View</h1>
+                  <p className="text-slate-600 mb-8">Select a model to view its entity relationships</p>
+                  <div className="grid gap-4">
+                    {models.map((m) => (
+                      <button key={m.id} onClick={() => { setModel(m.id); setView('graph'); }} className="bg-white p-6 rounded-lg shadow hover:shadow-lg border hover:border-blue-400 flex items-center justify-between text-left">
+                        <div className="flex items-center">
+                          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-blue-600 mr-4">
+                            <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/>
+                          </svg>
+                          <div><h3 className="text-xl font-semibold text-slate-800">{m.name}</h3><p className="text-sm text-slate-500">Click to view entity graph</p></div>
+                        </div>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 18 6-6-6-6"/></svg>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          if (view === 'graph') {
+            return (
+              <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8">
+                <div className="max-w-7xl mx-auto">
+                  <button onClick={() => setView('models')} className="flex items-center text-blue-600 mb-6">← Back to Model List</button>
+                  <h1 className="text-4xl font-bold text-slate-800 mb-2">{models.find(m => m.id === model)?.name}</h1>
+                  <p className="text-slate-600 mb-8">Entity Relationship Graph - Click Client to explore</p>
+                  <div className="bg-white rounded-xl shadow-lg p-8 border">
+                    <svg width="800" height="500" className="mx-auto">
+                      <defs><marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><polygon points="0 0, 10 3, 0 6" fill="#94a3b8"/></marker></defs>
+                      {graph.edges.map((e, i) => {
+                        const from = graph.nodes.find(n => n.id === e.from);
+                        const to = graph.nodes.find(n => n.id === e.to);
+                        return <g key={i}><line x1={from.x} y1={from.y} x2={to.x} y2={to.y} stroke="#94a3b8" strokeWidth="2" markerEnd="url(#arrowhead)"/><text x={(from.x + to.x) / 2} y={(from.y + to.y) / 2 - 5} fontSize="11" fill="#64748b" textAnchor="middle" style={{userSelect: 'none'}}>{e.label}</text></g>;
+                      })}
+                      {graph.nodes.map((n) => (
+                        <g key={n.id} onClick={() => { if (n.id === 'client') { setEntity('client'); setView('datasourcenodes'); }}} style={{cursor: n.id === 'client' ? 'pointer' : 'default'}}>
+                          <circle cx={n.x} cy={n.y} r="50" fill={n.id === 'client' ? '#3b82f6' : '#64748b'} stroke={n.id === 'client' ? '#1e40af' : '#475569'} strokeWidth="3"/>
+                          <text x={n.x} y={n.y + 5} fontSize="14" fill="white" textAnchor="middle" fontWeight="600" style={{userSelect: 'none', pointerEvents: 'none'}}>{n.label}</text>
+                        </g>
+                      ))}
+                    </svg>
+                    <div className="mt-6 flex justify-center gap-6">
+                      {graph.nodes.map((n) => (
+                        <div key={n.id} className="flex items-center text-sm text-slate-700">
+                          <div className={`w-3 h-3 rounded-full mr-2 ${n.id === 'client' ? 'bg-blue-600' : 'bg-slate-500'}`}></div>{n.label}
+                          {n.id === 'client' && <span className="ml-2 text-blue-600 text-xs">(clickable)</span>}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          if (view === 'datasourcenodes') {
+            const dsNodes = [
+              { id: 'ced', label: 'CED', x: 150, y: 80, color: '#3b82f6' },
+              { id: 'sf', label: 'SF', x: 275, y: 80, color: '#10b981' },
+              { id: 'wcc', label: 'WCC', x: 400, y: 80, color: '#8b5cf6' }
+            ];
+            const entNodes = [
+              { id: 'associate', label: 'Associate', x: 200, y: 150 },
+              { id: 'client', label: 'Client', x: 350, y: 150 },
+              { id: 'coverage', label: 'Coverage', x: 275, y: 280 }
+            ];
+            return (
+              <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8">
+                <div className="max-w-7xl mx-auto">
+                  <button onClick={() => { setEntity(null); setView('graph'); }} className="flex items-center text-blue-600 mb-6">← Back to Entity Graph</button>
+                  <h1 className="text-4xl font-bold text-slate-800 mb-2">Client Data Architecture</h1>
+                  <p className="text-slate-600 mb-8">Select entity, then click data source or unified model</p>
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="bg-white rounded-xl shadow-lg p-8 border">
+                      <h2 className="text-2xl font-bold mb-4">Entities</h2>
+                      <svg width="100%" height="350" viewBox="0 0 550 350">
+                        {entNodes.map((n) => (
+                          <g key={n.id} onMouseEnter={() => setHovered(n.id)} onClick={() => setHovered(n.id)} style={{cursor: 'pointer'}}>
+                            <circle cx={n.x} cy={n.y} r="45" fill={hovered === n.id ? '#3b82f6' : '#64748b'} stroke={hovered === n.id ? '#1e40af' : '#475569'} strokeWidth="3"/>
+                            <text x={n.x} y={n.y + 5} fontSize="13" fill="white" textAnchor="middle" fontWeight="600" style={{userSelect: 'none', pointerEvents: 'none'}}>{n.label}</text>
+                          </g>
+                        ))}
+                      </svg>
+                      <div className="mt-4 flex justify-center gap-4">{entNodes.map((n) => (<div key={n.id} className="flex items-center text-xs"><div className={`w-2 h-2 rounded-full mr-2 ${hovered === n.id ? 'bg-blue-600' : 'bg-slate-500'}`}></div>{n.label}</div>))}</div>
+                    </div>
+                    <div className="bg-white rounded-xl shadow-lg p-8 border">
+                      {hovered === 'client' ? (
+                        <div>
+                          <div className="mb-8 pb-8 border-b">
+                            <h2 className="text-xl font-bold mb-4">Unified Client Data Model</h2>
+                            <svg width="100%" height="150" viewBox="0 0 550 150">
+                              <g onClick={() => { setUnified(true); setView('datasources'); }} style={{cursor: 'pointer'}}>
+                                <circle cx="275" cy="75" r="50" fill="#f59e0b" stroke="#d97706" strokeWidth="3"/>
+                                <text x="275" y="70" fontSize="14" fill="white" textAnchor="middle" fontWeight="bold" style={{userSelect: 'none', pointerEvents: 'none'}}>Unified</text>
+                                <text x="275" y="85" fontSize="14" fill="white" textAnchor="middle" fontWeight="bold" style={{userSelect: 'none', pointerEvents: 'none'}}>Model</text>
+                              </g>
+                            </svg>
+                            <div className="mt-2 text-center text-sm text-slate-700"><div className="inline-flex items-center"><div className="w-3 h-3 rounded-full mr-2 bg-amber-500"></div>Unified Model <span className="ml-2 text-blue-600 text-xs">(clickable)</span></div></div>
+                          </div>
+                          <div>
+                            <h2 className="text-xl font-bold mb-4">Data Sources</h2>
+                            <svg width="100%" height="180" viewBox="0 0 550 180">
+                              {dsNodes.map((n) => (
+                                <g key={n.id} onClick={() => { setSource(n.id.toUpperCase()); setUnified(false); setView('datasources'); }} style={{cursor: 'pointer'}}>
+                                  <circle cx={n.x} cy={n.y} r="50" fill={n.color} stroke="#1e40af" strokeWidth="3"/>
+                                  <text x={n.x} y={n.y + 5} fontSize="16" fill="white" textAnchor="middle" fontWeight="bold" style={{userSelect: 'none', pointerEvents: 'none'}}>{n.label}</text>
+                                </g>
+                              ))}
+                            </svg>
+                            <div className="mt-2 flex justify-center gap-6">{dsNodes.map((n) => (<div key={n.id} className="flex items-center text-xs"><div className="w-2 h-2 rounded-full mr-2" style={{backgroundColor: n.color}}></div>{n.label}</div>))}</div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-center h-96 text-slate-400">
+                          <div className="text-center">
+                            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mx-auto mb-4 opacity-50">
+                              <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/>
+                            </svg>
+                            <p className="text-lg">No data sources configured</p>
+                            <p className="text-sm mt-2">Data model for {hovered} coming soon</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          if (view === 'datasources') {
+            const data = unified ? unifiedModel : dataSources[source];
+            const isUnified = unified;
+            return (
+              <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8">
+                <div className="max-w-7xl mx-auto">
+                  <button onClick={() => { setSource(null); setUnified(false); setMode('metadata'); setEditing(null); setView('datasourcenodes'); }} className="flex items-center text-blue-600 mb-6">← Back</button>
+                  <h1 className="text-4xl font-bold text-slate-800 mb-2">{isUnified ? 'Unified Client Data Model' : `${data?.name} - Client Table`}</h1>
+                  <p className="text-slate-600 mb-8">{isUnified ? (mode === 'metadata' ? 'Field definitions' : mode === 'mappings' ? 'Mapping rules' : 'Sample data') : (mode === 'metadata' ? 'Field mappings' : 'Sample data')}</p>
+                  <div className="bg-white rounded-xl shadow-lg border overflow-hidden">
+                    <div className={`p-6 ${isUnified ? 'bg-gradient-to-r from-amber-500 to-amber-600' : 'bg-gradient-to-r from-blue-600 to-blue-700'}`}>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center">
+                          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-white mr-3">
+                            <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/>
+                          </svg>
+                          <div><h2 className="text-2xl font-bold text-white">{data?.name}</h2><p className="text-white text-opacity-90 text-sm">Table: {data?.table}</p></div>
+                        </div>
+                        {isUnified ? (
+                          <div className="flex bg-white bg-opacity-20 rounded-lg p-1">
+                            <button onClick={() => setMode('metadata')} className={`px-3 py-2 rounded-md text-sm font-medium ${mode === 'metadata' ? 'bg-white text-slate-700 shadow' : 'text-white'}`}>Metadata</button>
+                            <button onClick={() => { setMode('mappings'); setEditing(null); }} className={`px-3 py-2 rounded-md text-sm font-medium ${mode === 'mappings' ? 'bg-white text-slate-700 shadow' : 'text-white'}`}>Mappings</button>
+                            <button onClick={() => setMode('data')} className={`px-3 py-2 rounded-md text-sm font-medium ${mode === 'data' ? 'bg-white text-slate-700 shadow' : 'text-white'}`}>Data</button>
+                          </div>
+                        ) : (
+                          <div className="flex bg-white bg-opacity-20 rounded-lg p-1">
+                            <button onClick={() => setMode('metadata')} className={`px-4 py-2 rounded-md text-sm font-medium ${mode === 'metadata' ? 'bg-white text-slate-700 shadow' : 'text-white'}`}>Metadata</button>
+                            <button onClick={() => setMode('data')} className={`px-4 py-2 rounded-md text-sm font-medium ${mode === 'data' ? 'bg-white text-slate-700 shadow' : 'text-white'}`}>Data</button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="p-6">
+                      {isUnified && mode === 'mappings' ? (
+                        <div className="space-y-4">
+                          {data?.fields.map((f, i) => (
+                            <div key={i} className="border-l-4 border-amber-500 bg-slate-50 p-4 rounded-r-lg">
+                              <div className="flex items-start justify-between mb-3">
+                                <div className="flex-1">
+                                  <div className="flex items-baseline mb-2"><h3 className="text-lg font-semibold">{f.name}</h3><span className="ml-3 text-sm text-slate-500 font-mono">{f.type}</span></div>
+                                  <p className="text-sm text-slate-600 mb-3">{f.metadata}</p>
+                                  <div className="border-t pt-3">
+                                    <div className="flex items-start justify-between">
+                                      <div className="flex-1">
+                                        <p className="text-xs font-semibold text-amber-700 mb-1">Mapping Rule:</p>
+                                        {editing === f.name ? (
+                                          <div>
+                                            <textarea value={rules[f.name]} onChange={(e) => setRules({...rules, [f.name]: e.target.value})} className="w-full text-sm bg-white border rounded p-2 focus:outline-none focus:ring-2 focus:ring-amber-500" rows="3"/>
+                                            <div className="mt-2 flex gap-2">
+                                              <button onClick={() => setEditing(null)} className="px-3 py-1 bg-amber-600 text-white text-sm rounded hover:bg-amber-700">Save</button>
+                                              <button onClick={() => setEditing(null)} className="px-3 py-1 bg-slate-300 text-slate-700 text-sm rounded hover:bg-slate-400">Cancel</button>
+                                            </div>
+                                          </div>
+                                        ) : (
+                                          <p className="text-sm text-slate-700 italic">{rules[f.name]}</p>
+                                        )}
+                                      </div>
+                                      {editing !== f.name && (
+                                        <button onClick={() => setEditing(f.name)} className="ml-4 p-2 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded">
+                                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                                            <circle cx="12" cy="12" r="3"/>
+                                          </svg>
+                                        </button>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : mode === 'metadata' ? (
+                        <div className="space-y-4">
+                          {data?.fields.map((f, i) => (
+                            <div key={i} className={`border-l-4 ${isUnified ? 'border-amber-500' : 'border-blue-500'} bg-slate-50 p-4 rounded-r-lg`}>
+                              <div className="flex items-baseline mb-2"><h3 className="text-lg font-semibold">{f.name}</h3><span className="ml-3 text-sm text-slate-500 font-mono">{f.type}</span></div>
+                              <p className="text-sm text-slate-600">{f.metadata}</p>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="overflow-x-auto">
+                          <table className="w-full border-collapse">
+                            <thead>
+                              <tr className="bg-slate-100">
+                                <th className="px-4 py-3 text-left text-sm font-semibold border-b-2 border-slate-300">#</th>
+                                {data?.fields.map((f, i) => (<th key={i} className="px-4 py-3 text-left text-sm font-semibold border-b-2 border-slate-300">{f.name}</th>))}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {data?.sampleData.map((r, i) => (
+                                <tr key={i} className="hover:bg-slate-50">
+                                  <td className="px-4 py-3 text-sm text-slate-600 border-b">{i + 1}</td>
+                                  {isUnified ? (
+                                    <>
+                                      <td className="px-4 py-3 text-sm border-b font-mono">{r.UnifiedClientId}</td>
+                                      <td className="px-4 py-3 text-sm border-b">{r.FirstName}</td>
+                                      <td className="px-4 py-3 text-sm border-b">{r.LastName}</td>
+                                      <td className="px-4 py-3 text-sm border-b">{r.Email}</td>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <td className="px-4 py-3 text-sm border-b">{r.FirstName}</td>
+                                      <td className="px-4 py-3 text-sm border-b">{r.LastName}</td>
+                                      <td className="px-4 py-3 text-sm border-b">{r.Email}</td>
+                                      <td className="px-4 py-3 text-sm border-b">{r.Title}</td>
+                                    </>
+                                  )}
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                          <div className="mt-4 text-sm text-slate-500 text-center">Showing {data?.sampleData.length} sample records</div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          return (
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8">
+              <div className="max-w-6xl mx-auto">
+                <button onClick={() => setView('home')} className="flex items-center text-blue-600 mb-6">← Back to Home</button>
+                <div className="bg-white rounded-xl shadow-lg p-12 text-center border">
+                  <h1 className="text-4xl font-bold text-slate-800 mb-4">{view === 'domains' ? 'Domain Explorer' : 'Data Product Explorer'}</h1>
+                  <p className="text-slate-600">This section is under construction</p>
+                </div>
+              </div>
             </div>
-            <div class="legend-item">
-                <div class="legend-circle company"></div>
-                <span>Companies</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-circle product"></div>
-                <span>Products</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-circle tariff"></div>
-                <span>Tariffs</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-line purchases"></div>
-                <span>PURCHASES</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-line located-in"></div>
-                <span>LOCATED_IN</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-line has-tariff"></div>
-                <span>HAS_TARIFF</span>
-            </div>
-            <div class="legend-item">
-                <div class="legend-line supplies"></div>
-                <span>SUPPLIES</span>
-            </div>
-        </div>
-        
-        <div class="example-box">
-            <div class="example-title">Example Scenario: Walmart Importing Geese from Canada</div>
-            <p><strong>1. Setup:</strong> Walmart (US company) wants to buy geese from Canadian supplier</p>
-            <p><strong>2. Tariff Application:</strong> Canada → USA has 2.5% import tariff on geese</p>
-            <p><strong>3. Cost Calculation:</strong> Purchase price + (Purchase price × 2.5%) = Total cost</p>
-            <p><strong>4. Graph Traversal:</strong> Company → PURCHASES → Company → LOCATED_IN → Country → HAS_TARIFF → Country</p>
-        </div>
-        
-        <div class="example-box">
-            <div class="example-title">Key Query Patterns</div>
-            <p><strong>Find Alternative Suppliers:</strong> Traverse to other countries with lower tariff rates</p>
-            <p><strong>Calculate Total Import Costs:</strong> Sum purchase amounts × applicable tariff rates</p>
-            <p><strong>Tariff Impact Analysis:</strong> Compare costs across different supplier countries</p>
-            <p><strong>Compliance Tracking:</strong> Monitor tariff changes and expiration dates</p>
-        </div>
-    </div>
+          );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<DataHub />);
+    </script>
 </body>
 </html>
