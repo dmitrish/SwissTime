@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DataHub - Enterprise Data Architecture Platform</title>
+    <title>DataProductHub - Enterprise Single Data Platform</title>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -11,11 +11,37 @@
 </head>
 <body>
     <div id="root"></div>
+
+    <!-- Assistant help UI (outside React) -->
+    <button id="assistant-help-btn" class="fixed bottom-6 right-6 z-50 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-lg px-4 py-2 text-sm">
+      Help
+    </button>
+    <div id="assistant-help-modal" class="hidden fixed inset-0 z-50 items-center justify-center">
+      <div class="absolute inset-0 bg-black/50"></div>
+      <div class="relative bg-white rounded-xl shadow-2xl border max-w-lg w-full mx-4 p-6">
+        <div class="flex items-start justify-between mb-2">
+          <h2 class="text-xl font-semibold text-slate-800">About this page</h2>
+          <button id="assistant-help-close" class="text-slate-500 hover:text-slate-700">✕</button>
+        </div>
+        <p class="text-slate-600 text-sm leading-relaxed">
+          This is a single HTML file that embeds a React app (via the React UMD build + Babel) and Tailwind CSS.
+          I can edit and extend this page based on your prompts: add views, components, data, styles, or behaviors.
+        </p>
+        <ul class="mt-4 text-sm text-slate-600 list-disc pl-5 space-y-1">
+          <li>Ask to add new pages or routes (e.g., lineage view, glossary, settings)</li>
+          <li>Ask to change visuals (colors, icons, layout) or content</li>
+          <li>Ask to wire interactions (modals, forms, editing, persistence stubs)</li>
+        </ul>
+        <div class="mt-5 flex justify-end">
+          <button id="assistant-help-ok" class="rounded-md bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-sm">Got it</button>
+        </div>
+      </div>
+    </div>
     
     <script type="text/babel">
         const { useState } = React;
 
-        const DataHub = () => {
+        const DataProductHub = () => {
           const [view, setView] = useState('home');
           const [model, setModel] = useState(null);
           const [entity, setEntity] = useState(null);
@@ -30,6 +56,22 @@
             LastName: 'Primary source is SF Client table; if null, use WCC Client table; if still null, use CED Client table',
             Email: 'Validated email from CED Client table with preference order: CED → WCC → SF, excluding invalid formats'
           });
+          // State for the Add Model form
+          const [newModelName, setNewModelName] = useState('');
+          const [newModelDesc, setNewModelDesc] = useState('');
+          // Relationship builder state
+          const [newObjRelations, setNewObjRelations] = useState([]); // e.g., ['associate','client']
+          const [relDrag, setRelDrag] = useState({ active: false, x: 0, y: 0 });
+          const [relHoverTarget, setRelHoverTarget] = useState(null);
+          // User-added graph data (persist in-memory for the session)
+          const [userGraphNodes, setUserGraphNodes] = useState([]);
+          const [userGraphEdges, setUserGraphEdges] = useState([]);
+          // Dragging state for graph nodes (in graph view)
+          const [nodePos, setNodePos] = useState({}); // { [id]: {x, y} }
+          const [drag, setDrag] = useState({ id: null, offsetX: 0, offsetY: 0, active: false });
+          // New flow: data source and column selection state
+          const [selectedSources, setSelectedSources] = useState([]); // e.g., ['Interactions', 'Profitability']
+          const [selectedColumns, setSelectedColumns] = useState([]); // e.g., [{ source:'Interactions', name:'InteractionDate' }]
 
           const models = [
             { id: 'udm-gb', name: 'Unified Data Model GB' },
@@ -37,7 +79,7 @@
             { id: 'model-3', name: 'Model 3' }
           ];
 
-          const graph = {
+          const baseGraph = {
             nodes: [
               { id: 'associate', label: 'Associate', x: 300, y: 250 },
               { id: 'client', label: 'Client', x: 500, y: 250 },
@@ -48,6 +90,45 @@
               { from: 'client', to: 'coverage', label: 'has' },
               { from: 'associate', to: 'coverage', label: 'responsible for' }
             ]
+          };
+          const graph = {
+            nodes: [...baseGraph.nodes, ...userGraphNodes],
+            edges: [...baseGraph.edges, ...userGraphEdges]
+          };
+
+          // Helpers for dragging in the graph view
+          const getPos = (n) => nodePos[n.id] ? nodePos[n.id] : { x: n.x, y: n.y };
+          const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+          const svgPointGraph = (svg, clientX, clientY) => {
+            const pt = svg.createSVGPoint();
+            pt.x = clientX; pt.y = clientY;
+            const ctm = svg.getScreenCTM();
+            if (!ctm) return { x: clientX, y: clientY };
+            const inv = ctm.inverse();
+            const p = pt.matrixTransform(inv);
+            return { x: p.x, y: p.y };
+          };
+          const startDragNode = (e, node) => {
+            // If this is part of a double-click, don't initiate a drag.
+            if (e.detail && e.detail > 1) return;
+            const svg = e.currentTarget.closest('svg');
+            if (!svg) return;
+            const p = svgPointGraph(svg, e.clientX, e.clientY);
+            const current = getPos(node);
+            setDrag({ id: node.id, offsetX: p.x - current.x, offsetY: p.y - current.y, active: true });
+          };
+          const handleGraphMouseMove = (e) => {
+            if (!drag.active || !drag.id) return;
+            const svg = e.currentTarget;
+            const p = svgPointGraph(svg, e.clientX, e.clientY);
+            const x = clamp(p.x - drag.offsetX, 50, 750);
+            const y = clamp(p.y - drag.offsetY, 50, 450);
+            setNodePos(prev => ({ ...prev, [drag.id]: { x, y } }));
+          };
+          const handleGraphMouseUp = () => {
+            if (drag.active) {
+              setTimeout(() => setDrag({ id: null, offsetX: 0, offsetY: 0, active: false }), 0);
+            }
           };
 
           const unifiedModel = {
@@ -150,7 +231,7 @@
                         <path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/>
                         <path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/>
                       </svg>
-                      <h2 className="text-2xl font-bold text-white">DataHub</h2>
+                      <h2 className="text-2xl font-bold text-white">DataProductHub</h2>
                     </div>
                     <p className="text-slate-400 text-sm">Enterprise Data Platform</p>
                   </div>
@@ -179,6 +260,22 @@
                         <div><h3 className="text-white font-semibold">Data Product Explorer</h3><p className="text-slate-400 text-xs">Discover products</p></div>
                       </div>
                     </button>
+                    <button onClick={() => setView('dictionary')} className="w-full flex items-center justify-between p-4 rounded-lg bg-slate-700 hover:bg-slate-600 transition-all text-left">
+                      <div className="flex items-center">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-amber-400 mr-3">
+                          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 4v16a2 2 0 0 0 2 2h14V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2Z"/>
+                        </svg>
+                        <div><h3 className="text-white font-semibold">Dictionary</h3><p className="text-slate-400 text-xs">Key terms & definitions</p></div>
+                      </div>
+                    </button>
+                    <button onClick={() => setView('account')} className="w-full flex items-center justify-between p-4 rounded-lg bg-slate-700 hover:bg-slate-600 transition-all text-left">
+                      <div className="flex items-center">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-sky-400 mr-3">
+                          <path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        <div><h3 className="text-white font-semibold">My Account</h3><p className="text-slate-400 text-xs">Profile & products</p></div>
+                      </div>
+                    </button>
                   </nav>
                 </div>
                 <div className="flex-1 flex items-center justify-center">
@@ -193,8 +290,8 @@
                       <line x1="70" y1="100" x2="100" y2="70" stroke="#f59e0b" strokeWidth="2" opacity="0.5"/>
                       <circle cx="100" cy="100" r="12" fill="#1e40af"/><circle cx="100" cy="100" r="6" fill="white"/>
                     </svg>
-                    <h1 className="text-6xl font-bold text-slate-800 mb-4">DataHub</h1>
-                    <p className="text-xl text-slate-600 mb-8">Enterprise Data Architecture Platform</p>
+                    <h1 className="text-6xl font-bold text-slate-800 mb-4">DataProductHub</h1>
+                    <p className="text-xl text-slate-600 mb-8">Enterprise Single Data Platform</p>
                     <div className="flex items-center justify-center gap-2 text-slate-500">
                       <div className="w-2 h-2 bg-blue-600 rounded-full"></div><span className="text-sm">Unified</span>
                       <div className="w-2 h-2 bg-green-600 rounded-full ml-4"></div><span className="text-sm">Connected</span>
@@ -238,20 +335,49 @@
                   <button onClick={() => setView('models')} className="flex items-center text-blue-600 mb-6">← Back to Model List</button>
                   <h1 className="text-4xl font-bold text-slate-800 mb-2">{models.find(m => m.id === model)?.name}</h1>
                   <p className="text-slate-600 mb-8">Entity Relationship Graph - Click Client to explore</p>
-                  <div className="bg-white rounded-xl shadow-lg p-8 border">
-                    <svg width="800" height="500" className="mx-auto">
+                  <div className="bg-white rounded-xl shadow-lg p-8 border relative">
+                    <div className="absolute top-4 right-4">
+                      <button
+                        onClick={() => { setNewModelName(''); setNewModelDesc(''); setNewObjRelations([]); setRelDrag({ active: false, x: 0, y: 0 }); setRelHoverTarget(null); setView('addModel'); }}
+                        className="inline-flex items-center gap-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-sm shadow"
+                        aria-label="Add Object"
+                        title="Add Object"
+                      >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 5v14M5 12h14"/></svg>
+                        Add Object
+                      </button>
+                    </div>
+                    <svg width="800" height="500" className="mx-auto" onMouseMove={handleGraphMouseMove} onMouseUp={handleGraphMouseUp}>
                       <defs><marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><polygon points="0 0, 10 3, 0 6" fill="#94a3b8"/></marker></defs>
                       {graph.edges.map((e, i) => {
-                        const from = graph.nodes.find(n => n.id === e.from);
-                        const to = graph.nodes.find(n => n.id === e.to);
-                        return <g key={i}><line x1={from.x} y1={from.y} x2={to.x} y2={to.y} stroke="#94a3b8" strokeWidth="2" markerEnd="url(#arrowhead)"/><text x={(from.x + to.x) / 2} y={(from.y + to.y) / 2 - 5} fontSize="11" fill="#64748b" textAnchor="middle" style={{userSelect: 'none'}}>{e.label}</text></g>;
+                        const fromNode = graph.nodes.find(n => n.id === e.from);
+                        const toNode = graph.nodes.find(n => n.id === e.to);
+                        const from = getPos(fromNode);
+                        const to = getPos(toNode);
+                        return (
+                          <g key={i}>
+                            <line x1={from.x} y1={from.y} x2={to.x} y2={to.y} stroke="#94a3b8" strokeWidth="2" markerEnd="url(#arrowhead)"/>
+                            <text x={(from.x + to.x) / 2} y={(from.y + to.y) / 2 - 5} fontSize="11" fill="#64748b" textAnchor="middle" style={{userSelect: 'none'}}>{e.label}</text>
+                          </g>
+                        );
                       })}
-                      {graph.nodes.map((n) => (
-                        <g key={n.id} onClick={() => { if (n.id === 'client') { setEntity('client'); setView('datasourcenodes'); }}} style={{cursor: n.id === 'client' ? 'pointer' : 'default'}}>
-                          <circle cx={n.x} cy={n.y} r="50" fill={n.id === 'client' ? '#3b82f6' : '#64748b'} stroke={n.id === 'client' ? '#1e40af' : '#475569'} strokeWidth="3"/>
-                          <text x={n.x} y={n.y + 5} fontSize="14" fill="white" textAnchor="middle" fontWeight="600" style={{userSelect: 'none', pointerEvents: 'none'}}>{n.label}</text>
-                        </g>
-                      ))}
+                      {graph.nodes.map((n) => {
+                        const pos = getPos(n);
+                        const isClient = n.id === 'client';
+                        const isDragging = drag.active && drag.id === n.id;
+                        return (
+                          <g
+                            key={n.id}
+                            onMouseDown={(e) => startDragNode(e, n)}
+                            onClick={() => { if (drag.active) return; if (isClient) { setEntity('client'); setView('datasourcenodes'); }}}
+                            onDoubleClick={() => { if (drag.active) return; if (isClient) { setEntity('client'); setView('datasourcenodes'); }}}
+                            style={{cursor: isDragging ? 'grabbing' : 'grab'}}
+                          >
+                            <circle cx={pos.x} cy={pos.y} r="50" fill={isClient ? '#3b82f6' : '#64748b'} stroke={isClient ? '#1e40af' : '#475569'} strokeWidth="3"/>
+                            <text x={pos.x} y={pos.y + 5} fontSize="14" fill="white" textAnchor="middle" fontWeight="600" style={{userSelect: 'none', pointerEvents: 'none'}}>{n.label}</text>
+                          </g>
+                        );
+                      })}
                     </svg>
                     <div className="mt-6 flex justify-center gap-6">
                       {graph.nodes.map((n) => (
@@ -261,6 +387,377 @@
                         </div>
                       ))}
                     </div>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          if (view === 'addModel') {
+            return (
+              <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8">
+                <div className="max-w-3xl mx-auto">
+                  <button onClick={() => setView('graph')} className="flex items-center text-blue-600 hover:text-blue-800 mb-6">← Back to Graph</button>
+                  <div className="bg-white rounded-xl shadow-lg border">
+                    <div className="p-6 border-b">
+                      <h1 className="text-3xl font-bold text-slate-800">Add Object</h1>
+                      <p className="text-slate-600 mt-1">Provide details for the new object.</p>
+                    </div>
+                    <div className="p-6 space-y-6">
+                      <div>
+                        <label htmlFor="model-name" className="block text-sm font-medium text-slate-700 mb-1">Name of the object</label>
+                        <input
+                          id="model-name"
+                          type="text"
+                          maxLength={100}
+                          value={newModelName}
+                          onChange={(e) => setNewModelName(e.target.value)}
+                          placeholder="Enter object name"
+                          className="w-full rounded-md border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        <div className="mt-1 text-xs text-slate-500 text-right">{newModelName.length}/100</div>
+                      </div>
+                      <div>
+                        <label htmlFor="model-desc" className="block text-sm font-medium text-slate-700 mb-1">Description</label>
+                        <textarea
+                          id="model-desc"
+                          maxLength={500}
+                          rows={6}
+                          value={newModelDesc}
+                          onChange={(e) => setNewModelDesc(e.target.value)}
+                          placeholder="Enter a brief description"
+                          className="w-full rounded-md border border-slate-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        <div className="mt-1 text-xs text-slate-500 text-right">{newModelDesc.length}/500</div>
+                      </div>
+                    </div>
+                    <div className="p-6 border-t flex items-center justify-end gap-3 bg-slate-50">
+                      <button onClick={() => setView('graph')} className="px-4 py-2 rounded-md bg-slate-200 text-slate-800 hover:bg-slate-300">Cancel</button>
+                      <button
+                        onClick={() => {
+                          setView('defineRelationships');
+                        }}
+                        disabled={(newModelName.trim().length === 0 || newModelDesc.trim().length === 0)}
+                        className={`px-4 py-2 rounded-md text-white ${(newModelName.trim().length === 0 || newModelDesc.trim().length === 0) ? 'bg-blue-300 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          if (view === 'defineRelationships') {
+            const existing = [
+              { id: 'associate', label: 'Associate', x: 600, y: 140, color: '#64748b' },
+              { id: 'client', label: 'Client', x: 600, y: 240, color: '#3b82f6' },
+              { id: 'coverage', label: 'Coverage', x: 600, y: 340, color: '#8b5cf6' }
+            ];
+            const newNode = { id: 'new', label: newModelName || 'New Object', x: 180, y: 240, color: '#0ea5e9' };
+            const handleMouseDown = (e) => {
+              setRelDrag({ active: true, x: newNode.x, y: newNode.y });
+            };
+            const hitTestExisting = (svg, x, y) => {
+              // Return the id of the node under (x,y) in SVG coords, or null
+              const R = 56; // slightly larger than visible radius to be forgiving
+              for (const n of existing) {
+                const dx = x - n.x;
+                const dy = y - n.y;
+                if (dx*dx + dy*dy <= R*R) return n.id;
+              }
+              return null;
+            };
+            const svgPoint = (svg, clientX, clientY) => {
+              const pt = svg.createSVGPoint();
+              pt.x = clientX; pt.y = clientY;
+              const ctm = svg.getScreenCTM();
+              if (!ctm) return { x: clientX, y: clientY };
+              const inv = ctm.inverse();
+              const p = pt.matrixTransform(inv);
+              return { x: p.x, y: p.y };
+            };
+            const handleMouseMove = (e) => {
+              if (!relDrag.active) return;
+              const svg = e.currentTarget;
+              const p = svgPoint(svg, e.clientX, e.clientY);
+              setRelDrag(prev => ({ ...prev, x: p.x, y: p.y, active: true }));
+              // Update hover target based on proximity instead of relying only on onMouseEnter/Leave
+              const target = hitTestExisting(svg, p.x, p.y);
+              setRelHoverTarget(target);
+            };
+            const handleMouseUp = (e) => {
+              if (relDrag.active) {
+                const svg = e.currentTarget;
+                const p = svgPoint(svg, e.clientX, e.clientY);
+                const target = hitTestExisting(svg, p.x, p.y) || relHoverTarget;
+                if (target && !newObjRelations.includes(target)) {
+                  setNewObjRelations([...newObjRelations, target]);
+                }
+              }
+              setRelDrag({ active: false, x: 0, y: 0 });
+              setRelHoverTarget(null);
+            };
+            const removeRelation = (id) => {
+              setNewObjRelations(newObjRelations.filter(x => x !== id));
+            };
+            const toggleRelation = (id) => {
+              if (newObjRelations.includes(id)) {
+                removeRelation(id);
+              } else {
+                setNewObjRelations([...newObjRelations, id]);
+              }
+            };
+            return (
+              <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8">
+                <div className="max-w-5xl mx-auto">
+                  <button onClick={() => setView('addModel')} className="flex items-center text-blue-600 hover:text-blue-800 mb-6">← Back</button>
+                  <h1 className="text-3xl font-bold text-slate-800 mb-2">Define Relationships</h1>
+                  <p className="text-slate-600 mb-6">Connect the new object to existing objects. Drag from the new object or click a target on the right to create or remove a relationship.</p>
+                  <div className="bg-white rounded-xl shadow-lg p-6 border">
+                    <svg width="800" height="420" className="block mx-auto"
+                      onMouseMove={handleMouseMove}
+                      onMouseUp={handleMouseUp}
+                    >
+                      <defs>
+                        <marker id="arrowhead-blue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><polygon points="0 0, 10 3, 0 6" fill="#3b82f6"/></marker>
+                        <filter id="glow"><feGaussianBlur stdDeviation="2.5" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                      </defs>
+                      {/* Existing nodes on right */}
+                      {existing.map(n => {
+                        const selected = newObjRelations.includes(n.id);
+                        return (
+                          <g key={n.id}
+                             onClick={() => toggleRelation(n.id)}
+                             onMouseEnter={() => { if (relDrag.active) setRelHoverTarget(n.id); }}
+                             onMouseLeave={() => { if (relDrag.active) setRelHoverTarget(prev => (prev === n.id ? null : prev)); }}
+                             style={{cursor: 'pointer'}}
+                          >
+                            <circle cx={n.x} cy={n.y} r="52" fill={selected ? '#0ea5e9' : n.color} stroke={relHoverTarget===n.id? '#0f172a':'#1e293b'} strokeWidth="3" opacity={0.95} filter={relHoverTarget===n.id? 'url(#glow)':'none'}/>
+                            <text x={n.x} y={n.y + 5} fontSize="14" fill="white" textAnchor="middle" fontWeight="600" style={{userSelect: 'none'}}>{n.label}</text>
+                          </g>
+                        );
+                      })}
+                      {/* New object on left */}
+                      <g onMouseDown={handleMouseDown} style={{cursor: 'crosshair'}}>
+                        <circle cx={newNode.x} cy={newNode.y} r="56" fill="#0284c7" stroke="#075985" strokeWidth="4"/>
+                        <text x={newNode.x} y={newNode.y - 4} fontSize="14" fill="white" textAnchor="middle" fontWeight="700" style={{userSelect: 'none'}}>{newNode.label}</text>
+                        <text x={newNode.x} y={newNode.y + 14} fontSize="11" fill="#e2e8f0" textAnchor="middle" style={{userSelect: 'none'}}>Drag or click to connect →</text>
+                      </g>
+                      {/* Existing connections */}
+                      {newObjRelations.map((toId, i) => {
+                        const to = existing.find(e => e.id === toId);
+                        return (
+                          <g key={toId}>
+                            <line x1={newNode.x+56} y1={newNode.y} x2={to.x-48} y2={to.y} stroke="#3b82f6" strokeWidth="3" markerEnd="url(#arrowhead-blue)"/>
+                          </g>
+                        );
+                      })}
+                      {/* Dragging line */}
+                      {relDrag.active && (
+                        <line x1={newNode.x+56} y1={newNode.y} x2={relDrag.x} y2={relDrag.y} stroke="#94a3b8" strokeDasharray="6 4" strokeWidth="2"/>
+                      )}
+                    </svg>
+                    {/* Legend and connections list */}
+                    <div className="mt-6 grid grid-cols-2 gap-6">
+                      <div>
+                        <h3 className="text-sm font-semibold text-slate-700 mb-2">Legend</h3>
+                        <div className="flex items-center gap-4 text-sm text-slate-600">
+                          <div className="flex items-center"><span className="w-3 h-3 rounded-full inline-block mr-2 bg-sky-600"></span>New Object</div>
+                          <div className="flex items-center"><span className="w-3 h-3 rounded-full inline-block mr-2 bg-slate-500"></span>Existing Objects</div>
+                          <div className="flex items-center"><span className="w-6 h-0.5 inline-block mr-2 bg-blue-500"></span>Relationship</div>
+                        </div>
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-semibold text-slate-700 mb-2">Connections</h3>
+                        {newObjRelations.length === 0 ? (
+                          <p className="text-sm text-slate-500">No connections yet. Drag from the new object to create one.</p>
+                        ) : (
+                          <ul className="space-y-2">
+                            {newObjRelations.map(id => (
+                              <li key={id} className="flex items-center justify-between bg-slate-50 border rounded px-3 py-2">
+                                <span className="text-sm text-slate-700">{newNode.label} → {existing.find(e => e.id===id)?.label}</span>
+                                <button onClick={() => removeRelation(id)} className="text-xs px-2 py-1 rounded bg-slate-200 hover:bg-slate-300 text-slate-800">Remove</button>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    </div>
+                    <div className="mt-6 flex items-center justify-end gap-3">
+                      <button onClick={() => setView('addModel')} className="px-4 py-2 rounded-md bg-slate-200 text-slate-800 hover:bg-slate-300">Back</button>
+                      <button onClick={() => {
+                        // Proceed to data source selection; persistence will occur at the final Finish step
+                        setView('selectDataSources');
+                      }} className="px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white">Next</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          if (view === 'selectDataSources') {
+            const ds = [
+              { id: 'Interactions', color: 'from-sky-500 to-sky-600', icon: (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-white"><path d="M7 8h10"/><path d="M7 12h8"/><path d="M7 16h6"/><rect x="3" y="4" width="18" height="16" rx="2"/></svg>
+              ), desc: 'Customer touchpoints across channels' },
+              { id: 'Profitability', color: 'from-emerald-500 to-emerald-600', icon: (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-white"><path d="M3 3v18"/><path d="M21 21H3"/><path d="M7 15l3-3 4 4 5-7"/></svg>
+              ), desc: 'Financial performance metrics' }
+            ];
+            const toggle = (id) => {
+              setSelectedSources(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+            };
+            const canNext = selectedSources.length > 0;
+            return (
+              <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8">
+                <div className="max-w-4xl mx-auto">
+                  <button onClick={() => setView('defineRelationships')} className="flex items-center text-blue-600 hover:text-blue-800 mb-6">← Back</button>
+                  <h1 className="text-3xl font-bold text-slate-800 mb-2">Choose Data Sources</h1>
+                  <p className="text-slate-600 mb-6">Select at least one source to proceed.</p>
+                  <div className="grid sm:grid-cols-2 gap-6">
+                    {ds.map(item => {
+                      const active = selectedSources.includes(item.id);
+                      return (
+                        <button key={item.id} onClick={() => toggle(item.id)} className={`text-left rounded-xl border shadow hover:shadow-lg transition-all overflow-hidden ${active ? 'ring-2 ring-offset-2 ring-blue-600' : ''}`}>
+                          <div className={`p-6 bg-gradient-to-r ${item.color}`}>
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center">{item.icon}</div>
+                              <div>
+                                <div className="text-white text-lg font-semibold">{item.id}</div>
+                                <div className="text-white/90 text-sm">{item.desc}</div>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="p-4 bg-white flex items-center justify-between">
+                            <span className="text-sm text-slate-600">{active ? 'Selected' : 'Click to select'}</span>
+                            <span className={`text-xs px-2 py-1 rounded ${active ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-700'}`}>{active ? '✓' : '○'}</span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div className="mt-6 flex items-center justify-end gap-3">
+                    <button onClick={() => setView('defineRelationships')} className="px-4 py-2 rounded-md bg-slate-200 text-slate-800 hover:bg-slate-300">Back</button>
+                    <button onClick={() => setView('selectColumns')} disabled={!canNext} className={`px-4 py-2 rounded-md text-white ${canNext ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-300 cursor-not-allowed'}`}>Next</button>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          if (view === 'selectColumns') {
+            const interactions = [
+              'InteractionDate',
+              'InteractionType',
+              'Channel',
+              'RelationshipManager',
+              'Outcome'
+            ];
+            const profitability = [
+              'AccountId',
+              'NetInterestIncome',
+              'NonInterestIncome',
+              'TotalRevenue',
+              'ReturnOnEquity'
+            ];
+            const isEnabled = (src) => selectedSources.includes(src);
+            const exists = (src, name) => selectedColumns.some(c => c.source === src && c.name === name);
+            const addCol = (src, name) => {
+              if (!isEnabled(src)) return;
+              if (exists(src, name)) return;
+              setSelectedColumns(prev => [...prev, { source: src, name }]);
+            };
+            const removeCol = (src, name) => {
+              setSelectedColumns(prev => prev.filter(c => !(c.source === src && c.name === name)));
+            };
+            const handleDragStart = (e, src, name) => {
+              if (!isEnabled(src)) return;
+              e.dataTransfer.setData('text/plain', JSON.stringify({ src, name }));
+            };
+            const handleDrop = (e) => {
+              e.preventDefault();
+              try {
+                const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+                if (data?.src && data?.name) addCol(data.src, data.name);
+              } catch {}
+            };
+            const handleFinish = () => {
+              // Persist the new object and its relationships in memory
+              const idBaseRaw = (newModelName || 'new-object').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+              const idBase = idBaseRaw.replace(/(^-|-$)/g, '') || 'new-object';
+              let newId = idBase;
+              const existingIds = new Set([...baseGraph.nodes.map(n => n.id), ...userGraphNodes.map(n => n.id)]);
+              let i = 1;
+              while (existingIds.has(newId)) {
+                newId = `${idBase}-${i++}`;
+              }
+              const node = { id: newId, label: newModelName || 'New Object', x: 180, y: 240 };
+              const edges = newObjRelations.map(toId => ({ from: newId, to: toId, label: 'related to' }));
+              setUserGraphNodes([...userGraphNodes, node]);
+              setUserGraphEdges([...userGraphEdges, ...edges]);
+              // Reset transient state
+              setRelDrag({ active: false, x: 0, y: 0 });
+              setRelHoverTarget(null);
+              setSelectedSources([]);
+              setSelectedColumns([]);
+              setNewModelName('');
+              setNewModelDesc('');
+              setNewObjRelations([]);
+              setView('graph');
+            };
+            const Panel = ({ title, items, src }) => (
+              <div className={`rounded-xl border bg-white ${isEnabled(src) ? '' : 'opacity-50'}`}>
+                <div className="px-5 py-3 border-b flex items-center justify-between bg-slate-50 rounded-t-xl">
+                  <div className="text-sm font-semibold text-slate-700">{title}</div>
+                  {!isEnabled(src) && <span className="text-xs text-slate-500">Not selected</span>}
+                </div>
+                <ul className="p-4 grid grid-cols-1 gap-2">
+                  {items.map(name => (
+                    <li key={name} draggable={isEnabled(src)} onDragStart={(e) => handleDragStart(e, src, name)}
+                        className={`flex items-center justify-between px-3 py-2 rounded border ${exists(src, name) ? 'bg-slate-100' : 'bg-white'} ${isEnabled(src) ? 'cursor-grab hover:bg-slate-50' : 'cursor-not-allowed'}`}>
+                      <span className="text-sm text-slate-700">{name}</span>
+                      <button disabled={!isEnabled(src) || exists(src, name)} onClick={() => addCol(src, name)} className={`text-xs px-2 py-1 rounded ${(!isEnabled(src) || exists(src, name)) ? 'bg-slate-200 text-slate-500' : 'bg-blue-600 text-white hover:bg-blue-700'}`}>Add</button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+            return (
+              <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8">
+                <div className="max-w-6xl mx-auto">
+                  <button onClick={() => setView('selectDataSources')} className="flex items-center text-blue-600 hover:text-blue-800 mb-6">← Back</button>
+                  <h1 className="text-3xl font-bold text-slate-800 mb-2">Choose Columns</h1>
+                  <p className="text-slate-600 mb-6">Drag or add attributes from the left to the right panel. Both Interactions and Profitability are shown.</p>
+                  <div className="grid lg:grid-cols-3 gap-6">
+                    <div className="lg:col-span-2 space-y-4">
+                      <Panel title="Interactions" items={interactions} src="Interactions" />
+                      <Panel title="Profitability" items={profitability} src="Profitability" />
+                    </div>
+                    <div className="lg:col-span-1">
+                      <div onDragOver={(e) => e.preventDefault()} onDrop={handleDrop} className="h-full min-h-[300px] rounded-xl border-2 border-dashed border-slate-300 bg-white p-4">
+                        <div className="text-sm font-semibold text-slate-700 mb-3">Selected Attributes ({selectedColumns.length})</div>
+                        {selectedColumns.length === 0 ? (
+                          <div className="h-[220px] flex items-center justify-center text-slate-400 text-sm">Drop items here or click Add</div>
+                        ) : (
+                          <ul className="space-y-2">
+                            {selectedColumns.map((c, idx) => (
+                              <li key={`${c.source}:${c.name}`} className="flex items-center justify-between px-3 py-2 rounded bg-slate-50 border">
+                                <span className="text-sm text-slate-700"><span className="text-xs px-2 py-0.5 rounded bg-slate-200 text-slate-700 mr-2">{c.source}</span>{c.name}</span>
+                                <button onClick={() => removeCol(c.source, c.name)} className="text-xs px-2 py-1 rounded bg-slate-200 hover:bg-slate-300 text-slate-800">Remove</button>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                      <div className="mt-4 text-xs text-slate-500">Tip: You can select one or both sources on the previous step. Items from non-selected sources are disabled.</div>
+                    </div>
+                  </div>
+                  <div className="mt-6 flex items-center justify-end gap-3">
+                    <button onClick={() => setView('selectDataSources')} className="px-4 py-2 rounded-md bg-slate-200 text-slate-800 hover:bg-slate-300">Back</button>
+                    <button onClick={handleFinish} className="px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white">Finish</button>
                   </div>
                 </div>
               </div>
@@ -282,11 +779,11 @@
               <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8">
                 <div className="max-w-7xl mx-auto">
                   <button onClick={() => { setEntity(null); setView('graph'); }} className="flex items-center text-blue-600 mb-6">← Back to Entity Graph</button>
-                  <h1 className="text-4xl font-bold text-slate-800 mb-2">Client Data Architecture</h1>
-                  <p className="text-slate-600 mb-8">Select entity, then click data source or unified model</p>
+                  <h1 className="text-4xl font-bold text-slate-800 mb-2">Client Data Composition</h1>
+                  <p className="text-slate-600 mb-8">Select Object, then click data source or unified model</p>
                   <div className="grid grid-cols-2 gap-6">
                     <div className="bg-white rounded-xl shadow-lg p-8 border">
-                      <h2 className="text-2xl font-bold mb-4">Entities</h2>
+                      <h2 className="text-2xl font-bold mb-4">Objects</h2>
                       <svg width="100%" height="350" viewBox="0 0 550 350">
                         {entNodes.map((n) => (
                           <g key={n.id} onMouseEnter={() => setHovered(n.id)} onClick={() => setHovered(n.id)} style={{cursor: 'pointer'}}>
@@ -465,6 +962,186 @@
             );
           }
 
+          if (view === 'account') {
+            return (
+              <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8">
+                <div className="max-w-5xl mx-auto">
+                  <button onClick={() => setView('home')} className="flex items-center text-blue-600 hover:text-blue-800 mb-6">← Back to Home</button>
+                  <div className="bg-white rounded-2xl shadow-lg border overflow-hidden">
+                    <div className="px-6 py-8 bg-gradient-to-r from-sky-600 to-blue-700 text-white">
+                      <div className="flex items-center gap-6">
+                        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Bjarne_Stroustrup_(2013).jpg" alt="Portrait of Bjarne Stroustrup (2013)" className="w-24 h-24 rounded-full ring-4 ring-white/20 shadow-lg object-cover" referrerPolicy="no-referrer"/>
+                        <div>
+                          <h1 className="text-3xl font-bold">Bjarne Stroustrup</h1>
+                          <p className="text-white/90">Vice President</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-6 grid md:grid-cols-3 gap-6">
+                      <div className="md:col-span-2 space-y-6">
+                        <div>
+                          <h2 className="text-lg font-semibold text-slate-800 mb-3">My Data Products</h2>
+                          <div className="grid sm:grid-cols-2 gap-4">
+                            <div className="rounded-xl border bg-white p-5 hover:shadow-md transition">
+                              <div className="flex items-center gap-3 mb-2">
+                                <span className="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                                <div className="font-semibold text-slate-800">Unified Client</div>
+                              </div>
+                              <p className="text-sm text-slate-600">Canonical, deduplicated client entity for enterprise use.</p>
+                            </div>
+                            <div className="rounded-xl border bg-white p-5 hover:shadow-md transition">
+                              <div className="flex items-center gap-3 mb-2">
+                                <span className="w-2.5 h-2.5 rounded-full bg-violet-500"></span>
+                                <div className="font-semibold text-slate-800">Unified Coverage</div>
+                              </div>
+                              <p className="text-sm text-slate-600">Consolidated coverage model across regions and segments.</p>
+                            </div>
+                          </div>
+                          <div className="mt-6 rounded-xl border bg-white p-5">
+                            <h3 className="text-sm font-semibold text-slate-700 mb-3">My History</h3>
+                            <ol className="relative border-l border-slate-200 pl-4 space-y-6">
+                              <li className="ml-2">
+                                <span className="absolute -left-1.5 mt-1.5 h-3 w-3 rounded-full bg-amber-500 border-2 border-white ring-2 ring-amber-200"></span>
+                                <div className="text-xs uppercase tracking-wide text-slate-500">October 10</div>
+                                <div className="mt-1 font-medium text-slate-800">Updated Unified Coverage Business Rule — Coverage Ownership Resolution v2</div>
+                                <p className="mt-1 text-sm text-slate-700 leading-relaxed">
+                                  Introduced a deterministic tie-breaker ladder to resolve a single accountable banker per client: primary by Segment priority (CIB → CB → MM), then Region alignment, then Banker tenure; final tie broken by rolling 12‑month revenue contribution. Enforced “no gaps, no overlaps” using effective‑dated assignments (SCD2), validated against book limits, and emitted lineage events for downstream consumers. Backfilled historical corrections with audit trail and change notice v2.1.
+                                </p>
+                              </li>
+                              <li className="ml-2">
+                                <span className="absolute -left-1.5 mt-1.5 h-3 w-3 rounded-full bg-blue-600 border-2 border-white ring-2 ring-blue-200"></span>
+                                <div className="text-xs uppercase tracking-wide text-slate-500">October 7</div>
+                                <div className="mt-1 font-medium text-slate-800">Updated Unified Coverage Business Rule — Capacity & Delegation Controls v1.3</div>
+                                <p className="mt-1 text-sm text-slate-700 leading-relaxed">
+                                  Implemented portfolio capacity caps per role with dynamic thresholds by revenue tier; auto‑route overflow to a shared coverage pool. Added temporary delegation windows (with explicit start/end dates) for vacations and vacancies, with automatic reversion and conflict checks. Excluded dormant accounts (L12M revenue &lt; $5k) from capacity counts while keeping visibility in reporting. Published SLA and contract updates to dependent products.
+                                </p>
+                              </li>
+                              <li className="ml-2">
+                                <span className="absolute -left-1.5 mt-1.5 h-3 w-3 rounded-full bg-slate-400 border-2 border-white ring-2 ring-slate-200"></span>
+                                <div className="text-xs uppercase tracking-wide text-slate-500">September 24</div>
+                                <div className="mt-1 font-medium text-slate-800">Created Unified Coverage Rule — Baseline Assignment</div>
+                                <p className="mt-1 text-sm text-slate-700 leading-relaxed">
+                                  Established the initial unified coverage assignment logic: standardized mapping of SF, CED, and WCC rosters into the canonical model; attribute precedence and survivorship rules; effective‑dating for coverage records; and baseline “Primary RM” determination. Delivered end‑to‑end lineage and documentation for governance sign‑off.
+                                </p>
+                              </li>
+                            </ol>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="space-y-4">
+                        <div className="rounded-xl border bg-white p-5">
+                          <h3 className="text-sm font-semibold text-slate-700 mb-3">My Contact Info</h3>
+                          <ul className="text-sm text-slate-700 space-y-2">
+                            <li className="flex items-center gap-2">
+                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-slate-500"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.63a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.45-1.16a2 2 0 0 1 2.11-.45c.85.29 1.73.5 2.63.62A2 2 0 0 1 22 16.92z"/></svg>
+                              <span>+1 (212) 555-0198</span>
+                            </li>
+                            <li className="flex items-center gap-2">
+                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-slate-500"><path d="M4 4h16v16H4z"/><path d="m22 6-10 7L2 6"/></svg>
+                              <span>bjarne.stroustrup@bofa.com</span>
+                            </li>
+                            <li className="flex items-center gap-2">
+                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-slate-500"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                              <span>1 Bryant Park, New York, NY</span>
+                            </li>
+                          </ul>
+                        </div>
+                        <div className="rounded-xl border bg-slate-50 p-5">
+                          <h3 className="text-sm font-semibold text-slate-700 mb-2">My Role</h3>
+                          <p className="text-sm text-slate-700">Coverage Banker — Corporate Banking</p>
+                        </div>
+                        <div className="rounded-xl border bg-slate-50 p-5">
+                          <h2 className="text-lg font-semibold text-slate-800 mb-2">About me</h2>
+                          <p className="text-slate-700 leading-relaxed text-sm">
+                            As a Vice President in Corporate Banking, Bjarne specializes in complex credit structuring, liquidity solutions, and data-informed coverage for large corporate clients. Partnering closely with product, risk, and capital markets teams, Bjarne translates strategy into executable deals, drives portfolio profitability, and champions a disciplined, client-first approach. A strong advocate for data products, Bjarne uses standardized client views and unified coverage insights to improve cross-sell, accelerate onboarding, and maintain rigorous governance across the book of business.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          if (view === 'dictionary') {
+            const terms = [
+              {
+                term: 'Dataset',
+                def: 'A bounded collection of related records organized for a specific purpose. In a data product, datasets are versioned, schema-managed assets (e.g., output, serving, or internal datasets) with contracts for format, fields, quality, and access.'
+              },
+              {
+                term: 'Data Product',
+                def: 'A domain-owned, discoverable, reusable data asset that packages data, code, metadata, documentation, policies, and interfaces as a product. It exposes well-defined contracts (APIs/SQL/streams), is versioned, monitored against SLOs (freshness, quality, availability), and is governed across its lifecycle.'
+              },
+              {
+                term: 'Domain',
+                def: 'A bounded business area with clear ownership and accountability. Domains produce and consume data products and are responsible for the quality, security, and lifecycle of those products under federated governance.'
+              },
+              {
+                term: 'Fundamental Data Product',
+                def: 'An enterprise-canonical, authoritative data product that standardizes core concepts (e.g., Customer, Account). It provides stable, high-quality contracts used by many downstream products and is held to stricter SLAs for completeness, conformance, and lineage.'
+              },
+              {
+                term: 'Governance',
+                def: 'The roles, policies, standards, and processes that ensure data products are compliant, secure, high-quality, and interoperable. Often implemented as federated governance: centralized guardrails and tooling with domain-level execution and stewardship.'
+              },
+              {
+                term: 'Model',
+                def: 'The formal representation of business entities, attributes, and relationships that define the structure and semantics of a dataset or product. Includes conceptual, logical, and physical models, and manifests as schemas/contracts that consumers rely on.'
+              },
+              {
+                term: 'Object',
+                def: 'A business object (entity) within a domain model that encapsulates attributes and relationships (e.g., Client, Coverage). In implementation it often maps to tables, documents, or classes and is used to compose data products.'
+              },
+              {
+                term: 'Source Data',
+                def: 'Original operational or third-party data produced by source systems and ingested into the platform. Source data feeds data products and must retain provenance, contracts, and SLAs (latency, availability) for reliable downstream use.'
+              }
+            ];
+            const sorted = [...terms].sort((a, b) => a.term.localeCompare(b.term));
+            return (
+              <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8">
+                <div className="max-w-6xl mx-auto">
+                  <button onClick={() => setView('home')} className="flex items-center text-blue-600 hover:text-blue-800 mb-6">← Back to Home</button>
+                  <h1 className="text-4xl font-bold text-slate-800 mb-2">Dictionary</h1>
+                  <p className="text-slate-600 mb-6">Key terms for Data Products. Sorted A→Z.</p>
+                  <div className="bg-white rounded-xl shadow-lg border overflow-hidden">
+                    <div className="px-6 py-4 bg-gradient-to-r from-amber-500 to-amber-600 flex items-center justify-between">
+                      <div className="flex items-center">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-white mr-3">
+                          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 4v16a2 2 0 0 0 2 2h14V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2Z"/>
+                        </svg>
+                        <div>
+                          <h2 className="text-xl font-bold text-white">Glossary</h2>
+                          <p className="text-white/90 text-sm">Canonical definitions for consistent understanding</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-6 overflow-x-auto">
+                      <table className="w-full border-collapse">
+                        <thead>
+                          <tr className="bg-slate-100">
+                            <th className="px-4 py-3 text-left text-sm font-semibold border-b-2 border-slate-300 w-56">Term</th>
+                            <th className="px-4 py-3 text-left text-sm font-semibold border-b-2 border-slate-300">Definition</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {sorted.map((row, i) => (
+                            <tr key={row.term} className="hover:bg-slate-50 align-top">
+                              <td className="px-4 py-3 text-sm font-medium text-slate-800 border-b w-56">{row.term}</td>
+                              <td className="px-4 py-3 text-sm text-slate-700 border-b leading-relaxed">{row.def}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
           return (
             <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8">
               <div className="max-w-6xl mx-auto">
@@ -479,7 +1156,27 @@
         };
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<DataHub />);
+        root.render(<DataProductHub />);
+    </script>
+
+    <!-- Small utility script to toggle the help modal (no React dependency) -->
+    <script>
+      (function(){
+        const btn = document.getElementById('assistant-help-btn');
+        const modal = document.getElementById('assistant-help-modal');
+        const ok = document.getElementById('assistant-help-ok');
+        const close = document.getElementById('assistant-help-close');
+        if (!btn || !modal) return;
+        const open = () => { modal.classList.remove('hidden'); modal.classList.add('flex'); };
+        const hide = () => { modal.classList.add('hidden'); modal.classList.remove('flex'); };
+        btn.addEventListener('click', open);
+        ok && ok.addEventListener('click', hide);
+        close && close.addEventListener('click', hide);
+        modal.addEventListener('click', (e) => { if (e.target === modal) hide(); });
+        // Also open with ?help=1
+        const params = new URLSearchParams(location.search);
+        if (params.get('help') === '1') open();
+      })();
     </script>
 </body>
 </html>
