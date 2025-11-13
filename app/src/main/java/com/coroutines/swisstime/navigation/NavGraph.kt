@@ -24,6 +24,7 @@ import com.coroutines.worldclock.common.components.CustomWorldMapScreen
 import com.coroutines.swisstime.ui.screens.OptimizedWorldMapScreen
 import com.coroutines.swisstime.ui.screens.SettingsScreen
 import com.coroutines.swisstime.ui.screens.TimeScreen
+import com.coroutines.swisstime.ui.screens.WallpaperScreen
 import com.coroutines.swisstime.ui.screens.WatchDetailScreen
 import com.coroutines.swisstime.ui.screens.WatchListScreen
 import com.coroutines.swisstime.ui.screens.WorldMapScreen
@@ -44,6 +45,7 @@ sealed class Screen(val route: String) {
     object CustomWorldMap : Screen("customWorldMap")
     object Settings : Screen("settings")
     object About : Screen("about")
+    object Wallpaper : Screen("wallpaper")
 }
 
 // Animation duration for transitions - extremely short duration for immediate UI updates
@@ -291,7 +293,8 @@ fun NavGraph(
             // Render the SettingsScreen
             SettingsScreen(
                 themeViewModel = themeViewModel,
-                watchViewModel = watchViewModel
+                watchViewModel = watchViewModel,
+                navController = navController
             )
         }
 
@@ -315,6 +318,33 @@ fun NavGraph(
 
             // Render the AboutScreen
             AboutScreen()
+        }
+
+        composable(
+            route = Screen.Wallpaper.route,
+            enterTransition = {
+                fadeIn(animationSpec = tween(ANIMATION_DURATION))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(ANIMATION_DURATION))
+            }
+        ) {
+            // Get the current context to access the activity
+            val context = LocalContext.current
+            val activity = context as? ComponentActivity
+
+            val originalColor = MaterialTheme.colorScheme.background.toArgb()
+
+            activity?.window?.setStatusBarColor(originalColor);
+            activity?.window?.setNavigationBarColor(originalColor);
+
+            // Render the WallpaperScreen
+            WallpaperScreen(
+                onBackClick = {
+                    // Navigate back to the previous screen
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }
