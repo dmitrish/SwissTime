@@ -1,5 +1,6 @@
 package com.coroutines.livewallpaper.service
 
+import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.os.Handler
@@ -14,18 +15,29 @@ import com.coroutines.livewallpaper.watches.RomaMarinaClock
 import com.coroutines.livewallpaper.watches.ZeitwerkClock
 import com.coroutines.livewallpaper.common.BaseClock
 import com.coroutines.livewallpaper.components.WallpaperHorizontalPager
+import com.coroutines.worldclock.common.repository.WallpaperPreferenceRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+
 //import com.coroutines.livewallpaper.watches.AventinusClassiqueClock
 //import com.coroutines.livewallpaper.watches.LeonardAutomaticClock
 
 class PagerWallpaperService : WallpaperService() {
+    lateinit var appContext: Context
 
     override fun onCreateEngine(): Engine {
+        appContext = applicationContext
         return PagerEngine()
     }
 
     inner class PagerEngine : Engine() {
         private val handler = Handler(Looper.getMainLooper())
         private var visible = false
+        private val engineJob = SupervisorJob()
+        private val engineScope = CoroutineScope(Dispatchers.Main.immediate + engineJob)
 
         // List of clocks/pages to display
         private val clocks = mutableListOf<BaseClock>()
@@ -46,35 +58,58 @@ class PagerWallpaperService : WallpaperService() {
         override fun onCreate(surfaceHolder: SurfaceHolder) {
             super.onCreate(surfaceHolder)
 
+
+            val wallpaperPreferenceRepository = WallpaperPreferenceRepository(appContext)
+
+            // Collect the initial selected wallpaper name in a coroutine
+            engineScope.launch {
+               // val selected = wallpaperPreferenceRepository.selectedWallpaperName.first()
+                // TODO: Use `selected` to configure initial page or clock selection if needed
+
+                val selected = "romamarina"
+
+                when (selected) {
+                    "romamarina" -> clocks.add(RomaMarinaClock(this@PagerWallpaperService, handler))
+                    "zeitwerk" -> clocks.add(ZeitwerkClock(this@PagerWallpaperService, handler))
+                    else -> clocks.add(KnotClock(this@PagerWallpaperService, handler))
+                }
+
+
+                pager = WallpaperHorizontalPager(
+                    context = this@PagerWallpaperService,
+                    pageCount = clocks.size,
+                    onPageChanged = { page ->
+                        // Optional: Handle page change events
+                    }
+                )
+
+                // Set up redraw listener
+                pager.setOnPageOffsetChangedListener { _ ->
+                    drawFrame()
+                }
+            }
+
+
             // Initialize clocks
-            clocks.add(PontifexChronometraClock(this@PagerWallpaperService, handler))
+          /*  clocks.add(PontifexChronometraClock(this@PagerWallpaperService, handler))
             clocks.add(RomaMarinaClock(this@PagerWallpaperService, handler))
             clocks.add(ChronomagusRegumClock(this@PagerWallpaperService, handler))
             clocks.add(KnotClock(this@PagerWallpaperService, handler))
-            clocks.add(ZeitwerkClock(this@PagerWallpaperService, handler))
+            clocks.add(ZeitwerkClock(this@PagerWallpaperService, handler)) */
            // clocks.add(AventinusClassiqueClock(this@PagerWallpaperService, handler))
           //  clocks.add(LeonardAutomaticClock(this@PagerWallpaperService, handler))
             // Add more clocks as needed
 
             // Initialize pager
-            pager = WallpaperHorizontalPager(
-                context = this@PagerWallpaperService,
-                pageCount = clocks.size,
-                onPageChanged = { page ->
-                    // Optional: Handle page change events
-                }
-            )
 
-            // Set up redraw listener
-            pager.setOnPageOffsetChangedListener { _ ->
-                drawFrame()
-            }
         }
 
         override fun onDestroy() {
             super.onDestroy()
             handler.removeCallbacks(timeUpdateRunnable)
             clocks.forEach { it.destroy() }
+            // Cancel any running coroutines to avoid leaks
+            engineJob.cancel()
         }
 
         override fun onTouchEvent(event: MotionEvent) {
