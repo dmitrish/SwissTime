@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
@@ -35,6 +36,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,12 +45,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.navigation.NavController
+import com.coroutines.swisstime.navigation.Screen
 import com.coroutines.swisstime.ui.components.ThemeSelectionDialog
 import com.coroutines.swisstime.ui.components.ThemeSettingsCard
 import com.coroutines.swisstime.ui.components.TimeFormatSettingsCard
+import com.coroutines.swisstime.ui.theme.DarkNavy
+import com.coroutines.swisstime.utils.darken
 import com.coroutines.swisstime.viewmodel.ThemeViewModel
 import com.coroutines.swisstime.viewmodel.WatchViewModel
+import com.coroutines.swisstime.wallpaper.WallPaperWatchesHorizontalPager
 import com.coroutines.worldclock.common.theme.ThemeMode
+import kotlinx.coroutines.launch
 
 
 /**
@@ -78,6 +86,7 @@ import com.coroutines.worldclock.common.theme.ThemeMode
 fun SettingsScreen(
     themeViewModel: ThemeViewModel,
     watchViewModel: WatchViewModel,
+    navController: NavController,
     modifier: Modifier = Modifier,
     themeSettingsCard: @Composable (
         themeMode: ThemeMode,
@@ -120,7 +129,8 @@ fun SettingsScreen(
             onThemeModeChange = onThemeModeChange,
             onDismiss = onDismiss
         )
-    }
+    },
+    wallpaperSelectionCard: @Composable (modifier: Modifier) -> Unit = { modifier ->}
 ) {
     // Collect theme preferences from the ViewModel
     val themeMode by themeViewModel.themeMode.collectAsState()
@@ -152,23 +162,28 @@ fun SettingsScreen(
 
         // Theme settings card
         themeSettingsCard(
-            themeMode, 
-            darkMode, 
-            { showThemeDialog = true }, 
+            themeMode,
+            darkMode,
+            { showThemeDialog = true },
             { themeViewModel.saveDarkMode(it) }
         )
 
         // Time format settings card
         timeFormatSettingsCard(
-            useUsTimeFormat, 
+            useUsTimeFormat,
             { watchViewModel.saveTimeFormat(it) }
         )
 
         // Watch removal gesture settings card
         watchRemovalGestureSettingsCard(
-            useDoubleTapForRemoval, 
+            useDoubleTapForRemoval,
             { watchViewModel.saveWatchRemovalGesture(it) }
         )
+
+
+       // wallpaperSelectionCard(Modifier.fillMaxWidth())
+        WallpaperSelectionCard(Modifier.fillMaxWidth()) { navController.navigate("wallpaper") }
+
     }
 
     // Theme selection dialog

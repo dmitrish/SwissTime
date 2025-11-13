@@ -89,12 +89,9 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    androidTestImplementation(libs.kaspresso)
+    //androidTestImplementation(libs.kaspresso)
     androidTestImplementation(libs.shot)
     androidTestImplementation(libs.androidx.runner.v152)
-    androidTestImplementation(libs.material)
-    androidTestImplementation(libs.androidx.material3)
-    androidTestImplementation(libs.androidx.material)
     androidTestImplementation(libs.androidx.drawerlayout)
 
 

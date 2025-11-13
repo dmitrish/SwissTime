@@ -10,6 +10,8 @@ import android.os.Handler
 import android.os.Looper
 import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.LocalContext
@@ -39,7 +42,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.coroutines.livewallpaper.DigitalClockWallpaperService
 import com.coroutines.livewallpaper.common.BaseClock
+import com.coroutines.livewallpaper.service.ChronomagusRegumWallpaperService
 import com.coroutines.livewallpaper.service.PagerWallpaperService
+import com.coroutines.livewallpaper.service.RomaMarinaWallpaperService
+import com.coroutines.livewallpaper.service.ZeitwerkWallpaperService
 import com.coroutines.livewallpaper.watches.ChronomagusRegumClock
 import com.coroutines.livewallpaper.watches.KnotClock
 import com.coroutines.livewallpaper.watches.PontifexChronometraClock
@@ -49,11 +55,20 @@ import com.coroutines.livewallpaper.watches.ZeitwerkClock
 /**
  * Launches the live wallpaper picker for the digital clock wallpaper
  */
-fun launchDigitalClockWallpaperPicker(context: Context) {
+fun launchDigitalClockWallpaperPicker(context: Context, name: String) {
+
+    val className = when(name){
+        "Pontifex" -> PagerWallpaperService::class.java.name
+        "Chronomagus" -> ChronomagusRegumWallpaperService::class.java.name
+        "RomaMarina" -> RomaMarinaWallpaperService::class.java.name
+        "Zeitwerk" -> ZeitwerkWallpaperService::class.java.name
+        else -> PagerWallpaperService::class.java.name
+    }
+
     val intent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER)
     intent.putExtra(
         WallpaperManager.EXTRA_LIVE_WALLPAPER_COMPONENT,
-        ComponentName(context.packageName, PagerWallpaperService::class.java.name)
+        ComponentName(context.packageName, className)
     )
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     context.startActivity(intent)
@@ -61,45 +76,45 @@ fun launchDigitalClockWallpaperPicker(context: Context) {
 
 
 @Composable
-fun WallPaperWatchesHorizontalPager() {
+fun WallPaperWatchesHorizontalPager(modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val handler = remember { Handler(Looper.getMainLooper()) }
     
     // Create instances of all available watches
     val watches = remember {
         listOf(
-            PontifexChronometraClock(context, handler),
-            RomaMarinaClock(context, handler),
-            ChronomagusRegumClock(context, handler),
-            KnotClock(context, handler),
-            ZeitwerkClock(context, handler)
+            "Pontifex" to PontifexChronometraClock(context, handler),
+            "RomaMarina" to RomaMarinaClock(context, handler),
+            "Chronomagus" to ChronomagusRegumClock(context, handler),
+            "Knot" to KnotClock(context, handler),
+            "Zeitwerk" to ZeitwerkClock(context, handler)
         )
     }
     
     // Create a pager state
     val pagerState = rememberPagerState(pageCount = { watches.size })
-    
-    // Column to hold the pager and page indicator
+
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxSize().background(Color(0xFF000000).copy(alpha = 0.5f)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Horizontal pager for watches
         HorizontalPager(
             state = pagerState,
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
                 .aspectRatio(1f) // Square aspect ratio for watches
         ) { page ->
-            // Get the watch for this page
-            val watch = watches[page]
-            
-            // Box to center the watch
-            Box(
-                modifier = Modifier.fillMaxSize(),
+
+            val watch = watches[page].second
+            val name = watches[page].first
+
+
+            Box (
+                modifier = Modifier.fillMaxSize().clickable{
+                    launchDigitalClockWallpaperPicker(context, name)
+                },
                 contentAlignment = Alignment.Center
             ) {
-                // Canvas to draw the watch
                 WatchCanvas(watch = watch)
             }
         }
@@ -115,7 +130,7 @@ fun WallPaperWatchesHorizontalPager() {
     // Clean up resources when the composable is disposed
     DisposableEffect(Unit) {
         onDispose {
-            watches.forEach { it.destroy() }
+            watches.forEach { it.second.destroy() }
         }
     }
 }
@@ -184,7 +199,7 @@ fun DigitalClockWallpaperCard() {
             Spacer(modifier = Modifier.height(16.dp))
             
             Button(
-                onClick = { launchDigitalClockWallpaperPicker(context) }
+                onClick = {  }
             ) {
                 Text("Set as Wallpaper")
             }
