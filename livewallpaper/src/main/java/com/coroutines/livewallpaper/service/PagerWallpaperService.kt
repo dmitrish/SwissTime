@@ -16,6 +16,7 @@ import com.coroutines.livewallpaper.watches.RomaMarinaClock
 import com.coroutines.livewallpaper.watches.ZeitwerkClock
 import com.coroutines.livewallpaper.common.BaseClock
 import com.coroutines.livewallpaper.components.WallpaperHorizontalPager
+import com.coroutines.livewallpaper.watches.LeonardAutomaticClock
 import com.coroutines.worldclock.common.repository.WallpaperPreferenceRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -45,6 +46,8 @@ class PagerWallpaperService : WallpaperService() {
         // List of clocks/pages to display
         private val clocks = mutableListOf<BaseClock>()
 
+        private lateinit var clock: BaseClock
+
         // The horizontal pager
         private var pager: WallpaperHorizontalPager? = null
 
@@ -68,7 +71,6 @@ class PagerWallpaperService : WallpaperService() {
             engineScope.launch {
                 // val selected = "Alpenglühen Zeitwerk"
                 // TODO: Use `selected` to configure initial page or clock selection if needed
-
 
                 try {
                     val selected = wallpaperPreferenceRepository.selectedWallpaperName.first()

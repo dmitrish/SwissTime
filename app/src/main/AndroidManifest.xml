@@ -53,9 +53,9 @@
         </receiver>
 
         <service
-                android:name="com.coroutines.livewallpaper.service.PagerWallpaperService"
+                android:name="com.coroutines.livewallpaper.service.RomaMarinaWallpaperService"
                 android:permission="android.permission.BIND_WALLPAPER"
-                android:label="@string/digital_clock_wallpaper_name"
+                android:label="@string/roma_marina_wallpaper_name"
                 android:enabled="true"
                 android:exported="true" >
             <intent-filter>
@@ -63,7 +63,7 @@
             </intent-filter>
             <meta-data
                     android:name="android.service.wallpaper"
-                    android:resource="@xml/digital_clock_wallpaper" />
+                    android:resource="@xml/roma_marina_wallpaper" />
         </service>
 
 

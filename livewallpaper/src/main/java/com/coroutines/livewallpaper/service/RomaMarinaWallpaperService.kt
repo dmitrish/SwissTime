@@ -1,18 +1,33 @@
 package com.coroutines.livewallpaper.service
 
+import android.content.Context
 import android.graphics.Canvas
 import android.os.Handler
 import android.os.Looper
 import android.service.wallpaper.WallpaperService
+import android.util.Log
 import android.view.SurfaceHolder
+import com.coroutines.livewallpaper.common.BaseClock
+import com.coroutines.livewallpaper.watches.KnotClock
 import com.coroutines.livewallpaper.watches.RomaMarinaClock
+import com.coroutines.livewallpaper.watches.ZeitwerkClock
+import com.coroutines.worldclock.common.repository.WallpaperPreferenceRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 /**
  * A live wallpaper service that displays the Roma Marina watch face.
  */
 class RomaMarinaWallpaperService : WallpaperService() {
+    lateinit var appContext: Context
+
 
     override fun onCreateEngine(): Engine {
+        appContext = applicationContext
         return ClockEngine()
     }
 
@@ -22,7 +37,10 @@ class RomaMarinaWallpaperService : WallpaperService() {
     inner class ClockEngine : Engine() {
         private val handler = Handler(Looper.getMainLooper())
         private var visible = false
-        private lateinit var clock: RomaMarinaClock
+        private lateinit var clock: BaseClock
+
+        private val engineJob = SupervisorJob()
+        private val engineScope = CoroutineScope(Dispatchers.Main.immediate + engineJob)
 
         private val timeUpdateRunnable = object : Runnable {
             override fun run() {
@@ -36,7 +54,27 @@ class RomaMarinaWallpaperService : WallpaperService() {
 
         override fun onCreate(surfaceHolder: SurfaceHolder) {
             super.onCreate(surfaceHolder)
-            clock = RomaMarinaClock(this@RomaMarinaWallpaperService, handler)
+            val wallpaperPreferenceRepository = WallpaperPreferenceRepository(appContext)
+
+            runBlocking {
+                // val selected = "Alpenglühen Zeitwerk"
+                // TODO: Use `selected` to configure initial page or clock selection if needed
+
+                try {
+                    val selected = wallpaperPreferenceRepository.selectedWallpaperName.first()
+                    Log.d("PagerWallpaperService", "selected=$selected")
+                    when (selected) {
+                        "Roma Marina" -> clock = RomaMarinaClock(this@RomaMarinaWallpaperService, handler)
+                        "Alpenglühen Zeitwerk" -> clock = ZeitwerkClock(this@RomaMarinaWallpaperService, handler)
+                        else -> clock = KnotClock(this@RomaMarinaWallpaperService, handler)
+                    }
+
+                    // build clocks then pager
+                } catch (t: Throwable) {
+                    Log.e("PagerWallpaperService", "Failed to read selected wallpaper", t)
+                }
+            }
+
         }
 
         override fun onDestroy() {

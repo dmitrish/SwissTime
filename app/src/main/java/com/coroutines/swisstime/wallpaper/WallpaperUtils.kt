@@ -65,7 +65,7 @@ fun launchDigitalClockWallpaperPicker(context: Context, name: String) {
         "Chronomagus" -> ChronomagusRegumWallpaperService::class.java.name
         "RomaMarina" -> RomaMarinaWallpaperService::class.java.name
         "Zeitwerk" -> ZeitwerkWallpaperService::class.java.name
-        else -> PagerWallpaperService::class.java.name
+        else -> RomaMarinaWallpaperService::class.java.name
     }
 
     val intent = Intent(WallpaperManager.ACTION_CHANGE_LIVE_WALLPAPER)
