@@ -1,0 +1,194 @@
+Vertices:
+
+Country: Represents nations with trade relationships
+Company: Both buyers (like Walmart) and suppliers
+Product: Specific goods being traded (like geese)
+Tariff: Individual tariff policies with rates and dates
+
+Key Relationships:
+
+PURCHASES: Direct buying relationships between companies
+LOCATED_IN: Links companies to their countries
+HAS_TARIFF: Country-to-country tariff rates for specific products
+SUPPLIES: What products each company can provide
+
+For your specific example:
+
+Walmart (US company) → PURCHASES → Canadian Geese Suppliers (CA company)
+Canada → HAS_TARIFF → US for geese products with specific rate
+The schema tracks tariff rates, effective dates, and HS codes for customs
+
+Key advantages of this design:
+
+Flexible tariff modeling: Can handle product-specific, country-pair tariffs
+Historical tracking: Effective/expiration dates for tariff changes
+Multi-hop analysis: Find alternative suppliers, calculate total costs
+Scalable: Easily add new countries, products, or tariff types
+
+The schema supports complex queries like finding the lowest-cost suppliers considering both product prices and applicable tariffs, or analyzing how tariff changes affect total import costs for companies like Walmart.
+
+# TigerGraph Schema for International Trade and Tariffs
+
+# ============================================
+# VERTEX DEFINITIONS
+# ============================================
+
+CREATE VERTEX Country (
+    PRIMARY_ID country_code STRING,
+    name STRING,
+    region STRING,
+    currency STRING,
+    trade_agreements SET<STRING>
+) WITH primary_id_as_attribute="true"
+
+CREATE VERTEX Company (
+    PRIMARY_ID company_id STRING,
+    name STRING,
+    company_type STRING,  # "buyer", "supplier", "both"
+    headquarters_country STRING,
+    industry STRING,
+    annual_revenue DOUBLE
+) WITH primary_id_as_attribute="true"
+
+CREATE VERTEX Product (
+    PRIMARY_ID product_id STRING,
+    name STRING,
+    category STRING,
+    hs_code STRING,  # Harmonized System code for customs
+    description STRING,
+    unit_of_measure STRING
+) WITH primary_id_as_attribute="true"
+
+CREATE VERTEX Tariff (
+    PRIMARY_ID tariff_id STRING,
+    tariff_rate DOUBLE,  # percentage
+    effective_date DATETIME,
+    expiration_date DATETIME,
+    tariff_type STRING,  # "import", "export", "anti-dumping", etc.
+    status STRING  # "active", "suspended", "expired"
+) WITH primary_id_as_attribute="true"
+
+# ============================================
+# EDGE DEFINITIONS
+# ============================================
+
+# Company purchases products from suppliers
+CREATE DIRECTED EDGE PURCHASES (
+    FROM Company, 
+    TO Company,
+    purchase_date DATETIME,
+    quantity DOUBLE,
+    unit_price DOUBLE,
+    total_value DOUBLE,
+    currency STRING,
+    product_id STRING,
+    terms STRING  # payment/delivery terms
+)
+
+# Companies are located in countries
+CREATE DIRECTED EDGE LOCATED_IN (
+    FROM Company,
+    TO Country,
+    establishment_date DATETIME,
+    business_type STRING  # "headquarters", "subsidiary", "warehouse"
+)
+
+# Products are subject to tariffs between countries
+CREATE DIRECTED EDGE SUBJECT_TO_TARIFF (
+    FROM Product,
+    TO Tariff,
+    applicable_since DATETIME
+)
+
+# Tariffs apply to trade between countries (from origin to destination)
+CREATE DIRECTED EDGE APPLIES_BETWEEN (
+    FROM Tariff,
+    TO Country,
+    FROM Country,
+    origin_country STRING,
+    destination_country STRING,
+    trade_direction STRING  # "import", "export"
+)
+
+# Alternative: Direct tariff relationship between countries
+CREATE DIRECTED EDGE HAS_TARIFF (
+    FROM Country,
+    TO Country,
+    product_id STRING,
+    tariff_rate DOUBLE,
+    effective_date DATETIME,
+    expiration_date DATETIME,
+    tariff_type STRING
+)
+
+# Companies supply specific products
+CREATE DIRECTED EDGE SUPPLIES (
+    FROM Company,
+    TO Product,
+    production_capacity DOUBLE,
+    quality_grade STRING,
+    certifications SET<STRING>,
+    lead_time_days INT
+)
+
+# ============================================
+# EXAMPLE QUERIES
+# ============================================
+
+# Query 1: Find all tariffs affecting Walmart's Canadian geese purchases
+# This would traverse: Company(Walmart) -> PURCHASES -> Company(Canadian suppliers) 
+# -> LOCATED_IN -> Country(Canada) -> HAS_TARIFF -> Country(US) where product_id = "geese"
+
+# Query 2: Calculate total tariff impact for a specific transaction
+# Traverse the purchase relationship and join with applicable tariffs
+
+# Query 3: Find alternative suppliers to minimize tariff costs
+# Find suppliers in countries with lower tariff rates for specific products
+
+# ============================================
+# SAMPLE DATA LOADING
+# ============================================
+
+# Insert Countries
+INSERT INTO Country VALUES ("US", "United States", "North America", "USD", ["NAFTA", "USMCA"]);
+INSERT INTO Country VALUES ("CA", "Canada", "North America", "CAD", ["NAFTA", "USMCA"]);
+INSERT INTO Country VALUES ("CN", "China", "Asia", "CNY", ["RCEP"]);
+
+# Insert Companies
+INSERT INTO Company VALUES ("WALMART_001", "Walmart Inc.", "buyer", "US", "Retail", 611289000000.0);
+INSERT INTO Company VALUES ("CANGEESE_001", "Canadian Geese Suppliers Ltd.", "supplier", "CA", "Agriculture", 50000000.0);
+
+# Insert Products
+INSERT INTO Product VALUES ("GEESE_001", "Fresh Geese", "Poultry", "0207.44.00", "Whole fresh geese", "kg");
+
+# Insert Tariffs
+INSERT INTO Tariff VALUES ("TARIFF_001", 2.5, "2024-01-01 00:00:00", "2024-12-31 23:59:59", "import", "active");
+
+# Insert Relationships
+INSERT INTO LOCATED_IN VALUES ("WALMART_001", "US", "1962-07-02 00:00:00", "headquarters");
+INSERT INTO LOCATED_IN VALUES ("CANGEESE_001", "CA", "2010-03-15 00:00:00", "headquarters");
+
+INSERT INTO SUPPLIES VALUES ("CANGEESE_001", "GEESE_001", 10000.0, "Grade A", ["HACCP", "Organic"], 7);
+
+INSERT INTO HAS_TARIFF VALUES ("CA", "US", "GEESE_001", 2.5, "2024-01-01 00:00:00", "2024-12-31 23:59:59", "import");
+
+INSERT INTO PURCHASES VALUES ("WALMART_001", "CANGEESE_001", "2024-06-15 00:00:00", 1000.0, 8.50, 8500.0, "CAD", "GEESE_001", "NET30");
+
+# ============================================
+# USEFUL ANALYTICAL QUERIES
+# ============================================
+
+# 1. Find all products subject to tariffs above a certain threshold
+SELECT p.name, t.tariff_rate, c1.name as origin, c2.name as destination
+FROM Product p - (SUBJECT_TO_TARIFF) - Tariff t - (APPLIES_BETWEEN) - Country c1, Country c2
+WHERE t.tariff_rate > 5.0;
+
+# 2. Calculate total tariff costs for a company's imports
+SELECT SUM(p.total_value * (t.tariff_rate / 100)) as total_tariff_cost
+FROM Company buyer - (PURCHASES:p) - Company supplier - (LOCATED_IN) - Country origin - (HAS_TARIFF:t) - Country destination
+WHERE buyer.company_id = "WALMART_001";
+
+# 3. Find suppliers in countries with preferential tariff rates
+SELECT supplier.name, origin.name, ht.tariff_rate
+FROM Company supplier - (LOCATED_IN) - Country origin - (HAS_TARIFF:ht) - Country destination
+WHERE destination.country_code = "US" AND ht.tariff_rate < 5.0;
