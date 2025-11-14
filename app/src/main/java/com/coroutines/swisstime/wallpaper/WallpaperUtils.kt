@@ -39,6 +39,7 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.coroutines.livewallpaper.DigitalClockWallpaperService
 import com.coroutines.livewallpaper.common.BaseClock
@@ -51,6 +52,8 @@ import com.coroutines.livewallpaper.watches.KnotClock
 import com.coroutines.livewallpaper.watches.PontifexChronometraClock
 import com.coroutines.livewallpaper.watches.RomaMarinaClock
 import com.coroutines.livewallpaper.watches.ZeitwerkClock
+import com.coroutines.swisstime.utils.darken
+import com.coroutines.worldclock.common.theme.DarkNavy
 
 /**
  * Launches the live wallpaper picker for the digital clock wallpaper
@@ -95,7 +98,9 @@ fun WallPaperWatchesHorizontalPager(modifier: Modifier = Modifier) {
     val pagerState = rememberPagerState(pageCount = { watches.size })
 
     Column(
-        modifier = modifier.fillMaxSize().background(Color(0xFF000000).copy(alpha = 0.5f)),
+        modifier = modifier
+            .fillMaxSize(),
+            //.background(Color(0xFF000000).copy(alpha = 0.5f)),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         HorizontalPager(
@@ -108,9 +113,10 @@ fun WallPaperWatchesHorizontalPager(modifier: Modifier = Modifier) {
             val watch = watches[page].second
             val name = watches[page].first
 
-
             Box (
-                modifier = Modifier.fillMaxSize().clickable{
+                modifier = Modifier.fillMaxSize().
+                  // .background(DarkNavy.darken(0.3f)).
+                clickable{
                     launchDigitalClockWallpaperPicker(context, name)
                 },
                 contentAlignment = Alignment.Center
@@ -133,6 +139,13 @@ fun WallPaperWatchesHorizontalPager(modifier: Modifier = Modifier) {
             watches.forEach { it.second.destroy() }
         }
     }
+}
+
+
+@Preview
+@Composable
+fun WallPaperWatchesHorizontalPagerPreview() {
+    WallPaperWatchesHorizontalPager()
 }
 
 /**
