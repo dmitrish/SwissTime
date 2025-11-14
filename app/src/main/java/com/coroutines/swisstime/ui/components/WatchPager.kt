@@ -13,6 +13,10 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.collectLatest
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -61,6 +65,16 @@ fun WatchPager (context: Context){
     ))
     val pagerState = rememberPagerState(pageCount = { watches.size })
 
+    // Persist the selected watch name when the current page changes
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }
+            .distinctUntilChanged()
+            .collectLatest { page ->
+                val name = watches.getOrNull(page)?.name ?: return@collectLatest
+                viewModel.saveWallpaperName(name)
+            }
+    }
+
     Column(
         modifier = Modifier
         .fillMaxSize(),
@@ -75,7 +89,6 @@ fun WatchPager (context: Context){
         ) { page ->
 
             val watch = watches[page]
-            viewModel.saveWallpaperName(watch.name)
           //  val watchInfo = WatchInfo("name here", "America/Los_Angeles")
 
           //  val name = watches[page].first
