@@ -23,9 +23,9 @@ class WallpaperPreferenceRepository (private val context: Context) {
         private val SELECTED_WALLPAPER_KEY = stringPreferencesKey("selected_wallpaper")
     }
 
-    val selectedWallpaperName: Flow<String?> = context.dataStore.data
+    val selectedWallpaperName: Flow<String> = context.dataStore.data
         .map { preferences ->
-            preferences[SELECTED_WALLPAPER_KEY]
+            preferences[SELECTED_WALLPAPER_KEY] ?: "Roma Marina"
         }
 
     suspend fun saveSelectedWallpaperName(wallpaperName: String) {
