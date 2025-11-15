@@ -8,6 +8,7 @@ import android.service.wallpaper.WallpaperService
 import android.util.Log
 import android.view.SurfaceHolder
 import com.coroutines.livewallpaper.common.BaseClock
+import com.coroutines.livewallpaper.watches.ChronomagusRegumClock
 import com.coroutines.livewallpaper.watches.KnotClock
 import com.coroutines.livewallpaper.watches.RomaMarinaClock
 import com.coroutines.livewallpaper.watches.ZeitwerkClock
@@ -66,6 +67,7 @@ class RomaMarinaWallpaperService : WallpaperService() {
                     when (selected) {
                         "Roma Marina" -> clock = RomaMarinaClock(this@RomaMarinaWallpaperService, handler)
                         "Alpenglühen Zeitwerk" -> clock = ZeitwerkClock(this@RomaMarinaWallpaperService, handler)
+                        "Chronomagus Regum" -> clock = ChronomagusRegumClock(this@RomaMarinaWallpaperService, handler)
                         else -> clock = KnotClock(this@RomaMarinaWallpaperService, handler)
                     }
 
