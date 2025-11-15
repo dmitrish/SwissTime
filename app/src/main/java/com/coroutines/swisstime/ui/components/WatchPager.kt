@@ -5,13 +5,22 @@ import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
@@ -77,15 +86,16 @@ fun WatchPager (context: Context){
 
     Column(
         modifier = Modifier
-        .fillMaxSize(),
+            .fillMaxSize(),
         //.background(Color(0xFF000000).copy(alpha = 0.5f)),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
         HorizontalPager(
             state = pagerState,
             modifier = Modifier
-                .fillMaxSize()
-                .aspectRatio(1f) // Square aspect ratio for watches
+                .fillMaxWidth()
+                .aspectRatio(1f) // Square based on width to leave space for indicator and button
         ) { page ->
 
             val watch = watches[page]
@@ -108,11 +118,37 @@ fun WatchPager (context: Context){
             }
         }
 
-        // Page indicator
-        Text(
-            text = "${pagerState.currentPage + 1} ",
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(top = 8.dp)
-        )
+        // Dots page indicator
+        Row(
+            modifier = Modifier.padding(top = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            repeat(watches.size) { index ->
+                Box(
+                    modifier = Modifier
+                        .size(8.dp)
+                        .background(
+                            color = if (pagerState.currentPage == index) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+                            shape = CircleShape
+                        )
+                )
+                if (index < watches.size - 1) {
+                    Spacer(modifier = Modifier.width(8.dp))
+                }
+            }
+        }
+
+        // Choose button
+        Button(
+            onClick = {
+                val current = watches.getOrNull(pagerState.currentPage)
+                if (current != null) {
+                    launchDigitalClockWallpaperPicker(context, current.name)
+                }
+            },
+            modifier = Modifier.padding(top = 12.dp)
+        ) {
+            Text(text = "Choose as Wallpaper")
+        }
     }
 }
