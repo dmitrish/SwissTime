@@ -457,7 +457,7 @@ private fun getWatches(): List<WatchInfo> {
 
         WatchInfo(
             name = "Vostok Military",
-            description = "The Alpenglühen Zeitwerk features a deep blue dial inspired by the Atlantic Ocean. This German-made timepiece combines Bauhaus minimalism with dive watch functionality, featuring a waterproof design, luminous markers, and the distinctive red seconds hand that is a signature of Alpenglühen Zeitwerk watches.",
+            description = "Vostok Military pays tribute to the rugged Komandirskie and Amphibia watches produced for the Soviet and Russian armed forces. Known for their durable cases, ingenious Amphibia waterproofing with a self‑sealing caseback, and bold utilitarian dials, these mechanical timepieces are built to withstand harsh conditions while delivering dependable everyday timekeeping.",
             composable = { modifier, timeZone -> VostokRussianMilitary(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
         )
 

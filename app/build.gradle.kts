@@ -16,8 +16,8 @@ android {
         minSdk = 26  // Temporarily increased from 24 to 26 to resolve Scala and JSON4s library issues
         //noinspection EditedTargetSdkVersion
         targetSdk = 36
-        versionCode = 12
-        versionName = "1.45"
+        versionCode = 13
+        versionName = "1.46"
 
         testInstrumentationRunner = "com.karumi.shot.ShotTestRunner"
     }

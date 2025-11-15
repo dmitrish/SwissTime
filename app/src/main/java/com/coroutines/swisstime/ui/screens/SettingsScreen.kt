@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DarkMode
@@ -148,6 +150,7 @@ fun SettingsScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .verticalScroll(androidx.compose.foundation.rememberScrollState())
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -182,7 +185,11 @@ fun SettingsScreen(
 
 
        // wallpaperSelectionCard(Modifier.fillMaxWidth())
-        WallpaperSelectionCard(Modifier.fillMaxWidth()) { navController.navigate("wallpaper") }
+        WallpaperSelectionCard(
+            modifier = Modifier.fillMaxWidth(),
+            wallpaperPreferenceRepository = com.coroutines.worldclock.common.repository.WallpaperPreferenceRepository(androidx.compose.ui.platform.LocalContext.current),
+            onNavigationRequested = { navController.navigate("wallpaper") }
+        )
 
     }
 
