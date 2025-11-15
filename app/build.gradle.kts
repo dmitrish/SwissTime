@@ -16,8 +16,8 @@ android {
         minSdk = 26  // Temporarily increased from 24 to 26 to resolve Scala and JSON4s library issues
         //noinspection EditedTargetSdkVersion
         targetSdk = 36
-        versionCode = 10
-        versionName = "1.43"
+        versionCode = 12
+        versionName = "1.45"
 
         testInstrumentationRunner = "com.karumi.shot.ShotTestRunner"
     }
@@ -26,7 +26,8 @@ android {
         release {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-           // signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("debug")
+            // signingConfig = signingConfigs.getByName("debug")
             // signingConfig = signingConfigs.getByName("debug")
         }
     }
