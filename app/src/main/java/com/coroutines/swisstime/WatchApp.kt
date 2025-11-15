@@ -44,6 +44,7 @@ import androidx.compose.material3.DrawerDefaults
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.Color
 import androidx.glance.appwidget.updateAll
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 //import com.coroutines.swisstime.data.TimeZoneRepository
@@ -51,6 +52,7 @@ import androidx.navigation.compose.rememberNavController
 //import com.coroutines.swisstime.data.WatchPreferencesRepository
 import com.coroutines.swisstime.navigation.NavGraph
 import com.coroutines.swisstime.navigation.SwissTimeNavigationBar
+import com.coroutines.swisstime.navigation.TopLevelDestination
 import com.coroutines.swisstime.ui.components.ModalDrawerContent
 import com.coroutines.swisstime.ui.theme.SwissTimeTheme
 import com.coroutines.swisstime.viewmodel.ThemeViewModel
@@ -202,6 +204,21 @@ fun WatchApp(watchPreferencesRepository: WatchPreferencesRepository) {
                     // No top app bar as per requirements
                 },
                 bottomBar = {
+                    val configuration = LocalConfiguration.current
+                    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+                    val showBottomBar = !isLandscape && TopLevelDestination.values().any { top ->
+                        currentDestination?.hierarchy?.any { it.route == top.route } == true
+                    }
+
+                    if (showBottomBar) {
+                        SwissTimeNavigationBar(
+                            navController = navController,
+                            currentDestination = currentDestination
+                        )
+                    }
+                }
+               /* bottomBar = {
                     // Get the current configuration to determine orientation
                     val configuration = LocalConfiguration.current
                     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -214,7 +231,7 @@ fun WatchApp(watchPreferencesRepository: WatchPreferencesRepository) {
                             currentDestination = currentDestination
                         )
                     }
-                }
+                }n*/
             ) { innerPadding ->
                 // Use the Navigation 3 library
                 // Apply the innerPadding to the content

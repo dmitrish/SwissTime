@@ -69,7 +69,7 @@ fun ThemeSettingsCard(
             Spacer(modifier = Modifier.height(16.dp))
 
             // Theme selection row
-            Row(
+            /*Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onThemeClick() }
@@ -109,7 +109,7 @@ fun ThemeSettingsCard(
                 )
             }
 
-            Divider(modifier = Modifier.padding(vertical = 8.dp))
+            Divider(modifier = Modifier.padding(vertical = 8.dp)) */
 
             // Dark mode toggle
             Row(

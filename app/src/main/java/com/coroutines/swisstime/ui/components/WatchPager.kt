@@ -33,6 +33,7 @@ import com.coroutines.swisstime.ui.screens.TimeZoneAwareWatchFace2
 import com.coroutines.swisstime.viewmodel.WallpaperViewmodel
 import com.coroutines.swisstime.viewmodel.WatchViewModel
 import com.coroutines.swisstime.wallpaper.launchDigitalClockWallpaperPicker
+import com.coroutines.swisstime.watchfaces.ChronomagusRegum
 import com.coroutines.swisstime.watchfaces.HorologiaRomanum
 import com.coroutines.swisstime.watchfaces.JurgsenZenithor
 import com.coroutines.swisstime.watchfaces.Knot
@@ -58,9 +59,9 @@ fun WatchPager (context: Context){
             composable = { modifier, timeZone -> RomaMarina(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
         ),
         WatchInfo(
-            name = "Horologia Romanum",
-            description = "The Horologia Romanum, first created in the 1930s, features a clean dial design inspired by precision marine chronometers. Known for its large case size and elegant simplicity, it represents HR's commitment to technical excellence and timeless design.",
-            composable = { modifier, timeZone -> HorologiaRomanum(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+            name = "Chronomagus Regum",
+            description = "The Chronomagus Regum is celebrated for its ultra-thin profile and minimalist design. Since the 1950s, Chronomagus has been a pioneer in creating incredibly slim watches, with the Regum line showcasing the brand's expertise in producing elegant timepieces that combine technical innovation with refined aesthetics.",
+            composable = { modifier, timeZone -> ChronomagusRegum(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
         ),
         WatchInfo(
             name = "Alpenglühen Zeitwerk",
@@ -146,7 +147,7 @@ fun WatchPager (context: Context){
                     launchDigitalClockWallpaperPicker(context, current.name)
                 }
             },
-            modifier = Modifier.padding(top = 12.dp)
+            modifier = Modifier.padding(top = 50.dp)
         ) {
             Text(text = "Choose as Wallpaper")
         }
