@@ -9,7 +9,7 @@
 
     <uses-feature
             android:name="android.software.live_wallpaper"
-            android:required="true" />
+            android:required="false" />
 
     <application
             android:allowBackup="true"
