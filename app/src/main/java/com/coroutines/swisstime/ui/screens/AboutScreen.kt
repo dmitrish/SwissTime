@@ -59,13 +59,19 @@ fun AboutScreen(
 ) {
     val scrollState = rememberScrollState()
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .verticalScroll(scrollState),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+    // Provide a shared max width so the action buttons in RateAppSection and AppVersionSection
+    // can match the width of the longer one.
+    val buttonsMaxWidth = androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(0.dp) }
+    androidx.compose.runtime.CompositionLocalProvider(
+        com.coroutines.swisstime.ui.components.LocalSettingsButtonsMaxWidth provides buttonsMaxWidth
     ) {
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(16.dp)
+                .verticalScroll(scrollState),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
         Text(
             text = "About",
             style = MaterialTheme.typography.headlineMedium,
@@ -116,5 +122,6 @@ fun AboutScreen(
 
         // App Version section
         appVersionSection()
+        }
     }
 }
