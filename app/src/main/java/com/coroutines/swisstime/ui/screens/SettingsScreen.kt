@@ -147,50 +147,55 @@ fun SettingsScreen(
     // State for showing the theme selection dialog
     var showThemeDialog by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(androidx.compose.foundation.rememberScrollState())
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+    // Provide a shared max width state for Settings action buttons
+    val buttonsMaxWidth = remember { androidx.compose.runtime.mutableStateOf(0.dp) }
+    androidx.compose.runtime.CompositionLocalProvider(
+        com.coroutines.swisstime.ui.components.LocalSettingsButtonsMaxWidth provides buttonsMaxWidth
     ) {
-        Text(
-            text = "Settings",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground
-        )
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .verticalScroll(androidx.compose.foundation.rememberScrollState())
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Text(
+                text = "Settings",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
 
-        Divider()
+            Divider()
 
-        // Theme settings card
-        themeSettingsCard(
-            themeMode,
-            darkMode,
-            { showThemeDialog = true },
-            { themeViewModel.saveDarkMode(it) }
-        )
+            // Theme settings card
+            themeSettingsCard(
+                themeMode,
+                darkMode,
+                { showThemeDialog = true },
+                { themeViewModel.saveDarkMode(it) }
+            )
 
-        // Time format settings card
-        timeFormatSettingsCard(
-            useUsTimeFormat,
-            { watchViewModel.saveTimeFormat(it) }
-        )
+            // Time format settings card
+            timeFormatSettingsCard(
+                useUsTimeFormat,
+                { watchViewModel.saveTimeFormat(it) }
+            )
 
-        // Watch removal gesture settings card
-        watchRemovalGestureSettingsCard(
-            useDoubleTapForRemoval,
-            { watchViewModel.saveWatchRemovalGesture(it) }
-        )
+            // Watch removal gesture settings card
+            watchRemovalGestureSettingsCard(
+                useDoubleTapForRemoval,
+                { watchViewModel.saveWatchRemovalGesture(it) }
+            )
 
 
-       // wallpaperSelectionCard(Modifier.fillMaxWidth())
-        WallpaperSelectionCard(
-            modifier = Modifier.fillMaxWidth(),
-            wallpaperPreferenceRepository = com.coroutines.worldclock.common.repository.WallpaperPreferenceRepository(androidx.compose.ui.platform.LocalContext.current),
-            onNavigationRequested = { navController.navigate("wallpaper") }
-        )
-
+           // wallpaperSelectionCard(Modifier.fillMaxWidth())
+            WallpaperSelectionCard(
+                modifier = Modifier.fillMaxWidth(),
+                wallpaperPreferenceRepository = com.coroutines.worldclock.common.repository.WallpaperPreferenceRepository(androidx.compose.ui.platform.LocalContext.current),
+                onNavigationRequested = { navController.navigate("wallpaper") }
+            )
+        }
     }
 
     // Theme selection dialog
