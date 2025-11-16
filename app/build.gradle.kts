@@ -79,6 +79,8 @@ dependencies {
 
     implementation(libs.androidx.runtime.tracing)
 
+    implementation(libs.coil.compose)
+
     testImplementation(libs.junit)
     // MockK for mocking in tests
     testImplementation(libs.mockk)

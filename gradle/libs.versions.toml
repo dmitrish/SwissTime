@@ -26,6 +26,7 @@ kaspresso = "1.6.0"
 compose-ui-test = "1.6.0"
 shot = "6.0.0"
 androidTestRunner = "1.7.0"
+coil = "3.3.0"
 
 
 [libraries]
@@ -68,6 +69,9 @@ material = { group = "com.google.android.material", name = "material", version.r
 kaspresso = { group = "com.kaspersky.android-components", name = "kaspresso", version.ref = "kaspresso" }
 shot = { module = "com.karumi:shot", version.ref = "shot" }
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidTestRunner" }
+
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
+coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
 
 
 [plugins]
