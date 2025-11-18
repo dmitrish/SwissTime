@@ -84,22 +84,15 @@ fun WatchPager (context: Context){
         ) { page ->
 
             val watch = watches[page]
-          //  val watchInfo = WatchInfo("name here", "America/Los_Angeles")
-
-          //  val name = watches[page].first
 
             Box (
                 modifier = Modifier.fillMaxSize().
-                    // .background(DarkNavy.darken(0.3f)).
                 clickable{
-                   // viewModel.saveWallpaperName(watch.name)
                     launchDigitalClockWallpaperPicker(context, watch.name)
                 },
                 contentAlignment = Alignment.Center
             ) {
                 watch.composable(Modifier.fillMaxSize(), TimeZone.getDefault())
-              //  TimeZoneAwareWatchFace2(watch, viewModel = WatchViewModel())
-               // WatchCanvas(watch = watch)
             }
         }
 

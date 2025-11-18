@@ -80,6 +80,7 @@ dependencies {
     implementation(libs.androidx.runtime.tracing)
 
     implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
 
     testImplementation(libs.junit)
     // MockK for mocking in tests
