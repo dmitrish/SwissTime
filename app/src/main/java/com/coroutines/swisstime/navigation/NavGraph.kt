@@ -27,7 +27,7 @@ import com.coroutines.swisstime.ui.screens.TimeScreen
 import com.coroutines.swisstime.ui.screens.WallpaperScreen
 import com.coroutines.swisstime.ui.screens.WatchDetailScreen
 import com.coroutines.swisstime.ui.screens.WatchListScreen
-import com.coroutines.swisstime.ui.screens.WorldMapScreen
+import com.coroutines.swisstime.ui.screens.WelcomeScreen
 import com.coroutines.swisstime.utils.darken
 import com.coroutines.swisstime.viewmodel.ThemeViewModel
 import com.coroutines.swisstime.viewmodel.WatchViewModel
@@ -46,6 +46,8 @@ sealed class Screen(val route: String) {
     object Settings : Screen("settings")
     object About : Screen("about")
     object Wallpaper : Screen("wallpaper")
+
+    object Welcome : Screen("welcome")
 }
 
 // Animation duration for transitions - extremely short duration for immediate UI updates
@@ -60,9 +62,14 @@ fun NavGraph(
     watchViewModel: WatchViewModel,
     themeViewModel: ThemeViewModel
 ) {
+
+    // Determine the start destination based on whether a watch is already selected
+    val hasSelectedWatch = watchViewModel.selectedWatches.collectAsState().value.isNotEmpty()
+    val startDestinationRoute = if (hasSelectedWatch) Screen.Time.route else Screen.Welcome.route
+
     NavHost(
         navController = navController,
-        startDestination = Screen.Time.route,
+        startDestination = startDestinationRoute,
         // Set enter/exit animations for the entire NavHost
         enterTransition = {
             fadeIn(animationSpec = tween(ANIMATION_DURATION))
@@ -343,6 +350,23 @@ fun NavGraph(
                 onBackClick = {
                     // Navigate back to the previous screen
                     navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = Screen.Welcome.route,
+            enterTransition = {
+                fadeIn(animationSpec = tween(ANIMATION_DURATION))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(ANIMATION_DURATION))
+            }
+        ) {
+            WelcomeScreen(
+                watchViewModel,
+                onBackClick = {
+                    navController.navigate(Screen.Time.route)
                 }
             )
         }

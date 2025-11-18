@@ -53,7 +53,7 @@ public fun getWatches(): List<WatchInfo> {
         ),
         WatchInfo(
             name = "Horologia Romanum",
-            description = "The Horologia Romanum, first created in the 1930s, features a clean dial design inspired by precision marine chronometers. Known for its large case size and elegant simplicity, it represents HR's commitment to technical excellence and timeless design.",
+            description = "The Horologia Romanum features a clean dial design inspired by precision marine chronometers. Known for its large case size and elegant simplicity, it represents HR's commitment to technical excellence and timeless design.",
             composable = { modifier, timeZone -> HorologiaRomanum(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
         ),
 
@@ -201,13 +201,13 @@ public fun getWatches(): List<WatchInfo> {
          ), */
         WatchInfo(
             name = "Alpenglühen Zeitwerk",
-            description = "The Alpenglühen Zeitwerk features a deep blue dial inspired by the Atlantic Ocean. This German-made timepiece combines Bauhaus minimalism with dive watch functionality, featuring a waterproof design, luminous markers, and the distinctive red seconds hand that is a signature of Alpenglühen Zeitwerk watches.",
+            description = "The Alpenglühen Zeitwerk features a deep blue dial inspired by the Atlantic Ocean, combining artistry with functionality. This German-made timepiece combines Bauhaus minimalism with dive watch functionality, featuring a waterproof design, luminous markers, and the distinctive red seconds hand that is a signature of Alpenglühen Zeitwerk watches.",
             composable = { modifier, timeZone -> Zeitwerk(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
         ),
 
         WatchInfo(
             name = "Vostok Military",
-            description = "Vostok Military pays tribute to the rugged Komandirskie and Amphibia watches produced for the Soviet and Russian armed forces. Known for their durable cases, ingenious Amphibia waterproofing with a self‑sealing caseback, and bold utilitarian dials, these mechanical timepieces are built to withstand harsh conditions while delivering dependable everyday timekeeping.",
+            description = "Vostok Military pays tribute to the rugged Amphibia watches produced for the Soviet and Russian armed forces. Known for their durable cases, ingenious Amphibia waterproofing with a self‑sealing caseback, and bold utilitarian dials, these mechanical timepieces are built to withstand harsh conditions while delivering dependable everyday timekeeping.",
             composable = { modifier, timeZone -> VostokRussianMilitary(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
         )
 
