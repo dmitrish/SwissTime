@@ -36,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import androidx.compose.ui.zIndex
+import androidx.constraintlayout.compose.ConstraintLayout
 import com.coroutines.swisstime.viewmodel.WallpaperViewmodel
 import com.coroutines.swisstime.viewmodel.WatchViewModel
 import com.coroutines.swisstime.wallpaper.launchDigitalClockWallpaperPicker
@@ -100,56 +101,72 @@ fun SwissTimePager (watchViewModel: WatchViewModel, onBackClick: () -> Unit){
     BoxWithConstraints(
         modifier = Modifier.fillMaxSize()
     ) {
-        val bottomOffset = maxHeight * 0.001f
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize(),
-                //.padding(bottom = bottomOffset),
-            horizontalAlignment = Alignment.CenterHorizontally
+        val maxHeight = maxHeight
+        // Single parent ConstraintLayout to anchor top texts and bottom button
+        androidx.constraintlayout.compose.ConstraintLayout(
+            modifier = Modifier.fillMaxSize()
         ) {
-            // Push content to the bottom of the padded area so the pager's bottom
-            // sits exactly bottomOffset above the screen bottom.
-            Spacer(modifier = Modifier.weight(1f))
+            val (title, chooseText, descText, pager, button) = createRefs()
 
+            // Title near the top
             androidx.compose.material3.Text(
                 text = "Let's get started!",
                 modifier = Modifier
-                    .offset(y = (35.dp))
-                    .padding(horizontal = 24.dp)
-                    .padding(bottom = 20.dp),
+                    .constrainAs(title) {
+                        top.linkTo(parent.top, margin = maxHeight * 0.22f)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+                    .padding(horizontal = 24.dp),
+                   // .padding(bottom = 20.dp),
                 textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                 style = androidx.compose.material3.MaterialTheme.typography.headlineLarge
             )
 
+            // "Choose your first watch" below the title
             androidx.compose.material3.Text(
                 text = "Choose your first watch",
                 modifier = Modifier
-                    .offset(y = (35.dp))
-                    .padding(horizontal = 24.dp)
-                    .padding(bottom = 20.dp),
+                    .constrainAs(chooseText) {
+                        top.linkTo(title.bottom, margin = 10.dp)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+                    .padding(horizontal = 24.dp),
+                   // .padding(bottom = 20.dp),
                 textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                 style = androidx.compose.material3.MaterialTheme.typography.headlineMedium
             )
 
-            // Description of the focused watch (now ABOVE the pager) — first sentence only
+            // Description anchored 10.dp below the above text
             androidx.compose.material3.Text(
                 text = firstSentence(watches.getOrNull(pagerState.currentPage)?.description),
                 modifier = Modifier
-                    .offset(y = (35.dp))
+                    .constrainAs(descText) {
+                        top.linkTo(chooseText.bottom, margin = 50.dp)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
                     .padding(horizontal = 24.dp)
-                    .padding(bottom = 1.dp),
+                    .padding(bottom = 8.dp),
                 textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                 maxLines = 3,
                 overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
                 style = androidx.compose.material3.MaterialTheme.typography.bodyMedium
             )
 
-            // Pager below the description
+            // Pager fills the space between description and button
             BoxWithConstraints(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f) // Square area for the pager
+                    .constrainAs(pager) {
+                        top.linkTo(descText.bottom, margin = 16.dp)
+                        bottom.linkTo(button.top, margin = 16.dp)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        height = androidx.constraintlayout.compose.Dimension.fillToConstraints
+                        width = androidx.constraintlayout.compose.Dimension.fillToConstraints
+                    }
+                    .aspectRatio(1f)
             ) {
                 // We want three pages visible on each side. Keep base page width 200+ dp and
                 // create overlap by using a negative pageSpacing so adjacent pages are only ~24.dp apart.
@@ -207,15 +224,18 @@ fun SwissTimePager (watchViewModel: WatchViewModel, onBackClick: () -> Unit){
                 }
             }
 
-            // Action button under the pager
+            // Bottom-anchored action button
             androidx.compose.material3.Button(
                 onClick = {
                     watchViewModel.saveSelectedWatch(watch = watches[pagerState.currentPage])
                     onBackClick()
                 },
                 modifier = Modifier
-                    .offset(y = (-40.dp))
-                    //.padding(top = 1.dp)
+                    .constrainAs(button) {
+                        bottom.linkTo(parent.bottom, margin = 40.dp)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
             ) {
                 androidx.compose.material3.Text(
                     text = if (hasEnlargedAndReturned) "Select this watch" else "Tap the watch to enlarge"

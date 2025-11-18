@@ -27,6 +27,7 @@ compose-ui-test = "1.6.0"
 shot = "6.0.0"
 androidTestRunner = "1.7.0"
 coil = "3.3.0"
+constraintlayoutCompose = "1.1.0"
 
 
 [libraries]
@@ -72,6 +73,7 @@ androidx-test-runner = { module = "androidx.test:runner", version.ref = "android
 
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
+androidx-constraintlayout-compose = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "constraintlayoutCompose" }
 
 
 [plugins]

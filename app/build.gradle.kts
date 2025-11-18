@@ -55,7 +55,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material.icons.extended)
-
+    implementation(libs.androidx.constraintlayout.compose)
 
     // Glance for App Widgets
     implementation(libs.androidx.glance)
