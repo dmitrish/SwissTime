@@ -51,11 +51,7 @@ import java.util.TimeZone
 fun WatchPager (context: Context){
 
     val appContext = context.applicationContext
-
     val viewModel = WallpaperViewmodel(WallpaperPreferenceRepository(appContext))
-
-
-
     val watches = wallpaperWatches()
     val pagerState = rememberPagerState(pageCount = { watches.size })
 
