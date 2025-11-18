@@ -113,7 +113,7 @@ fun SwissTimePager (watchViewModel: WatchViewModel, onBackClick: () -> Unit){
                 text = "Let's get started!",
                 modifier = Modifier
                     .constrainAs(title) {
-                        top.linkTo(parent.top, margin = maxHeight * 0.22f)
+                        top.linkTo(parent.top, margin = maxHeight * 0.20f)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                     }
