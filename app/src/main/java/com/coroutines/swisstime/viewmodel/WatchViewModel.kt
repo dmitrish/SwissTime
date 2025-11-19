@@ -42,6 +42,10 @@ class WatchViewModel(
     private val _selectedWatches = kotlinx.coroutines.flow.MutableStateFlow<List<WatchInfo>>(emptyList())
     val selectedWatches: StateFlow<List<WatchInfo>> = _selectedWatches
 
+    // Flag to indicate when selectedWatches has received its first value from repository
+    private val _selectedWatchesLoaded = kotlinx.coroutines.flow.MutableStateFlow(false)
+    val selectedWatchesLoaded: StateFlow<Boolean> = _selectedWatchesLoaded
+
     init {
         // Initialize selected watches from preferences
         viewModelScope.launch {
@@ -50,6 +54,10 @@ class WatchViewModel(
                     watches.find { it.name == name }
                 }
                 _selectedWatches.value = selectedWatchesList
+                // Mark as loaded after first (and subsequent) emissions
+                if (!_selectedWatchesLoaded.value) {
+                    _selectedWatchesLoaded.value = true
+                }
             }
         }
     }

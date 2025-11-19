@@ -127,11 +127,23 @@ fun WatchPager (context: Context){
 
         Spacer(modifier = Modifier.height(50.dp))
 
-        SwissTimeGradientButton("Choose as Wallpaper", onClick = {
+        Button(
+            onClick = {
+                val current = watches.getOrNull(pagerState.currentPage)
+                if (current != null) {
+                    launchDigitalClockWallpaperPicker(context, current.name)
+                }
+            },
+            modifier = Modifier.padding(top = 50.dp)
+        ) {
+            Text(text = "Choose as Wallpaper")
+        }
+
+      /*  SwissTimeGradientButton("Choose as Wallpaper", onClick = {
             val current = watches.getOrNull(pagerState.currentPage)
             if (current != null) {
                 launchDigitalClockWallpaperPicker(context, current.name)
             }
-        })
+        })*/
     }
 }
