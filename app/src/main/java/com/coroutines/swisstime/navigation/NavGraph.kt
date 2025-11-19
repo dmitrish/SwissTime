@@ -9,6 +9,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
@@ -64,12 +65,14 @@ fun NavGraph(
 ) {
 
     // Determine the start destination based on whether a watch is already selected
-    val hasSelectedWatch = watchViewModel.selectedWatches.collectAsState().value.isNotEmpty()
-    val startDestinationRoute = if (hasSelectedWatch) Screen.Time.route else Screen.Welcome.route
+   // val hasSelectedWatch = watchViewModel.selectedWatches.collectAsState().value.isNotEmpty()
+   // val startDestinationRoute = if (hasSelectedWatch) Screen.Time.route else Screen.Welcome.route
 
+
+    
     NavHost(
         navController = navController,
-        startDestination = startDestinationRoute,
+        startDestination = "decide",
         // Set enter/exit animations for the entire NavHost
         enterTransition = {
             fadeIn(animationSpec = tween(ANIMATION_DURATION))
@@ -84,6 +87,16 @@ fun NavGraph(
             fadeOut(animationSpec = tween(ANIMATION_DURATION))
         }
     ) {
+        composable("decide") {
+            val selected = watchViewModel.selectedWatches.collectAsState().value
+            val loaded = watchViewModel.selectedWatchesLoaded.collectAsState().value
+            LaunchedEffect(loaded, selected) {
+                if (!loaded) return@LaunchedEffect
+                val target = if (selected.isNotEmpty()) Screen.Time.route else Screen.Welcome.route
+                navController.navigate(target) { popUpTo("decide") { inclusive = true } }
+            }
+        }
+
         composable(
             route = Screen.Time.route,
             enterTransition = {

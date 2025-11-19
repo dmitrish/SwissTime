@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-09-14T00:48:20.531691Z">
+        <DropdownSelection timestamp="2025-11-18T03:15:06.627777Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=RFCT402ZD5X" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/shpinardmitri/.android/avd/Medium_Phone_2.avd" />
             </handle>
           </Target>
         </DropdownSelection>
@@ -27,12 +27,6 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="CurologyJourneyScreenPreview">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="SwissTimeJourneyPreview">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="SwissTimeJourneyPreviewWhite">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
@@ -40,6 +34,12 @@
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="PreviewSwissTimePagerCircle">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="YachtDetailsScreenPreview">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="YachtDetailsScreenPreview2">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
