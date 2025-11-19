@@ -65,7 +65,7 @@ fun RateAppSection(
                 val buttonsMaxWidthState = com.coroutines.swisstime.ui.components.LocalSettingsButtonsMaxWidth.current
                 val density = LocalDensity.current
                 val widthModifier = if (buttonsMaxWidthState.value > 0.dp) Modifier.width(buttonsMaxWidthState.value) else Modifier
-                SwissTimeGradientButton(
+              /*  SwissTimeGradientButton(
                     text = "Rate the App",
                     onClick = {
                         val reviewManager = AppReviewManager(context)
@@ -79,8 +79,8 @@ fun RateAppSection(
                             }
                         }
                     ).testTag("rate_app_button_text")
-                )
-               /* Button(
+                ) */
+                Button(
                     onClick = {
                         // Use the AppReviewManager to request a review
                         // This will use the Google Play In-App Review API in production
@@ -92,7 +92,7 @@ fun RateAppSection(
                         .testTag("rate_app_button")
                 ) {
                     Text(text = "Rate the App")
-                }*/
+                }
             }
         }
     }
