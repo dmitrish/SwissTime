@@ -181,7 +181,30 @@ fun AppVersionSection(
             ) {
                 // Check for updates button with shared width handling
                 val widthModifier = if (buttonsMaxWidthState.value > 0.dp) Modifier.width(buttonsMaxWidthState.value) else Modifier
-                SwissTimeGradientButton(
+                Button(
+                    onClick = {
+                        // Call the real appUpdateManager.checkForUpdate() method
+                        // This will:
+                        // 1. Check if an update is available from Google Play
+                        // 2. Determine the appropriate update type (immediate or flexible)
+                        // 3. Start the update flow if an update is available
+                        // 4. Update the updateStatus flow with the current status
+                        // The UI will be updated automatically based on the collected status
+                        appUpdateManager.checkForUpdate()
+                    },
+                    modifier = Modifier.fillMaxWidth(0.6f),
+                    // Disable the button while checking for updates to prevent multiple requests
+                    enabled = !isCheckingForUpdates
+                ) {
+                    Text(text = "Check for Updates")
+                }
+              }
+        }
+    }
+}
+
+/*
+ /* SwissTimeGradientButton(
                     text = "Check for Updates",
                     onClick = {
                         appUpdateManager.checkForUpdate()
@@ -194,9 +217,6 @@ fun AppVersionSection(
                             }
                         }
                     )
-                )
-            }
-        }
-    }
-}
 
+
+ */
