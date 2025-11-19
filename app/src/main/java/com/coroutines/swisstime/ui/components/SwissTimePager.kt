@@ -224,23 +224,33 @@ fun SwissTimePager (watchViewModel: WatchViewModel, onBackClick: () -> Unit){
                 }
             }
 
-            // Bottom-anchored action button
-            androidx.compose.material3.Button(
-                onClick = {
-                    if (isZoomed) {
+            // Bottom-anchored action: show Text when not zoomed, Button when zoomed
+            if (isZoomed) {
+                androidx.compose.material3.Button(
+                    onClick = {
                         watchViewModel.saveSelectedWatch(watch = watches[pagerState.currentPage])
                         onBackClick()
-                    }
-                },
-                modifier = Modifier
-                    .constrainAs(button) {
-                        bottom.linkTo(parent.bottom, margin = 40.dp)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }
-            ) {
+                    },
+                    modifier = Modifier
+                        .constrainAs(button) {
+                            bottom.linkTo(parent.bottom, margin = 40.dp)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                        }
+                ) {
+                    androidx.compose.material3.Text(
+                        text = "Select this watch"
+                    )
+                }
+            } else {
                 androidx.compose.material3.Text(
-                    text = if (isZoomed) "Select this watch" else "Tap to zoom"
+                    text = "Tap to zoom",
+                    modifier = Modifier
+                        .constrainAs(button) {
+                            bottom.linkTo(parent.bottom, margin = 40.dp)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                        }
                 )
             }
         }
