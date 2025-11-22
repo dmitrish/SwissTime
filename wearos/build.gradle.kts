@@ -82,4 +82,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    // Material icons for Compose (needed for Icons.Filled.*)
+    implementation(libs.androidx.material.icons.extended)
 }
