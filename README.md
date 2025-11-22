@@ -36,6 +36,7 @@ World Clock with timezones is a mighty little app that adds fun to timekeeping. 
   <tr>
     <th>Live Wallpaper Home Screen</th>
     <th>Live Wallpaper Lock Screen</th>
+    <th>Watch Selection Welcome Screen</th>
   </tr>
   <tr>
     <td>
@@ -43,6 +44,9 @@ World Clock with timezones is a mighty little app that adds fun to timekeeping. 
     </td>
     <td>
         <img src="https://github.com/dmitrish/SwissTime/blob/main/art/lockedscreen.gif" />
+    </td>
+     <td>
+        <img src="https://github.com/dmitrish/SwissTime/blob/main/art/watchsel.gif" />
     </td>
   </tr>
 </table>
