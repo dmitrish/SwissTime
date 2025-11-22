@@ -16,8 +16,8 @@ android {
         minSdk = 26  // Temporarily increased from 24 to 26 to resolve Scala and JSON4s library issues
         //noinspection EditedTargetSdkVersion
         targetSdk = 36
-        versionCode = 15
-        versionName = "1.48"
+        versionCode = 16
+        versionName = "1.49"
 
         testInstrumentationRunner = "com.karumi.shot.ShotTestRunner"
     }
@@ -56,6 +56,8 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.constraintlayout.compose)
+    // Compose Animation for shared element transitions
+    implementation(libs.androidx.animation)
 
     // Glance for App Widgets
     implementation(libs.androidx.glance)
