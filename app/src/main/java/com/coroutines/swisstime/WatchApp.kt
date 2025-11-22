@@ -39,6 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import android.content.res.Configuration
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.DrawerDefaults
 import androidx.compose.runtime.LaunchedEffect
@@ -92,7 +93,7 @@ import com.coroutines.worldclock.common.repository.TimeZoneRepository
 import com.coroutines.worldclock.common.repository.WatchPreferencesRepository
 import com.coroutines.worldclock.common.service.TimeZoneService
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun WatchApp(watchPreferencesRepository: WatchPreferencesRepository) {
     // Get the current context
