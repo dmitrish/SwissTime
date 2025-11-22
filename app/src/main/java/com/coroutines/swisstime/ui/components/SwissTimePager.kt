@@ -27,7 +27,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.offset
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,7 +56,13 @@ import java.util.TimeZone
 
 @SuppressLint("ViewModelConstructorInComposable")
 @Composable
-fun SwissTimePager (watchViewModel: WatchViewModel, onBackClick: () -> Unit){
+@OptIn(ExperimentalSharedTransitionApi::class)
+fun SwissTimePager(
+    watchViewModel: WatchViewModel,
+    onBackClick: () -> Unit,
+    sharedTransitionScope: SharedTransitionScope? = null,
+    animatedVisibilityScope: AnimatedVisibilityScope? = null
+) {
 
     val watches = getWatches()
     val middle = if (watches.isNotEmpty()) watches.size / 2 else 0
@@ -61,12 +73,15 @@ fun SwissTimePager (watchViewModel: WatchViewModel, onBackClick: () -> Unit){
     // Track if the user has enlarged and then returned the focused watch for the current page
     var hasZoomedOnce by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
     var hasEnlargedAndReturned by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
+    // Flag to avoid double-scaling while shared element transition runs
+    var isNavigating by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
 
     // Reset zoom and progression flags when the focused page changes
     LaunchedEffect(pagerState.currentPage) {
         isZoomed = false
         hasZoomedOnce = false
         hasEnlargedAndReturned = false
+        isNavigating = false
     }
 
     // Observe zoom changes to mark completion when user returns from zoom
@@ -207,18 +222,41 @@ fun SwissTimePager (watchViewModel: WatchViewModel, onBackClick: () -> Unit){
                         contentAlignment = Alignment.Center
                     ) {
                         val clickableModifier = if (focused) Modifier.clickable { isZoomed = !isZoomed } else Modifier
-                        Box(
-                            modifier = Modifier
+                        run {
+                            // Build base modifier for the watch box
+                            var mod = Modifier
                                 .size(220.dp)
                                 .then(clickableModifier)
                                 .graphicsLayer {
-                                    scaleX = finalScale
-                                    scaleY = finalScale
+                                    // Avoid double scaling while the shared element transition is in flight
+                                    val appliedScale = if (focused && sharedTransitionScope != null && animatedVisibilityScope != null && isNavigating) 1f else finalScale
+                                    scaleX = appliedScale
+                                    scaleY = appliedScale
                                     this.alpha = alpha
-                                },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            watch.composable(Modifier.fillMaxSize(), TimeZone.getDefault())
+                                }
+
+                            // Apply shared element only when focused and scopes are provided
+                            if (focused && sharedTransitionScope != null && animatedVisibilityScope != null) {
+                                with(sharedTransitionScope) {
+                                    mod = mod.sharedBounds(
+                                        sharedContentState = rememberSharedContentState(key = "watch-${watch.name}"),
+                                        animatedVisibilityScope = animatedVisibilityScope,
+                                        boundsTransform = { _, _ ->
+                                            androidx.compose.animation.core.spring(
+                                                stiffness = 400f,
+                                                dampingRatio = 0.85f
+                                            )
+                                        }
+                                    )
+                                }
+                            }
+
+                            Box(
+                                modifier = mod,
+                                contentAlignment = Alignment.Center
+                            ) {
+                                watch.composable(Modifier.fillMaxSize(), TimeZone.getDefault())
+                            }
                         }
                     }
                 }
@@ -228,6 +266,8 @@ fun SwissTimePager (watchViewModel: WatchViewModel, onBackClick: () -> Unit){
             if (isZoomed) {
                 androidx.compose.material3.Button(
                     onClick = {
+                        // Mark navigating to avoid double-scaling during the shared transition
+                        isNavigating = true
                         watchViewModel.saveSelectedWatch(watch = watches[pagerState.currentPage])
                         onBackClick()
                     },

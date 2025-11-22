@@ -37,6 +37,11 @@ import com.coroutines.worldclock.common.components.CustomWorldMapWithDayNight
 import com.coroutines.worldclock.common.model.WatchInfo
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.AnimatedVisibilityScope
+//import androidx.compose.animation.rememberSharedContentState
+
 
 
 /**
@@ -151,9 +156,12 @@ fun WatchTimeManager(watchViewModel: WatchViewModel, selectedWatches: List<Watch
  * Each watch is associated with its own timezone.
  */
 @Composable
+@androidx.compose.animation.ExperimentalSharedTransitionApi
 fun TimeScreen(
     watchViewModel: WatchViewModel,
-    onBackClick: () -> Unit = {}
+    onBackClick: () -> Unit = {},
+    sharedTransitionScope: androidx.compose.animation.SharedTransitionScope? = null,
+    animatedVisibilityScope: androidx.compose.animation.AnimatedVisibilityScope? = null
 ) {
     val TAG = "Performance:TimeScreen"
     // Get the selected watches
@@ -401,8 +409,25 @@ fun TimeScreen(
                         val watch = selectedWatches[page]
 
                         androidx.compose.runtime.key(watch.name) {
+                            // Apply shared element to the exact watch face container using a stable key
+                            var mod = Modifier.fillMaxSize()
+                            if (sharedTransitionScope != null && animatedVisibilityScope != null) {
+                                with(sharedTransitionScope) {
+                                    mod = mod.sharedBounds(
+                                        sharedContentState = rememberSharedContentState(key = "watch-${watch.name}"),
+                                        animatedVisibilityScope = animatedVisibilityScope,
+                                        boundsTransform = { _, _ ->
+                                            androidx.compose.animation.core.spring(
+                                                stiffness = 400f,
+                                                dampingRatio = 0.85f
+                                            )
+                                        }
+                                    )
+                                }
+                            }
+
                             Box(
-                                modifier = Modifier.fillMaxSize(),
+                                modifier = mod,
                                 contentAlignment = Alignment.Center
                             ) {
                                 // Use LaunchedEffect to measure and log rendering time
@@ -499,8 +524,25 @@ fun TimeScreen(
                     // This helps avoid unnecessary recompositions during page transitions
                     androidx.compose.runtime.key(watch.name) {
                         // Wrap in a Box to improve performance by reducing the number of measure/layout passes
+                        // Apply shared element to the exact watch face container using a stable key
+                        var mod = Modifier.fillMaxSize()
+                        if (sharedTransitionScope != null && animatedVisibilityScope != null) {
+                            with(sharedTransitionScope) {
+                                mod = mod.sharedBounds(
+                                    sharedContentState = rememberSharedContentState(key = "watch-${watch.name}"),
+                                    animatedVisibilityScope = animatedVisibilityScope,
+                                    boundsTransform = { _, _ ->
+                                        androidx.compose.animation.core.spring(
+                                            stiffness = 400f,
+                                            dampingRatio = 0.85f
+                                        )
+                                    }
+                                )
+                            }
+                        }
+
                         Box(
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = mod,
                             contentAlignment = Alignment.Center
                         ) {
                             // Use LaunchedEffect to measure and log rendering time

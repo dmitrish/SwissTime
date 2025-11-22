@@ -55,6 +55,7 @@ sealed class Screen(val route: String) {
 private const val ANIMATION_DURATION = 25
 
 @Composable
+@androidx.compose.animation.ExperimentalSharedTransitionApi
 fun NavGraph(
     navController: NavHostController,
     watches: List<WatchInfo>,
@@ -70,11 +71,13 @@ fun NavGraph(
 
 
     
-    NavHost(
-        navController = navController,
-        startDestination = "decide",
-        // Set enter/exit animations for the entire NavHost
-        enterTransition = {
+    androidx.compose.animation.SharedTransitionLayout {
+        val sharedScope = this
+        NavHost(
+            navController = navController,
+            startDestination = "decide",
+            // Set enter/exit animations for the entire NavHost
+            enterTransition = {
             fadeIn(animationSpec = tween(ANIMATION_DURATION))
         },
         exitTransition = {
@@ -100,7 +103,9 @@ fun NavGraph(
         composable(
             route = Screen.Time.route,
             enterTransition = {
-                fadeIn(animationSpec = tween(ANIMATION_DURATION))
+                // Disable fade when navigating from Welcome -> Time to let shared element drive the motion
+                if (initialState.destination.route == Screen.Welcome.route) null
+                else fadeIn(animationSpec = tween(ANIMATION_DURATION))
             },
             exitTransition = {
                 fadeOut(animationSpec = tween(ANIMATION_DURATION))
@@ -117,7 +122,9 @@ fun NavGraph(
 
             // Render the TimeScreen
             TimeScreen(
-                watchViewModel = watchViewModel
+                watchViewModel = watchViewModel,
+                sharedTransitionScope = sharedScope,
+                animatedVisibilityScope = this
             )
         }
 
@@ -373,15 +380,20 @@ fun NavGraph(
                 fadeIn(animationSpec = tween(ANIMATION_DURATION))
             },
             exitTransition = {
-                fadeOut(animationSpec = tween(ANIMATION_DURATION))
+                // Disable fade when navigating from Welcome -> Time to let shared element drive the motion
+                if (targetState.destination.route == Screen.Time.route) null
+                else fadeOut(animationSpec = tween(ANIMATION_DURATION))
             }
         ) {
             WelcomeScreen(
-                watchViewModel,
+                watchViewModel = watchViewModel,
                 onBackClick = {
                     navController.navigate(Screen.Time.route)
-                }
+                },
+                sharedTransitionScope = sharedScope,
+                animatedVisibilityScope = this
             )
         }
     }
+}
 }

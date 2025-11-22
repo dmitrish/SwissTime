@@ -68,6 +68,7 @@ import java.util.Calendar
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
+@androidx.compose.animation.ExperimentalSharedTransitionApi
 fun SelectedWatchScreen2(
     onBackClick: () -> Unit,
     selectedWatch: WatchInfo? = null,
@@ -423,10 +424,8 @@ fun SelectedWatchScreen2(
                     },
                 contentAlignment = Alignment.Center
             ) {
-                //selectedWatch.composable(Modifier.fillMaxSize(0.8f), watchViewModel, currentTimeZone.value)
                 TimeZoneAwareWatchFace2(
                     watchInfo = selectedWatch,
-               //     timeZone = currentTimeZone.value,
                     viewModel = watchViewModel,
                     modifier = Modifier.fillMaxSize(0.8f)
                 )
