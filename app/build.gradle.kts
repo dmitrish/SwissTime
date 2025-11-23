@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("app.cash.paparazzi") version "2.0.0-alpha02"
+    alias(libs.plugins.baselineprofile)
 }
 
 apply(plugin = "shot")
@@ -83,6 +84,7 @@ dependencies {
 
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
+    implementation(libs.androidx.profileinstaller)
 
     testImplementation(libs.junit)
     // MockK for mocking in tests
@@ -93,6 +95,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+    "baselineProfile"(project(":baselineprofile"))
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     //androidTestImplementation(libs.kaspresso)
