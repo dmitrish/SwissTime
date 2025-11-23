@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.coroutines.baselineprofile"
-    compileSdk = 35
+    compileSdk = 36
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -19,7 +19,8 @@ android {
 
     defaultConfig {
         minSdk = 28
-        targetSdk = 35
+        //noinspection EditedTargetSdkVersion
+        targetSdk = 36
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -46,7 +47,11 @@ androidComponents {
         val artifactsLoader = v.artifacts.getBuiltArtifactsLoader()
         v.instrumentationRunnerArguments.put(
             "targetAppId",
-            v.testedApks.map { artifactsLoader.load(it)?.applicationId }
+            v.testedApks.map { apk ->
+                val builtArtifacts = artifactsLoader.load(apk)
+                requireNotNull(builtArtifacts) { "Built artifacts not found for ${v.name}" }
+                builtArtifacts.applicationId
+            }
         )
     }
 }
