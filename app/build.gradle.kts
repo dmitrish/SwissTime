@@ -59,6 +59,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout.compose)
     // Compose Animation for shared element transitions
     implementation(libs.androidx.animation)
+    implementation(libs.androidx.compose.foundation)
 
     // Glance for App Widgets
     implementation(libs.androidx.glance)
