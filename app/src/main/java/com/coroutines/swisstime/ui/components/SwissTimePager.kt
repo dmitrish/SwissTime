@@ -13,8 +13,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.core.EaseOutCubic
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.pager.PagerDefaults
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -47,12 +50,23 @@ fun SwissTimePager(
         val pageSpacing = visibleSeparation - pageWidth // negative to overlap pages
         val sidePadding = (viewportWidth - pageWidth) / 2f
 
+        val customSnapAnimationSpec = tween<Float>(
+            durationMillis = 300,
+            easing = EaseOutCubic
+        )
+
+        val customFlingBehavior = PagerDefaults.flingBehavior(
+            state = pagerState,
+            snapAnimationSpec = customSnapAnimationSpec
+        )
+
         HorizontalPager(
             state = pagerState,
             modifier = Modifier.fillMaxSize(),
             pageSize = PageSize.Fixed(pageWidth),
             pageSpacing = pageSpacing,
-            contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = sidePadding)
+            contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = sidePadding),
+            flingBehavior = customFlingBehavior
         ) { page ->
             val current = pagerState.currentPage
             val fraction = pagerState.currentPageOffsetFraction

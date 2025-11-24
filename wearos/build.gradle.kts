@@ -66,8 +66,8 @@ dependencies {
     // WearOS specific dependencies
     implementation(libs.androidx.wear)
     implementation(libs.androidx.compose.foundation)
-    implementation(libs.androidx.compose.material)
-    implementation(libs.androidx.compose.navigation)
+    implementation(libs.wear.compose.material)
+    implementation(libs.wear.compose.navigation)
 
     // DataStore for preferences
     implementation(libs.androidx.datastore.preferences)
