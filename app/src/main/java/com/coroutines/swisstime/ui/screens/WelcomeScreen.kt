@@ -2,8 +2,11 @@ package com.coroutines.swisstime.ui.screens
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -117,31 +120,36 @@ fun WelcomeScreen(
                 )
             }
 
-            if (isZoomed) {
-                Button(
-                    onClick = {
-                        watchViewModel.saveSelectedWatch(watch = watches[pagerState.currentPage])
-                        onBackClick()
-                    },
-                    modifier = Modifier
-                        .constrainAs(button) {
-                            bottom.linkTo(parent.bottom, margin = 40.dp)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                        }
-                ) {
-                    Text(text = "Select this watch")
+            // Constant-height bottom container to avoid vertical nudge when toggling zoom
+            val bottomHeight = 56.dp
+            androidx.compose.foundation.layout.Box(
+                modifier = Modifier
+                    .constrainAs(button) {
+                        bottom.linkTo(parent.bottom, margin = 40.dp)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+                    .padding(horizontal = 24.dp)
+                    .height(bottomHeight)
+                    .fillMaxWidth()
+            ) {
+                if (isZoomed) {
+                    Button(
+                        onClick = {
+                            watchViewModel.saveSelectedWatch(watch = watches[pagerState.currentPage])
+                            onBackClick()
+                        },
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        Text(text = "Select this watch")
+                    }
+                } else {
+                    Text(
+                        text = "Tap to zoom",
+                        modifier = Modifier.fillMaxSize(),
+                        textAlign = TextAlign.Center
+                    )
                 }
-            } else {
-                Text(
-                    text = "Tap to zoom",
-                    modifier = Modifier
-                        .constrainAs(button) {
-                            bottom.linkTo(parent.bottom, margin = 40.dp)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                        }
-                )
             }
         }
     }
