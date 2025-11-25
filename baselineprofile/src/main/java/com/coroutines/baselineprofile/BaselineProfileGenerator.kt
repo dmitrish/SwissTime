@@ -4,6 +4,9 @@ import androidx.benchmark.macro.junit4.BaselineProfileRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.uiautomator.By
+import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.Until
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -41,10 +44,24 @@ class BaselineProfileGenerator {
     @Test
     fun generate() {
         // The application id for the running build variant is read from the instrumentation arguments.
-        rule.collect(
-            packageName = InstrumentationRegistry.getArguments().getString("targetAppId")
-                ?: throw Exception("targetAppId not passed as instrumentation runner arg"),
+        val targetPackage = InstrumentationRegistry.getArguments().getString("targetAppId")
+            ?: throw Exception("targetAppId not passed as instrumentation runner arg")
 
+        // Workaround INSTALL_FAILED_UPDATE_INCOMPATIBLE: if a Play-installed or differently
+        // signed version of the target app already exists on the device, uninstall it first.
+        // BaselineProfileRule will install the test build afterwards.
+        try {
+            val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+            // Ignore the result; if the app isn't installed this will be a no-op.
+            device.executeShellCommand("pm uninstall ${'$'}targetPackage")
+            // Give PackageManager a brief moment to settle before install
+            Thread.sleep(250)
+        } catch (t: Throwable) {
+            // Swallow any errors here; we'll let the rule attempt installation regardless.
+        }
+
+        rule.collect(
+            packageName = targetPackage,
             // See: https://d.android.com/topic/performance/baselineprofiles/dex-layout-optimizations
             includeInStartupProfile = true
         ) {
@@ -55,14 +72,56 @@ class BaselineProfileGenerator {
             pressHome()
             startActivityAndWait()
 
-            // TODO Write more interactions to optimize advanced journeys of your app.
-            // For example:
-            // 1. Wait until the content is asynchronously loaded
-            // 2. Scroll the feed content
-            // 3. Navigate to detail screen
+            // Wait until the main content is loaded. We use UIAutomator to ensure the Welcome screen
+            // with the SwissTimePager is visible and settled. The Welcome screen shows a "Tap to zoom"
+            // text when the pager is ready for interaction.
+            val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
-            // Check UiAutomator documentation for more information how to interact with the app.
-            // https://d.android.com/training/testing/other-components/ui-automator
+            // Wait for the target package to be in foreground
+            device.wait(Until.hasObject(By.pkg(targetPackage).depth(0)), 5_000)
+
+            // Wait for the "Tap to zoom" text which indicates pager + content composed
+            val appeared = device.wait(Until.hasObject(By.text("Tap to zoom")), 10_000)
+
+            // As a safety net, wait for UI idle if the text isn't found (e.g., localized build)
+            if (!appeared) {
+                device.waitForIdle(2_000)
+                // small settle pause
+                Thread.sleep(250)
+            }
+
+            // Optional: ensure no pending animations interfere with trace segmentation
+            device.waitForIdle(1_000)
+
+            // 1) Tap the focused (center) watch to trigger zoom
+            val cx = device.displayWidth / 2
+            val cy = device.displayHeight / 2
+            device.click(cx, cy)
+
+            // 2) Wait for the "Select this watch" button to appear, then click it
+            val buttonAppeared = device.wait(Until.hasObject(By.text("Select this watch")), 10_000)
+            if (buttonAppeared) {
+                device.findObject(By.text("Select this watch"))?.click()
+            } else {
+                // Fallback for non-English locale: wait a bit and tap slightly below center
+                device.waitForIdle(1_000)
+                device.click(cx, (cy * 1.3).toInt())
+            }
+
+            // 3) Wait for TimeScreen to be visible
+            // Prefer a semantics content description if available; otherwise, fall back to heuristics
+            // Try multiple selectors in sequence to avoid BySelector.or() compatibility issues
+            var timeScreenShown = device.wait(Until.hasObject(By.desc("TimeScreen")), 4_000)
+            if (!timeScreenShown) timeScreenShown = device.wait(Until.hasObject(By.text("Time")), 2_000)
+            if (!timeScreenShown) timeScreenShown = device.wait(Until.hasObject(By.text("World Time")), 2_000)
+            if (!timeScreenShown) timeScreenShown = device.wait(Until.hasObject(By.text("Time zones")), 2_000)
+            if (!timeScreenShown) timeScreenShown = device.wait(Until.hasObject(By.textContains(":")), 2_000)
+
+            if (!timeScreenShown) {
+                // Ensure previous button is gone and UI is idle before finishing collection
+                device.wait(Until.gone(By.text("Select this watch")), 5_000)
+                device.waitForIdle(1_000)
+            }
         }
     }
 }

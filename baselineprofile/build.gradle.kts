@@ -55,3 +55,12 @@ androidComponents {
         )
     }
 }
+
+// Mark connected Android test tasks in this module as not compatible with
+// Gradle Configuration Cache. These tasks are known to be CC-incompatible
+// and attempting to cache them causes serialization errors.
+tasks.configureEach {
+    if (name.contains("connected", ignoreCase = true) || name.endsWith("AndroidTest")) {
+        notCompatibleWithConfigurationCache("Connected Android tests are not compatible with configuration cache in this module")
+    }
+}

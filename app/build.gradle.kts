@@ -17,8 +17,8 @@ android {
         minSdk = 26  // Temporarily increased from 24 to 26 to resolve Scala and JSON4s library issues
         //noinspection EditedTargetSdkVersion
         targetSdk = 36
-        versionCode = 16
-        versionName = "1.49"
+        versionCode = 17
+        versionName = "1.50"
 
         testInstrumentationRunner = "com.karumi.shot.ShotTestRunner"
     }
@@ -107,3 +107,54 @@ dependencies {
 
 
 }
+
+/*
+// Task to ensure generated baseline and startup profiles are copied into src/main for check-in
+// This helps when the Baseline Profile plugin doesn't automatically copy them on your setup.
+
+// Copy the generated profiles from src/release/generated/... into src/main/...
+val syncBaselineProfilesToMain by tasks.registering {
+    // This task is safe to run repeatedly; it just overwrites files in src/main
+    // Not configuration cache compatible due to use of Project APIs in doLast; this is a dev-only helper.
+    notCompatibleWithConfigurationCache("Uses Project APIs in task action; dev-only helper task")
+    doLast {
+        val generatedDir = file("src/release/generated/baselineProfiles")
+        val baselineSrc = file("src/main/baselineProfiles")
+        val startupSrc = file("src/main/startupProfiles")
+
+        if (!generatedDir.exists()) {
+            logger.lifecycle("[baseline] No generated profiles found at: ${generatedDir}. Run :app:generateReleaseBaselineProfile with a connected device.")
+            return@doLast
+        }
+
+        val baselineFile = file("src/release/generated/baselineProfiles/baseline-prof.txt")
+        val startupFile = file("src/release/generated/baselineProfiles/startup-prof.txt")
+
+        baselineSrc.mkdirs()
+        startupSrc.mkdirs()
+
+        if (baselineFile.exists()) {
+            copy {
+                from(baselineFile)
+                into(baselineSrc)
+            }
+            logger.lifecycle("[baseline] Copied baseline profile to: ${baselineSrc}/baseline-prof.txt")
+        } else {
+            logger.lifecycle("[baseline] baseline-prof.txt not found in generated directory.")
+        }
+
+        if (startupFile.exists()) {
+            copy {
+                from(startupFile)
+                into(startupSrc)
+            }
+            logger.lifecycle("[baseline] Copied startup profile to: ${startupSrc}/startup-prof.txt")
+        } else {
+            logger.lifecycle("[baseline] startup-prof.txt not found in generated directory.")
+        }
+    }
+}
+
+*/
+
+

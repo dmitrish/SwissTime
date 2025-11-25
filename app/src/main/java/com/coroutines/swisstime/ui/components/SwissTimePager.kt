@@ -66,6 +66,7 @@ fun SwissTimePager(
             pageSize = PageSize.Fixed(pageWidth),
             pageSpacing = pageSpacing,
             contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = sidePadding),
+            userScrollEnabled = !isZoomed,
             flingBehavior = customFlingBehavior
         ) { page ->
             val current = pagerState.currentPage
@@ -85,30 +86,40 @@ fun SwissTimePager(
                     .zIndex(1f - pageOffset.coerceIn(0f, 1f)),
                 contentAlignment = Alignment.Center
             ) {
-                val clickableModifier = if (focused) Modifier.clickable { onToggleZoom() } else Modifier
+                val interaction = androidx.compose.runtime.remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+                val clickableModifier = if (focused) Modifier.clickable(
+                    interactionSource = interaction,
+                    indication = null
+                ) { onToggleZoom() } else Modifier
 
                 var mod = Modifier
                     .size(220.dp)
                     .then(clickableModifier)
-                    .graphicsLayer {
-                        scaleX = finalScale
-                        scaleY = finalScale
-                        this.alpha = alpha
-                    }
 
+                // Apply shared element transition first (if any), then apply clipping/scaling
                 if (focused && sharedTransitionScope != null && animatedVisibilityScope != null) {
                     with(sharedTransitionScope) {
                         mod = mod.sharedBounds(
                             sharedContentState = rememberSharedContentState(key = pageKey(page)),
                             animatedVisibilityScope = animatedVisibilityScope,
                             boundsTransform = { _, _ ->
-                               spring(
+                                spring(
                                     stiffness = 400f,
                                     dampingRatio = 0.85f
                                 )
                             }
                         )
                     }
+                }
+
+                // Apply clipping and scaling at the very end so the outermost layer is circular
+                mod = mod.graphicsLayer {
+                    shape = androidx.compose.foundation.shape.CircleShape
+                    clip = true
+                    shadowElevation = 0f
+                    scaleX = finalScale
+                    scaleY = finalScale
+                    this.alpha = alpha
                 }
 
                 Box(modifier = mod, contentAlignment = Alignment.Center) {
