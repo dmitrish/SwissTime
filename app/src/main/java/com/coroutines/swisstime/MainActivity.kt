@@ -175,7 +175,7 @@ class MainActivity : ComponentActivity() {
                 SideEffect {
                     android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
                         isContentReady = true
-                    }, 500)
+                    }, 250)
                 }
             }
         }
