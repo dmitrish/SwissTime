@@ -17,8 +17,8 @@ android {
         minSdk = 26  // Temporarily increased from 24 to 26 to resolve Scala and JSON4s library issues
         //noinspection EditedTargetSdkVersion
         targetSdk = 36
-        versionCode = 17
-        versionName = "1.50"
+        versionCode = 18
+        versionName = "1.51"
 
         testInstrumentationRunner = "com.karumi.shot.ShotTestRunner"
     }
@@ -96,7 +96,8 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
-    "baselineProfile"(project(":baselineprofile"))
+   // "baselineProfile"(project(":baselineprofile"))
+    baselineProfile(project(":baselineprofile"))
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     //androidTestImplementation(libs.kaspresso)

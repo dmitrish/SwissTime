@@ -5,6 +5,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
+import androidx.test.uiautomator.Direction
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
 import org.junit.Rule
@@ -96,7 +97,8 @@ class BaselineProfileGenerator {
             // 1) Tap the focused (center) watch to trigger zoom
             val cx = device.displayWidth / 2
             val cy = device.displayHeight / 2
-            device.click(cx, cy)
+           // device.click(cx, cy)
+            device.click(cx, (cy * 1.3).toInt())
 
             // 2) Wait for the "Select this watch" button to appear, then click it
             val buttonAppeared = device.wait(Until.hasObject(By.text("Select this watch")), 10_000)
@@ -122,6 +124,53 @@ class BaselineProfileGenerator {
                 device.wait(Until.gone(By.text("Select this watch")), 5_000)
                 device.waitForIdle(1_000)
             }
+
+            // Example: navigate to Watch List
+            device.findObject(
+                androidx.test.uiautomator.By.text("Watches")
+            )?.click()
+
+            device.waitForIdle(2_000)
+
+            // Scroll the list a bit (uses a generic scrollable container)
+            // Or more explicitly for your use case:
+            device.findObject(By.res("watchList"))?.apply {
+                setGestureMargin(device.displayWidth / 5) // optional: set margins
+                fling(Direction.DOWN, 5000)
+                fling(Direction.UP, 5000)
+            }
+
+            // Open a watch detail (tap first visible item by text or use resource-id if available)
+            // Adjust text to one that’s always present on a watch tile
+            device.findObject(
+                androidx.test.uiautomator.By.textContains("Jurgsen")
+            )?.click()
+
+            // Back to list
+            device.pressBack()
+
+            // Go to Settings
+            device.findObject(
+                androidx.test.uiautomator.By.text("Settings")
+            )?.click()
+
+            // Toggle Theme (match the exact label as shown on device)
+            device.findObject(
+                androidx.test.uiautomator.By.textContains("Theme")
+            )?.click()
+            device.findObject(
+                androidx.test.uiautomator.By.text("System default")
+            )?.click()
+            device.pressBack()
+
+            // Navigate to World Map
+            device.findObject(
+                androidx.test.uiautomator.By.text("World Map")
+            )?.click()
+
+            // Return home
+            device.pressBack()
+            device.pressBack()
         }
     }
 }
