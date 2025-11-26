@@ -27,12 +27,6 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="previewSwissTimePager">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
-      <SelectionState runConfigName="PreviewSwissTimePagerCircle">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="YachtDetailsScreenPreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
@@ -51,6 +45,12 @@
         <DialogSelection />
       </SelectionState>
       <SelectionState runConfigName="generate()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="StartupBenchmarks">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="BaselineProfileGenerator">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

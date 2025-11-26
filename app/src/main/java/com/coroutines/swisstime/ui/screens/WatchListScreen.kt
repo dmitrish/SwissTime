@@ -18,6 +18,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
 import com.coroutines.swisstime.ui.components.WatchListItem
 import com.coroutines.worldclock.common.model.WatchInfo
@@ -59,7 +62,12 @@ fun WatchListScreen(
 
             LazyColumn(
                 state = listState,
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .testTag("watchList")
+                    .semantics {
+                        testTagsAsResourceId = true
+                    },
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 contentPadding = PaddingValues(8.dp)
             ) {
