@@ -1,8 +1,6 @@
 package com.coroutines.swisstime.ui.screens
 
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,7 +15,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -28,18 +25,12 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalConfiguration
 import android.content.res.Configuration
 import com.coroutines.swisstime.util.PerformanceMetrics
 import com.coroutines.worldclock.common.components.CustomWorldMapWithDayNight
 import com.coroutines.worldclock.common.model.WatchInfo
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
-import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.AnimatedVisibilityScope
+
 //import androidx.compose.animation.rememberSharedContentState
 
 
@@ -168,7 +159,7 @@ fun TimeScreen(
     val selectedWatches by watchViewModel.selectedWatches.collectAsState()
 
     // Report performance metrics periodically
-    LaunchedEffect(Unit) {
+   /* LaunchedEffect(Unit) {
         // Wait for some metrics to be collected before reporting
         kotlinx.coroutines.delay(10000) // Wait 10 seconds
 
@@ -194,6 +185,8 @@ fun TimeScreen(
             kotlinx.coroutines.delay(30000) // 30 seconds
         }
     }
+
+    */
 
     // Start the watch time manager to keep all watches ticking
     // This ensures that watch times are initialized before the user navigates to them
@@ -313,12 +306,12 @@ fun TimeScreen(
         val currentPage = pagerState.currentPage
 
         // Variables to track page transition metrics
-        var transitionStartTime by remember { mutableStateOf(0L) }
+        /*  var transitionStartTime by remember { mutableStateOf(0L) }
         var lastPage by remember { mutableStateOf(0) }
         var isTransitioning by remember { mutableStateOf(false) }
 
         // Track page transition metrics
-        LaunchedEffect(pagerState) {
+      LaunchedEffect(pagerState) {
             // Track when scrolling starts (transition begins)
             snapshotFlow { pagerState.isScrollInProgress }
                 .distinctUntilChanged()
@@ -367,6 +360,8 @@ fun TimeScreen(
                     }
                 }
         }
+
+       */
 
         // Ensure the pager state is updated when the selected watches change
         LaunchedEffect(selectedWatches.size) {
@@ -461,7 +456,8 @@ fun TimeScreen(
                                     onBackClick = onBackClick,
                                     selectedWatch = watch,
                                     watchViewModel = watchViewModel,
-                                    isPageTransitioning = pagerState.isScrollInProgress
+                                    isPageTransitioning = pagerState.isScrollInProgress,
+                                    isLandscapeMode = true
                                 )
                             }
                         }
@@ -546,7 +542,7 @@ fun TimeScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             // Use LaunchedEffect to measure and log rendering time
-                            LaunchedEffect(page) {
+                           /* LaunchedEffect(page) {
                                 val endTime = System.currentTimeMillis()
                                 val renderTime = endTime - startTime
 
@@ -569,7 +565,7 @@ fun TimeScreen(
                                     durationMs = renderTime,
                                     metadata = metadata
                                 )
-                            }
+                            } */
 
                             // Use the optimized SelectedWatchScreen2 component
                             // Pass isPageTransitioning parameter to prevent heavy rendering during transitions
@@ -577,7 +573,8 @@ fun TimeScreen(
                                 onBackClick = onBackClick,
                                 selectedWatch = watch,
                                 watchViewModel = watchViewModel,
-                                isPageTransitioning = pagerState.isScrollInProgress
+                                isPageTransitioning = pagerState.isScrollInProgress,
+                                isLandscapeMode = false
                             )
                         }
                     }
