@@ -167,33 +167,6 @@ fun TimeScreen(
     // Get the selected watches
     val selectedWatches by watchViewModel.selectedWatches.collectAsState()
 
-    // Report performance metrics periodically
-    LaunchedEffect(Unit) {
-        // Wait for some metrics to be collected before reporting
-        kotlinx.coroutines.delay(10000) // Wait 10 seconds
-
-        // Report metrics every 30 seconds
-        while(true) {
-            // Get average page transition time
-            val avgTransitionTime = PerformanceMetrics.getAverageDuration(PerformanceMetrics.Categories.PAGE_TRANSITION)
-            Log.d(TAG, "Average page transition time: $avgTransitionTime ms")
-
-            // Get average page rendering time
-            val avgRenderingTime = PerformanceMetrics.getAverageDuration(PerformanceMetrics.Categories.PAGE_RENDERING)
-            Log.d(TAG, "Average page rendering time: $avgRenderingTime ms")
-
-            // Get all transition metrics for detailed analysis
-            val transitionMetrics = PerformanceMetrics.getMetrics(PerformanceMetrics.Categories.PAGE_TRANSITION)
-            Log.d(TAG, "Collected ${transitionMetrics.size} page transition metrics")
-
-            // Get all rendering metrics for detailed analysis
-            val renderingMetrics = PerformanceMetrics.getMetrics(PerformanceMetrics.Categories.PAGE_RENDERING)
-            Log.d(TAG, "Collected ${renderingMetrics.size} page rendering metrics")
-
-            // Wait before next report
-            kotlinx.coroutines.delay(30000) // 30 seconds
-        }
-    }
 
     // Start the watch time manager to keep all watches ticking
     // This ensures that watch times are initialized before the user navigates to them
@@ -317,56 +290,7 @@ fun TimeScreen(
         var lastPage by remember { mutableStateOf(0) }
         var isTransitioning by remember { mutableStateOf(false) }
 
-        // Track page transition metrics
-        LaunchedEffect(pagerState) {
-            // Track when scrolling starts (transition begins)
-            snapshotFlow { pagerState.isScrollInProgress }
-                .distinctUntilChanged()
-                .collect { scrolling ->
-                    if (scrolling && !isTransitioning) {
-                        // Transition started
-                        isTransitioning = true
-                        transitionStartTime = System.currentTimeMillis()
-                        lastPage = pagerState.currentPage
-                        Log.d(TAG, "Page transition started from page $lastPage at $transitionStartTime")
-                    } else if (!scrolling && isTransitioning) {
-                        // Transition completed
-                        val endTime = System.currentTimeMillis()
-                        val transitionTime = endTime - transitionStartTime
-                        val currentPageNow = pagerState.currentPage
 
-                        // Log transition metrics with more detailed information
-                        Log.d(TAG, "Page transition completed to page $currentPageNow at $endTime")
-                        Log.d(TAG, "Page transition from $lastPage to $currentPageNow took $transitionTime ms")
-
-                        // Add more detailed logging for specific transitions
-                        if (lastPage == 0 && currentPageNow == 1) {
-                            Log.d(TAG, "PERFORMANCE METRIC: First transition from page 0 to 1 took $transitionTime ms")
-                        } else if (lastPage == 1 && currentPageNow == 0) {
-                            Log.d(TAG, "PERFORMANCE METRIC: Transition from page 1 to 0 took $transitionTime ms")
-                        } else if (lastPage == 1 && currentPageNow == 2) {
-                            Log.d(TAG, "PERFORMANCE METRIC: Transition from page 1 to 2 took $transitionTime ms")
-                        }
-
-                        // Record metric using PerformanceMetrics utility
-                        val transitionName = "Page${lastPage}to${currentPageNow}"
-                        val metadata = mapOf(
-                            "fromPage" to lastPage,
-                            "toPage" to currentPageNow,
-                            "startTime" to transitionStartTime,
-                            "endTime" to endTime
-                        )
-                        PerformanceMetrics.recordMetric(
-                            category = PerformanceMetrics.Categories.PAGE_TRANSITION,
-                            name = transitionName,
-                            durationMs = transitionTime,
-                            metadata = metadata
-                        )
-
-                        isTransitioning = false
-                    }
-                }
-        }
 
         // Ensure the pager state is updated when the selected watches change
         LaunchedEffect(selectedWatches.size) {
@@ -385,7 +309,7 @@ fun TimeScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 // Left side - Pager with watches
-                Column(
+               /* Column(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight(),
@@ -477,17 +401,19 @@ fun TimeScreen(
                     )
                 }
 
+                */
+
                 // Right side - World Map
                 Box(
                     modifier = Modifier
                         .weight(1f)
-                        .fillMaxHeight(),
+                        .fillMaxHeight().padding(100.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     CustomWorldMapWithDayNight(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .aspectRatio(2f)
+                            .aspectRatio(1f)
                     )
                 }
             }
@@ -645,3 +571,86 @@ fun TimeScreen(
         }
     }
 }
+
+/*
+/ Report performance metrics periodically
+    LaunchedEffect(Unit) {
+        // Wait for some metrics to be collected before reporting
+        kotlinx.coroutines.delay(10000) // Wait 10 seconds
+
+        // Report metrics every 30 seconds
+        while(true) {
+            // Get average page transition time
+            val avgTransitionTime = PerformanceMetrics.getAverageDuration(PerformanceMetrics.Categories.PAGE_TRANSITION)
+            Log.d(TAG, "Average page transition time: $avgTransitionTime ms")
+
+            // Get average page rendering time
+            val avgRenderingTime = PerformanceMetrics.getAverageDuration(PerformanceMetrics.Categories.PAGE_RENDERING)
+            Log.d(TAG, "Average page rendering time: $avgRenderingTime ms")
+
+            // Get all transition metrics for detailed analysis
+            val transitionMetrics = PerformanceMetrics.getMetrics(PerformanceMetrics.Categories.PAGE_TRANSITION)
+            Log.d(TAG, "Collected ${transitionMetrics.size} page transition metrics")
+
+            // Get all rendering metrics for detailed analysis
+            val renderingMetrics = PerformanceMetrics.getMetrics(PerformanceMetrics.Categories.PAGE_RENDERING)
+            Log.d(TAG, "Collected ${renderingMetrics.size} page rendering metrics")
+
+            // Wait before next report
+            kotlinx.coroutines.delay(30000) // 30 seconds
+        }
+    }
+
+
+
+       // Track page transition metrics
+        LaunchedEffect(pagerState) {
+            // Track when scrolling starts (transition begins)
+            snapshotFlow { pagerState.isScrollInProgress }
+                .distinctUntilChanged()
+                .collect { scrolling ->
+                    if (scrolling && !isTransitioning) {
+                        // Transition started
+                        isTransitioning = true
+                        transitionStartTime = System.currentTimeMillis()
+                        lastPage = pagerState.currentPage
+                        Log.d(TAG, "Page transition started from page $lastPage at $transitionStartTime")
+                    } else if (!scrolling && isTransitioning) {
+                        // Transition completed
+                        val endTime = System.currentTimeMillis()
+                        val transitionTime = endTime - transitionStartTime
+                        val currentPageNow = pagerState.currentPage
+
+                        // Log transition metrics with more detailed information
+                        Log.d(TAG, "Page transition completed to page $currentPageNow at $endTime")
+                        Log.d(TAG, "Page transition from $lastPage to $currentPageNow took $transitionTime ms")
+
+                        // Add more detailed logging for specific transitions
+                        if (lastPage == 0 && currentPageNow == 1) {
+                            Log.d(TAG, "PERFORMANCE METRIC: First transition from page 0 to 1 took $transitionTime ms")
+                        } else if (lastPage == 1 && currentPageNow == 0) {
+                            Log.d(TAG, "PERFORMANCE METRIC: Transition from page 1 to 0 took $transitionTime ms")
+                        } else if (lastPage == 1 && currentPageNow == 2) {
+                            Log.d(TAG, "PERFORMANCE METRIC: Transition from page 1 to 2 took $transitionTime ms")
+                        }
+
+                        // Record metric using PerformanceMetrics utility
+                        val transitionName = "Page${lastPage}to${currentPageNow}"
+                        val metadata = mapOf(
+                            "fromPage" to lastPage,
+                            "toPage" to currentPageNow,
+                            "startTime" to transitionStartTime,
+                            "endTime" to endTime
+                        )
+                        PerformanceMetrics.recordMetric(
+                            category = PerformanceMetrics.Categories.PAGE_TRANSITION,
+                            name = transitionName,
+                            durationMs = transitionTime,
+                            metadata = metadata
+                        )
+
+                        isTransitioning = false
+                    }
+                }
+        }
+ */
