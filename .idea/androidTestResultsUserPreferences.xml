@@ -195,6 +195,7 @@
                   <entry key="Duration" value="90" />
                   <entry key="Medium_Phone" value="120" />
                   <entry key="Tests" value="360" />
+                  <entry key="samsung SM-G988U1" value="120" />
                 </map>
               </option>
             </AndroidTestResultsTableState>
