@@ -61,11 +61,16 @@ fun WelcomeScreen(
         val maxHeight = this.maxHeight
 
         val watchSize = when (isLandscape()) {
-            false -> 220.dp
-            true ->  when (heightClass) {
-                WindowHeightSizeClass.Compact -> maxHeight * 0.35f
+            false -> when (heightClass) {
+                WindowHeightSizeClass.Compact -> maxHeight * 0.30f
                 WindowHeightSizeClass.Medium  -> maxHeight * 0.44f
-                WindowHeightSizeClass.Expanded -> maxHeight * 0.4f
+                WindowHeightSizeClass.Expanded -> maxHeight * 0.3f
+                else ->maxHeight * 0.10f
+            }
+            true ->  when (heightClass) {
+                WindowHeightSizeClass.Compact -> maxHeight * 0.4f
+                WindowHeightSizeClass.Medium  -> maxHeight * 0.44f
+                WindowHeightSizeClass.Expanded -> maxHeight * 0.3f
                 else -> 220.dp
             }
         }
