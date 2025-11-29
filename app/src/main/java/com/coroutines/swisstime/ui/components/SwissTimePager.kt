@@ -18,10 +18,12 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.pager.PagerDefaults
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import androidx.compose.ui.zIndex
@@ -31,14 +33,15 @@ import kotlin.math.absoluteValue
 @Composable
 @OptIn(ExperimentalSharedTransitionApi::class)
 fun SwissTimePager(
-    pagerState: androidx.compose.foundation.pager.PagerState,
+    pagerState: PagerState,
     pageCount: Int,
     isZoomed: Boolean,
     onToggleZoom: () -> Unit,
     sharedTransitionScope: SharedTransitionScope? = null,
     animatedVisibilityScope: AnimatedVisibilityScope? = null,
     pageKey: (Int) -> String,
-    pageContent: @Composable (index: Int) -> Unit
+    pageContent: @Composable (index: Int) -> Unit,
+    watchSize: Dp
 ) {
     // Pager-only layout and effects. Caller owns data/state and surrounding UI.
     BoxWithConstraints(
@@ -62,7 +65,7 @@ fun SwissTimePager(
 // Keep small constant padding so neighbors are visible on the sides
         val sidePadding = 16.dp */
 
-        val pageWidth = 220.dp
+        val pageWidth = watchSize
         val viewportWidth = maxWidth
 
 // Clamp spacing so it never becomes positive (which creates big gaps)
@@ -121,7 +124,7 @@ fun SwissTimePager(
                 ) { onToggleZoom() } else Modifier
 
                 var mod = Modifier
-                    .size(220.dp)
+                    .size(watchSize)
                     .then(clickableModifier)
 
                 // Apply shared element transition first (if any), then apply clipping/scaling

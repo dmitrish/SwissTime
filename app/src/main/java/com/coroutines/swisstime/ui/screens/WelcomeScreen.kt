@@ -4,7 +4,6 @@ import com.coroutines.swisstime.ui.adaptive.LocalWindowSizeClass
 import com.coroutines.swisstime.ui.adaptive.*
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,8 +13,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
-import androidx.compose.material3.windowsizeclass.WindowSizeClass
-import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -58,8 +55,20 @@ fun WelcomeScreen(
         isZoomed = false
     }
 
+
+
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val maxHeight = this.maxHeight
+
+        val watchSize = when (isLandscape()) {
+            false -> 220.dp
+            true ->  when (heightClass) {
+                WindowHeightSizeClass.Compact -> maxHeight * 0.35f
+                WindowHeightSizeClass.Medium  -> maxHeight * 0.44f
+                WindowHeightSizeClass.Expanded -> maxHeight * 0.4f
+                else -> 220.dp
+            }
+        }
 
         val topMargin = when (isLandscape()) {
             false -> when (heightClass) {
@@ -70,7 +79,7 @@ fun WelcomeScreen(
             }
             true -> when (heightClass) {
                 WindowHeightSizeClass.Compact -> maxHeight * 0.03f
-                WindowHeightSizeClass.Medium  -> maxHeight * 0.20f
+                WindowHeightSizeClass.Medium  -> maxHeight * 0.10f
                 WindowHeightSizeClass.Expanded -> maxHeight * 0.08f
                 else -> maxHeight * 0.15f
             }
@@ -129,53 +138,6 @@ fun WelcomeScreen(
             )
 
 
-            /* Text(
-                 text = "Let's get started!",
-                 modifier = Modifier
-                     .constrainAs(title) {
-                         top.linkTo(parent.top, margin = topMargin)
-                         if (isLandscape) {
-                             start.linkTo(parent.start)
-                             // Don't link end - this left-aligns it
-                         } else {
-                             start.linkTo(parent.start)
-                             end.linkTo(parent.end)
-                             // Both linked - this centers it
-                         }
-                     }
-                     .padding(horizontal = 24.dp),
-                // textAlign = TextAlign.Center,
-                 textAlign = if (isLandscape) TextAlign.End else TextAlign.Center,
-                 style = MaterialTheme.typography.headlineLarge
-             )
-
-
-
-             Text(
-                 text = "Choose your first watch",
-                 modifier = Modifier
-                     .constrainAs(chooseText) {
-                        // top.linkTo(title.bottom, margin = 10.dp)
-                         top.linkTo(
-                             when (isLandscape) {
-                                 false -> title.bottom
-                                 true -> parent.top
-                             },
-                             margin = 10.dp
-                         )
-                         start.linkTo(
-                             when (isLandscape) {
-                                 false -> parent.start
-                                 true -> title.end
-                             },
-                         )
-                         end.linkTo(parent.end)
-                     }
-                     .padding(horizontal = 24.dp),
-                 textAlign = TextAlign.Center,
-                 style = MaterialTheme.typography.headlineMedium
-             ) */
-
             if (isLandscape() && heightClass == WindowHeightSizeClass.Compact) {
                 Text(
                     text = "",
@@ -226,6 +188,7 @@ fun WelcomeScreen(
                 SwissTimePager(
                     pagerState = pagerState,
                     pageCount = watches.size,
+                    watchSize = watchSize,
                     isZoomed = isZoomed,
                     onToggleZoom = { isZoomed = !isZoomed },
                     sharedTransitionScope = sharedTransitionScope,
