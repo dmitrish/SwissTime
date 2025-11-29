@@ -44,11 +44,39 @@ fun SwissTimePager(
     BoxWithConstraints(
         modifier = Modifier.fillMaxSize()
     ) {
-        val pageWidth = 220.dp
+       /* val pageWidth = 220.dp
         val viewportWidth = maxWidth
         val visibleSeparation = ((viewportWidth - pageWidth) / 2.7f)
         val pageSpacing = visibleSeparation - pageWidth // negative to overlap pages
-        val sidePadding = (viewportWidth - pageWidth) / 2f
+        val sidePadding = (viewportWidth - pageWidth) / 2f */
+
+       /* val pageWidth = 220.dp
+        val viewportWidth = maxWidth
+
+// What your current formula would produce
+        val rawSpacing = ((viewportWidth - pageWidth) / 2.7f) - pageWidth
+
+// Clamp: never allow big positive spacing
+        val pageSpacing = rawSpacing.coerceAtMost((-24).dp) // <= -24.dp overlap (or 0.dp if you want just touching)
+
+// Keep small constant padding so neighbors are visible on the sides
+        val sidePadding = 16.dp */
+
+        val pageWidth = 220.dp
+        val viewportWidth = maxWidth
+
+// Clamp spacing so it never becomes positive (which creates big gaps)
+        val rawSpacing = ((viewportWidth - pageWidth) / 2.7f) - pageWidth
+        val pageSpacing = rawSpacing - pageWidth// rawSpacing
+            .coerceAtMost(0.dp)           // never allow positive spacing
+            .coerceAtLeast((-48).dp)      // optional: cap overlap at -48.dp
+
+// Center the current page in the viewport
+        val sidePadding = ((viewportWidth - pageWidth) / 2f)
+            .coerceAtLeast(0.dp)
+
+
+
 
         val customSnapAnimationSpec = tween<Float>(
             durationMillis = 300,
