@@ -79,10 +79,10 @@ class BaselineProfileGenerator {
             val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
             // Wait for the target package to be in foreground
-            device.wait(Until.hasObject(By.pkg(targetPackage).depth(0)), 5_000)
+            device.wait(Until.hasObject(By.pkg(targetPackage).depth(0)), 3_000)
 
             // Wait for the "Tap to zoom" text which indicates pager + content composed
-            val appeared = device.wait(Until.hasObject(By.text("Tap to zoom")), 10_000)
+            val appeared = device.wait(Until.hasObject(By.text("Tap to zoom")), 3_000)
 
             // As a safety net, wait for UI idle if the text isn't found (e.g., localized build)
             if (!appeared) {
@@ -101,7 +101,7 @@ class BaselineProfileGenerator {
             device.click(cx, (cy * 1.3).toInt())
 
             // 2) Wait for the "Select this watch" button to appear, then click it
-            val buttonAppeared = device.wait(Until.hasObject(By.text("Select this watch")), 10_000)
+            val buttonAppeared = device.wait(Until.hasObject(By.text("Select this watch")), 3_000)
             if (buttonAppeared) {
                 device.findObject(By.text("Select this watch"))?.click()
             } else {
@@ -113,7 +113,7 @@ class BaselineProfileGenerator {
             // 3) Wait for TimeScreen to be visible
             // Prefer a semantics content description if available; otherwise, fall back to heuristics
             // Try multiple selectors in sequence to avoid BySelector.or() compatibility issues
-            var timeScreenShown = device.wait(Until.hasObject(By.desc("TimeScreen")), 4_000)
+            var timeScreenShown = device.wait(Until.hasObject(By.desc("TimeScreen")), 3_000)
             if (!timeScreenShown) timeScreenShown = device.wait(Until.hasObject(By.text("Time")), 2_000)
             if (!timeScreenShown) timeScreenShown = device.wait(Until.hasObject(By.text("World Time")), 2_000)
             if (!timeScreenShown) timeScreenShown = device.wait(Until.hasObject(By.text("Time zones")), 2_000)
