@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.coroutines.swisstime.ui.components.SwissTimePager
@@ -43,9 +44,6 @@ fun WelcomeScreen(
     val windowSizeClass = LocalWindowSizeClass.current
     val widthClass = windowSizeClass.widthSizeClass
     val heightClass = windowSizeClass.heightSizeClass
-
-
-
 
 
     // Data and state owned by WelcomeScreen
@@ -79,25 +77,35 @@ fun WelcomeScreen(
         }
 
 
-        /*val topMargin = when (heightClass) {
-            WindowHeightSizeClass.Compact -> maxHeight * 0.20f
-            WindowHeightSizeClass.Medium  -> maxHeight * 0.10f
-            WindowHeightSizeClass.Expanded -> maxHeight * 0.08f
-            else -> maxHeight * 0.15f
-        }*/
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
             val (title, chooseText, descText, pager, button) = createRefs()
+
+            val isLandscape = isLandscape() // will use in non compposable scope, so must compute here
+
+
+            // Create a horizontal chain when in landscape
+            if (isLandscape) {
+                createHorizontalChain(
+                    title, chooseText,
+                    chainStyle = ChainStyle.Packed // Keeps them together, centered
+                )
+            }
 
             Text(
                 text = "Let's get started!",
                 modifier = Modifier
                     .constrainAs(title) {
-                        top.linkTo(parent.top, margin = topMargin)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
+                        if (isLandscape) {
+                            top.linkTo(parent.top, margin = topMargin)
+                            // Chain will handle horizontal positioning
+                        } else {
+                            top.linkTo(parent.top, margin = topMargin)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                        }
                     }
-                    .padding(horizontal = 24.dp),
-                textAlign = TextAlign.Center,
+                    .padding(horizontal = if (isLandscape)  2.dp else 24.dp),
+                textAlign = if (isLandscape) TextAlign.Start else TextAlign.Center,
                 style = MaterialTheme.typography.headlineLarge
             )
 
@@ -105,14 +113,68 @@ fun WelcomeScreen(
                 text = "Choose your first watch",
                 modifier = Modifier
                     .constrainAs(chooseText) {
-                        top.linkTo(title.bottom, margin = 10.dp)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
+                        if (isLandscape) {
+                            top.linkTo(title.top) // Align to same baseline/top
+                            bottom.linkTo(title.bottom)
+                            // Chain will handle horizontal positioning
+                        } else {
+                            top.linkTo(title.bottom, margin = 10.dp)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                        }
                     }
-                    .padding(horizontal = 24.dp),
-                textAlign = TextAlign.Center,
+                    .padding(horizontal = if (isLandscape)  2.dp else 24.dp),
+                textAlign = if (isLandscape) TextAlign.Start else TextAlign.Center,
                 style = MaterialTheme.typography.headlineMedium
             )
+
+
+            /* Text(
+                 text = "Let's get started!",
+                 modifier = Modifier
+                     .constrainAs(title) {
+                         top.linkTo(parent.top, margin = topMargin)
+                         if (isLandscape) {
+                             start.linkTo(parent.start)
+                             // Don't link end - this left-aligns it
+                         } else {
+                             start.linkTo(parent.start)
+                             end.linkTo(parent.end)
+                             // Both linked - this centers it
+                         }
+                     }
+                     .padding(horizontal = 24.dp),
+                // textAlign = TextAlign.Center,
+                 textAlign = if (isLandscape) TextAlign.End else TextAlign.Center,
+                 style = MaterialTheme.typography.headlineLarge
+             )
+
+
+
+             Text(
+                 text = "Choose your first watch",
+                 modifier = Modifier
+                     .constrainAs(chooseText) {
+                        // top.linkTo(title.bottom, margin = 10.dp)
+                         top.linkTo(
+                             when (isLandscape) {
+                                 false -> title.bottom
+                                 true -> parent.top
+                             },
+                             margin = 10.dp
+                         )
+                         start.linkTo(
+                             when (isLandscape) {
+                                 false -> parent.start
+                                 true -> title.end
+                             },
+                         )
+                         end.linkTo(parent.end)
+                     }
+                     .padding(horizontal = 24.dp),
+                 textAlign = TextAlign.Center,
+                 style = MaterialTheme.typography.headlineMedium
+             ) */
 
             if (isLandscape() && heightClass == WindowHeightSizeClass.Compact) {
                 Text(
