@@ -99,9 +99,25 @@ public fun getWatches(): List<WatchInfo> {
             composable = { modifier, timeZone -> KandinskyEvening(modifier = modifier, timeZone = timeZone) }
         ),
         WatchInfo(
+            name = "Pontifex Chronometra",
+            description = "The Pontifex Chronometra combines distinctive design elements with exceptional craftsmanship. Founded in 1996, this independent Swiss manufacturer draws on traditional techniques while incorporating modern innovations, resulting in watches with unique teardrop lugs and meticulously finished movements.",
+            composable = { modifier, timeZone -> PontifexChronometra(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+        ),
+        WatchInfo(
             name = "Knot Urushi",
             description = "The Knot Urushi is a collaboration between modern watchmaking and traditional Japanese craftsmanship. Its deep jet black dial is created through the meticulous Urushi lacquer technique, involving repeated painting, drying, and sharpening by skilled artisans. The dial is adorned with gold powder scraped from gold ingots, creating a subtle shimmer effect as light plays across the surface. With its minimalist silver hands and markers, this timepiece exemplifies the perfect harmony between Japanese aesthetics and precision timekeeping.",
             composable = { modifier, timeZone -> Knot(modifier = modifier, timeZone = timeZone) }
+        ),
+        WatchInfo(
+            name = "Centurio Luminor",
+            description = "The Centurio Luminor is renowned for its minimalist design and signature fumé dial that gradually darkens from center to edge. Founded in 1848, this independent Swiss manufacturer creates timepieces that combine traditional craftsmanship with contemporary aesthetics and innovative complications.",
+            composable = { modifier, timeZone -> CenturioLuminor(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+        ),
+
+        WatchInfo(
+            name = "Chronomagus Regum",
+            description = "The Chronomagus Regum is celebrated for its ultra-thin profile and minimalist design. Since the 1950s, Chronomagus has been a pioneer in creating incredibly slim watches, with the Regum line showcasing the brand's expertise in producing elegant timepieces that combine technical innovation with refined aesthetics.",
+            composable = { modifier, timeZone -> ChronomagusRegum(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
         ),
         /*  WatchInfo(
               name = "Oris Aquis",
@@ -159,11 +175,7 @@ public fun getWatches(): List<WatchInfo> {
             description = "The Lucerna Roma features a distinctive tonneau (barrel) shape case and bold, colorful numerals. Known as the 'Master of Inventions', Lucerna Roma combines avant-garde design with traditional Swiss watchmaking expertise to create timepieces that are both technically impressive and visually striking.",
             composable = { modifier, timeZone -> LucernaRoma(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
         ),
-        WatchInfo(
-            name = "Centurio Luminor",
-            description = "The Centurio Luminor is renowned for its minimalist design and signature fumé dial that gradually darkens from center to edge. Founded in 1848, this independent Swiss manufacturer creates timepieces that combine traditional craftsmanship with contemporary aesthetics and innovative complications.",
-            composable = { modifier, timeZone -> CenturioLuminor(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
-        ),
+
         WatchInfo(
             name = "Aventinus Classique",
             description = "The Aventinus Classique embodies the timeless elegance of Jean-Louis Aventinus's original designs. With its coin-edge case, guilloche dial, and distinctive Aventins hands with hollow moon tips, it represents the pinnacle of traditional Swiss watchmaking and horological heritage.",
@@ -174,21 +186,13 @@ public fun getWatches(): List<WatchInfo> {
             description = "The Chant Du Temps exemplifies pure, minimalist elegance with its slim profile and clean dial. As one of the oldest continuously operating watch manufacturers, Chant Du Temps combines centuries of tradition with contemporary refinement in this timeless dress watch.",
             composable = { modifier, timeZone -> ChantDuTemps(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
         ),
-        WatchInfo(
-            name = "Pontifex Chronometra",
-            description = "The Pontifex Chronometra combines distinctive design elements with exceptional craftsmanship. Founded in 1996, this independent Swiss manufacturer draws on traditional techniques while incorporating modern innovations, resulting in watches with unique teardrop lugs and meticulously finished movements.",
-            composable = { modifier, timeZone -> PontifexChronometra(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
-        ),
+
         WatchInfo(
             name = "Грань Секунды",
             description = "The Грань Секунды combines classic design with sophisticated complications like power reserve indicators and chronographs. Founded in St. Petersburg in 1888, Грань Секунды represents Russian watchmaking tradition with its elegant aesthetics and technical excellence.",
             composable = { modifier, timeZone -> EdgeOfSecond(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
         ),
-        WatchInfo(
-            name = "Chronomagus Regum",
-            description = "The Chronomagus Regum is celebrated for its ultra-thin profile and minimalist design. Since the 1950s, Chronomagus has been a pioneer in creating incredibly slim watches, with the Regum line showcasing the brand's expertise in producing elegant timepieces that combine technical innovation with refined aesthetics.",
-            composable = { modifier, timeZone -> ChronomagusRegum(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
-        ),
+
         /* WatchInfo(
              name = "Tokinoha",
              description = "The Tokinoha, first introduced in 1963, is a legendary chronograph designed for racing drivers. With its clean dial layout, distinctive subdials, and robust construction, it embodies Tokinoha's connection to motorsport and their commitment to precision timing in high-speed environments.",

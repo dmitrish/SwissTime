@@ -1,5 +1,6 @@
 package com.coroutines.swisstime
 
+import com.coroutines.swisstime.ui.adaptive.LocalWindowSizeClass
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
@@ -17,7 +18,11 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
@@ -37,7 +42,9 @@ import com.coroutines.swisstime.update.AppUpdateManager
 import com.coroutines.swisstime.utils.isDark
 import com.coroutines.worldclock.common.repository.WatchPreferencesRepository
 import kotlinx.coroutines.launch
-import java.util.TimeZone
+
+
+
 
 // Data class to hold watch information
 
@@ -105,6 +112,7 @@ class MainActivity : ComponentActivity() {
         super.onRestart()
     }
 
+    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         // Install splash screen before calling super.onCreate()
         val splashScreen = installSplashScreen()
@@ -169,13 +177,19 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+
+
         setContent {
             SwissTimeTheme {
-               WatchApp(watchPreferencesRepository)
-                SideEffect {
-                    android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
-                        isContentReady = true
-                    }, 100)
+               val windowSizeClass: WindowSizeClass = calculateWindowSizeClass(this)
+               //val windowSizeClass = calculateWindowSizeClass(this)
+                CompositionLocalProvider(LocalWindowSizeClass provides windowSizeClass) {
+                    WatchApp(watchPreferencesRepository)
+                    SideEffect {
+                        android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                            isContentReady = true
+                        }, 100)
+                    }
                 }
             }
         }

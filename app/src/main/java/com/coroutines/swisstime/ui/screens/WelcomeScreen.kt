@@ -1,5 +1,7 @@
 package com.coroutines.swisstime.ui.screens
 
+import com.coroutines.swisstime.ui.adaptive.LocalWindowSizeClass
+import com.coroutines.swisstime.ui.adaptive.*
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Box
@@ -11,6 +13,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
+import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -34,6 +39,15 @@ fun WelcomeScreen(
     sharedTransitionScope: androidx.compose.animation.SharedTransitionScope? = null,
     animatedVisibilityScope: androidx.compose.animation.AnimatedVisibilityScope? = null,
 ) {
+
+    val windowSizeClass = LocalWindowSizeClass.current
+    val widthClass = windowSizeClass.widthSizeClass
+    val heightClass = windowSizeClass.heightSizeClass
+
+
+
+
+
     // Data and state owned by WelcomeScreen
     val watches = com.coroutines.swisstime.watchfaces.getWatches()
     val middle = if (watches.isNotEmpty()) watches.size / 2 else 0
@@ -48,6 +62,29 @@ fun WelcomeScreen(
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         val maxHeight = this.maxHeight
+
+        val topMargin = when (isLandscape()) {
+            false -> when (heightClass) {
+                WindowHeightSizeClass.Compact -> maxHeight * 0.08f
+                WindowHeightSizeClass.Medium  -> maxHeight * 0.10f
+                WindowHeightSizeClass.Expanded -> maxHeight * 0.20f
+                else -> maxHeight * 0.15f
+            }
+            true -> when (heightClass) {
+                WindowHeightSizeClass.Compact -> maxHeight * 0.03f
+                WindowHeightSizeClass.Medium  -> maxHeight * 0.20f
+                WindowHeightSizeClass.Expanded -> maxHeight * 0.08f
+                else -> maxHeight * 0.15f
+            }
+        }
+
+
+        /*val topMargin = when (heightClass) {
+            WindowHeightSizeClass.Compact -> maxHeight * 0.20f
+            WindowHeightSizeClass.Medium  -> maxHeight * 0.10f
+            WindowHeightSizeClass.Expanded -> maxHeight * 0.08f
+            else -> maxHeight * 0.15f
+        }*/
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
             val (title, chooseText, descText, pager, button) = createRefs()
 
@@ -55,7 +92,7 @@ fun WelcomeScreen(
                 text = "Let's get started!",
                 modifier = Modifier
                     .constrainAs(title) {
-                        top.linkTo(parent.top, margin = maxHeight * 0.20f)
+                        top.linkTo(parent.top, margin = topMargin)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                     }
@@ -77,21 +114,40 @@ fun WelcomeScreen(
                 style = MaterialTheme.typography.headlineMedium
             )
 
-            Text(
-                text = firstSentence(watches.getOrNull(pagerState.currentPage)?.description),
-                modifier = Modifier
-                    .constrainAs(descText) {
-                        top.linkTo(chooseText.bottom, margin = 50.dp)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }
-                    .padding(horizontal = 24.dp)
-                    .padding(bottom = 8.dp),
-                textAlign = TextAlign.Center,
-                maxLines = 3,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.bodyMedium
-            )
+            if (isLandscape() && heightClass == WindowHeightSizeClass.Compact) {
+                Text(
+                    text = "",
+                    modifier = Modifier
+                        .constrainAs(descText) {
+                            top.linkTo(chooseText.bottom, margin = 5.dp)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                        }
+                        .padding(horizontal = 24.dp),
+
+                    textAlign = TextAlign.Center,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+            else{
+                Text(
+                    text = firstSentence(watches.getOrNull(pagerState.currentPage)?.description),
+                    modifier = Modifier
+                        .constrainAs(descText) {
+                            top.linkTo(chooseText.bottom, margin = 50.dp)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                        }
+                        .padding(horizontal = 24.dp)
+                        .padding(bottom = 8.dp),
+                    textAlign = TextAlign.Center,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
 
             androidx.compose.foundation.layout.Box(
                 modifier = Modifier
