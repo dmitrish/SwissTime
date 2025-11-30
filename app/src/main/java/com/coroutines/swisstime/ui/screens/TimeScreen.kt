@@ -1,8 +1,6 @@
 package com.coroutines.swisstime.ui.screens
 
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,7 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
+//import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -28,18 +26,20 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.platform.LocalConfiguration
 import android.content.res.Configuration
 import com.coroutines.swisstime.util.PerformanceMetrics
 import com.coroutines.worldclock.common.components.CustomWorldMapWithDayNight
 import com.coroutines.worldclock.common.model.WatchInfo
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
-import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.height
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
+import kotlinx.coroutines.delay
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+
 //import androidx.compose.animation.rememberSharedContentState
 
 
@@ -308,8 +308,86 @@ fun TimeScreen(
             Row(
                 modifier = Modifier.fillMaxSize()
             ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    // Header Row
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(2.dp),
+
+                          //  .background(Color.LightGray),
+                        contentAlignment = Alignment.Center
+                    ) {
+                   //     TickingTimeTextBox(watchViewModel)
+
+
+                    }
+
+                    // Two cells side by side
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                    ) {
+                        // Left cell
+                        Box(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(start = 50.dp)
+                                .fillMaxHeight(),
+                              //  .background(Color.Cyan),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            TimeZoneAwareWatchFace2(
+                                watchInfo = selectedWatches[0],
+                                viewModel = watchViewModel,
+                                modifier = Modifier.fillMaxSize(0.9f)
+                            )
+                           /* SelectedWatchScreen2(
+                                onBackClick = onBackClick,
+                                selectedWatch = selectedWatches[0],
+                                watchViewModel = watchViewModel,
+                                isPageTransitioning = pagerState.isScrollInProgress
+                            )*/
+                        }
+
+                        // Right cell
+                        Box(
+                            modifier = Modifier
+                                .weight(1.5f)
+                                .fillMaxHeight()
+                                .padding(end = 50.dp  ),
+                            // .background(Color.Yellow),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CustomWorldMapWithDayNight(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .aspectRatio(1.3f)
+                            )
+                        }
+                    }
+
+                    // Footer Row
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 20.dp)
+                            .background(Color.Transparent),
+                        contentAlignment = Alignment.Center
+                    ) {
+
+                        Text(watchViewModel.selectedTimeZone.collectAsState().value.displayName)
+                    }
+                }
+
+               // CenteredLayout()
+
                 // Left side - Pager with watches
-               /* Column(
+             /*  Column(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight(),
@@ -401,13 +479,13 @@ fun TimeScreen(
                     )
                 }
 
-                */
+
 
                 // Right side - World Map
-                Box(
+               /* Box(
                     modifier = Modifier
                         .weight(1f)
-                        .fillMaxHeight().padding(100.dp),
+                        .fillMaxHeight().padding(50.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     CustomWorldMapWithDayNight(
@@ -415,7 +493,23 @@ fun TimeScreen(
                             .fillMaxWidth()
                             .aspectRatio(1f)
                     )
-                }
+                }*/
+            }
+            Column  (modifier = Modifier
+              //  .weight(1f)
+                .fillMaxHeight()){
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight().padding(50.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CustomWorldMapWithDayNight(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1f)
+                    )
+                }*/
             }
         } else {
             // Portrait layout - original vertical layout
@@ -572,6 +666,43 @@ fun TimeScreen(
     }
 }
 
+@Composable
+private fun TickingTimeTextBox(watchViewModel: WatchViewModel) {
+    val watchTimeZoneInfo = watchViewModel.selectedTimeZone.collectAsState().value
+    // Create a state to hold the current time that will be updated every second
+    val targetZoneId = remember(watchTimeZoneInfo?.id) {
+        ZoneId.of(watchTimeZoneInfo?.id ?: "GMT")
+    }
+
+    // Create a state to hold the current time that will be updated every second
+    var currentTime by remember { mutableStateOf(ZonedDateTime.now(targetZoneId)) }
+
+    // Update the time every second - use targetZoneId as key to restart when it changes
+    // Use a key that includes the watch name to ensure proper recomposition
+    LaunchedEffect(targetZoneId) {
+        // Delay the first update to reduce work during page transition
+        delay(100) // Small delay to prioritize rendering
+
+        while (true) {
+            currentTime = ZonedDateTime.now(targetZoneId)
+            delay(1000) // Update every second
+        }
+    }
+
+
+    // Get the time format preference
+    val useUsTimeFormat by watchViewModel.useUsTimeFormat.collectAsState()
+    Text(
+        text = currentTime.format(
+            DateTimeFormatter.ofPattern(
+                if (useUsTimeFormat) "h:mm:ss a" else "HH:mm:ss"
+            )
+        ),
+        style = MaterialTheme.typography.bodyLarge,
+        modifier = Modifier.padding(16.dp)
+    )
+}
+
 /*
 / Report performance metrics periodically
     LaunchedEffect(Unit) {
@@ -653,4 +784,14 @@ fun TimeScreen(
                     }
                 }
         }
+ */
+
+/*
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+fun CenteredLayout() {
+
+
+}
+
  */
