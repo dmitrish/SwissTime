@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import androidx.compose.ui.zIndex
+import com.coroutines.swisstime.ui.adaptive.isLandscape
 import kotlin.math.absoluteValue
 
 
@@ -68,8 +69,10 @@ fun SwissTimePager(
         val pageWidth = watchSize
         val viewportWidth = maxWidth
 
+        val spacingFactor = if (isLandscape()) 8f else 2.7f
+
 // Clamp spacing so it never becomes positive (which creates big gaps)
-        val rawSpacing = ((viewportWidth - pageWidth) / 2.7f) - pageWidth
+        val rawSpacing = ((viewportWidth - pageWidth) / spacingFactor) - pageWidth
         val pageSpacing = rawSpacing - pageWidth// rawSpacing
             .coerceAtMost(0.dp)           // never allow positive spacing
             .coerceAtLeast((-48).dp)      // optional: cap overlap at -48.dp
