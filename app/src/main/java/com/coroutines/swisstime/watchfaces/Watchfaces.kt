@@ -170,17 +170,18 @@ public fun getWatches(): List<WatchInfo> {
               composable = { modifier -> AudemarsPiguetClock(modifier = modifier) }
           ),*/
         // New Swiss watches
-        WatchInfo(
-            name = "Lucerna Roma",
-            description = "The Lucerna Roma features a distinctive tonneau (barrel) shape case and bold, colorful numerals. Known as the 'Master of Inventions', Lucerna Roma combines avant-garde design with traditional Swiss watchmaking expertise to create timepieces that are both technically impressive and visually striking.",
-            composable = { modifier, timeZone -> LucernaRoma(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
-        ),
 
         WatchInfo(
             name = "Aventinus Classique",
             description = "The Aventinus Classique embodies the timeless elegance of Jean-Louis Aventinus's original designs. With its coin-edge case, guilloche dial, and distinctive Aventins hands with hollow moon tips, it represents the pinnacle of traditional Swiss watchmaking and horological heritage.",
             composable = { modifier, timeZone -> AventinusClassique(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
         ),
+        WatchInfo(
+            name = "Lucerna Roma",
+            description = "The Lucerna Roma features a distinctive tonneau (barrel) shape case and bold, colorful numerals. Known as the 'Master of Inventions', Lucerna Roma combines avant-garde design with traditional Swiss watchmaking expertise to create timepieces that are both technically impressive and visually striking.",
+            composable = { modifier, timeZone -> LucernaRoma(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+        ),
+
         WatchInfo(
             name = "Chant du Temps",
             description = "The Chant Du Temps exemplifies pure, minimalist elegance with its slim profile and clean dial. As one of the oldest continuously operating watch manufacturers, Chant Du Temps combines centuries of tradition with contemporary refinement in this timeless dress watch.",
