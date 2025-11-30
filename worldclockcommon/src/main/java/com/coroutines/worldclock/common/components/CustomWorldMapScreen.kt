@@ -33,6 +33,7 @@ import com.coroutines.worldclock.common.theme.DarkNavy
 // TODO: Copy ChronomagusRegum to worldclockcommon module
 // import com.coroutines.swisstime.watchfaces.ChronomagusRegum
 import kotlinx.coroutines.delay
+import java.io.File
 import java.util.*
 import kotlin.math.*
 
@@ -136,6 +137,34 @@ fun CustomWorldMapWithDayNight(
     nightOverlayColor: Color = Color(DarkNavy.toArgb()),
     updateIntervalMillis: Long = 6000 // Default to 6 seconds
 ) {
+    val context = LocalContext.current
+    val pixelDensity = remember {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            // S24 Ultra has performance class 34 (Android 14)
+            // S23 Ultra has performance class 33 (Android 13)
+            // S20 Ultra has performance class 0 or older
+            if (Build.VERSION.MEDIA_PERFORMANCE_CLASS >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                350f // S24+ tier - high quality
+            } else {
+                180f // S20 tier and below - performance mode
+            }
+        } else {
+            // Fallback for older Android versions
+            val cores = Runtime.getRuntime().availableProcessors()
+            val maxFreq = try {
+                File("/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq")
+                    .readText().trim().toLong()
+            } catch (e: Exception) {
+                0L
+            }
+
+            when {
+                cores >= 8 && maxFreq >= 3200000 -> 350f // S24-tier
+                else -> 180f // S20-tier and below
+            }
+        }
+    }
+
     var currentTime by remember {mutableStateOf( Calendar.getInstance(TimeZone.getTimeZone("America/New_York")))}
 
     LaunchedEffect(true){
@@ -449,7 +478,7 @@ fun CustomWorldMapWithDayNight(
              // Adjust step size based on screen width to ensure consistent visual quality across devices
 
 
-             val stepSize = (width / 150).coerceAtLeast(1f).toInt() // Scale step size with screen width
+             val stepSize = (width / pixelDensity).coerceAtLeast(1f).toInt() // Scale step size with screen width
              for (y in 0 until height.toInt() step stepSize) {
                  for (x in 0 until width.toInt() step stepSize) {
                      // Convert x,y to longitude, latitude
