@@ -3,11 +3,11 @@
   <component name="deploymentTargetSelector">
     <selectionStates>
       <SelectionState runConfigName="app">
-        <option name="selectionMode" value="DIALOG" />
-        <DropdownSelection timestamp="2025-11-30T20:23:38.293256Z">
+        <option name="selectionMode" value="DROPDOWN" />
+        <DropdownSelection timestamp="2025-12-03T01:13:25.626001Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/shpinardmitri/.android/avd/Pixel_Tablet.avd" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/shpinardmitri/.android/avd/Tablet7Inch.avd" />
             </handle>
           </Target>
         </DropdownSelection>
@@ -15,12 +15,12 @@
           <targets>
             <Target type="DEFAULT_BOOT">
               <handle>
-                <DeviceId pluginId="LocalEmulator" identifier="path=/Users/shpinardmitri/.android/avd/Pixel_Tablet.avd" />
+                <DeviceId pluginId="LocalEmulator" identifier="path=/Users/shpinardmitri/.android/avd/Medium_Phone_2.avd" />
               </handle>
             </Target>
             <Target type="DEFAULT_BOOT">
               <handle>
-                <DeviceId pluginId="LocalEmulator" identifier="path=/Users/shpinardmitri/.android/avd/Medium_Phone_2.avd" />
+                <DeviceId pluginId="LocalEmulator" identifier="path=/Users/shpinardmitri/.android/avd/Pixel_Tablet.avd" />
               </handle>
             </Target>
           </targets>
