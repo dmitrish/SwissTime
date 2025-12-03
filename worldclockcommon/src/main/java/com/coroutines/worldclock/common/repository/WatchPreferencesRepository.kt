@@ -11,9 +11,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.runBlocking
 
 // Create a DataStore instance at the top level
@@ -107,6 +109,21 @@ class WatchPreferencesRepository(private val context: Context) {
             replay = 0
         )
 
+    // New: Flow without shareIn, for per-watch StateFlow building
+    fun watchTimeZoneIdFlow(watchName: String): Flow<String?> = context.dataStore.data
+        .map { preferences ->
+            val key = stringPreferencesKey("${WATCH_TIMEZONE_PREFIX}${watchName}")
+            preferences[key]
+        }
+
+    // New: StateFlow wrapper with initial null (no implicit default)
+    fun timeZoneStateForWatch(watchName: String, scope: CoroutineScope): StateFlow<String?> =
+        watchTimeZoneIdFlow(watchName)
+            .stateIn(
+                scope = scope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = null
+            )
 
 
     fun getWatchTimeZoneIdBlocking(watchName: String): String? = runBlocking {
@@ -158,6 +175,16 @@ class WatchPreferencesRepository(private val context: Context) {
         context.dataStore.edit { preferences ->
             preferences[SELECTED_WATCHES_KEY] = watchNames
         }
+    }
+
+    // Blocking helper to fetch selected watch names synchronously
+    // Additive-only: does not change existing reactive APIs
+    fun getSelectedWatchNamesBlocking(): Set<String> = runBlocking {
+        context.dataStore.data
+            .map { preferences ->
+                preferences[SELECTED_WATCHES_KEY] ?: emptySet()
+            }
+            .first()
     }
 
     // Add a watch to the list of selected watches

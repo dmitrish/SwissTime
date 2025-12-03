@@ -18,7 +18,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.coroutines.swisstime.getWatchFaceColor
+//import com.coroutines.swisstime.getWatchFaceColor
 import com.coroutines.swisstime.ui.screens.AboutScreen
 import com.coroutines.swisstime.ui.screens.BrandLogosScreen
 import com.coroutines.worldclock.common.components.CustomWorldMapScreen
@@ -30,6 +30,7 @@ import com.coroutines.swisstime.ui.screens.WatchDetailScreen
 import com.coroutines.swisstime.ui.screens.WatchListScreen
 import com.coroutines.swisstime.ui.screens.WelcomeScreen
 import com.coroutines.swisstime.utils.darken
+import com.coroutines.swisstime.utils.getWatchFaceColor
 import com.coroutines.swisstime.viewmodel.ThemeViewModel
 import com.coroutines.swisstime.viewmodel.WatchViewModel
 import com.coroutines.worldclock.common.model.WatchInfo

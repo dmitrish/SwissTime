@@ -39,6 +39,7 @@ import kotlinx.coroutines.delay
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 //import androidx.compose.animation.rememberSharedContentState
 
@@ -305,6 +306,9 @@ fun TimeScreen(
 
         if (isLandscape) {
             // Landscape layout - pager on the left, map on the right
+            val currentWatch = selectedWatches[currentPage]
+            val tzInfoForCurrentWatch = watchViewModel.getWatchTimeZone(currentWatch.name).collectAsState().value
+
             Row(
                 modifier = Modifier.fillMaxSize()
             ) {
@@ -315,15 +319,16 @@ fun TimeScreen(
                     // Header Row
                     Box(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .height(2.dp),
+                            .fillMaxWidth(),
+                           // .height(2.dp)
 
-                          //  .background(Color.LightGray),
+                           // .background(Color.LightGray),
                         contentAlignment = Alignment.Center
                     ) {
-                   //     TickingTimeTextBox(watchViewModel)
-
-
+                        TickingTimeTextBox(
+                            zoneId = ZoneId.of(tzInfoForCurrentWatch.id ?: "GMT"),
+                            useUsTimeFormat = watchViewModel.useUsTimeFormat.collectAsState().value
+                        )
                     }
 
                     // Two cells side by side
@@ -342,18 +347,11 @@ fun TimeScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             TimeZoneAwareWatchFace2(
-                                watchInfo = selectedWatches[0],
+                                watchInfo = watchViewModel.selectedWatches.collectAsState().value[currentPage],
                                 viewModel = watchViewModel,
                                 modifier = Modifier.fillMaxSize(0.9f)
                             )
-                           /* SelectedWatchScreen2(
-                                onBackClick = onBackClick,
-                                selectedWatch = selectedWatches[0],
-                                watchViewModel = watchViewModel,
-                                isPageTransitioning = pagerState.isScrollInProgress
-                            )*/
                         }
-
                         // Right cell
                         Box(
                             modifier = Modifier
@@ -380,7 +378,7 @@ fun TimeScreen(
                         contentAlignment = Alignment.Center
                     ) {
 
-                        Text(watchViewModel.selectedTimeZone.collectAsState().value.displayName)
+                        Text(tzInfoForCurrentWatch.displayName ?: "")
                     }
                 }
 
@@ -667,6 +665,40 @@ fun TimeScreen(
 }
 
 @Composable
+private fun TickingTimeTextBox(zoneId: ZoneId, useUsTimeFormat: Boolean) {
+    var currentTime by remember(zoneId) { mutableStateOf(ZonedDateTime.now(zoneId)) }
+    LaunchedEffect(zoneId) {
+        delay(100)
+        while (true) {
+            currentTime = ZonedDateTime.now(zoneId)
+            delay(1000)
+        }
+    }
+    val formatter = DateTimeFormatter.ofPattern(
+        if (useUsTimeFormat) {
+            // Numeric month/day, 12h
+            // "MM/dd h:mm:ss a"  → 12/02 7:50:00 PM
+            // Or month name: "MMM d, h:mm:ss a" → Dec 2, 7:50:00 PM
+            "MMMM d, h:mm:ss a"
+        } else {
+            // Day month name, 24h
+            // "dd/MM HH:mm:ss"  → 02/12 19:50:00
+            // Or month name: "d MMM HH:mm:ss" → 2 Dec 19:50:00
+            "d MMMM HH:mm:ss"
+        }
+    ).withLocale(if (useUsTimeFormat) Locale.US else Locale.getDefault())
+    Text(
+        text = currentTime.format(formatter),
+       /* text = currentTime.format(
+            DateTimeFormatter.ofPattern(if (useUsTimeFormat) "h:mm:ss a" else "HH:mm:ss")
+        ),*/
+        color = Color.White,
+        style = MaterialTheme.typography.bodyLarge,
+        modifier = Modifier.padding(16.dp)
+    )
+}
+
+@Composable
 private fun TickingTimeTextBox(watchViewModel: WatchViewModel) {
     val watchTimeZoneInfo = watchViewModel.selectedTimeZone.collectAsState().value
     // Create a state to hold the current time that will be updated every second
@@ -698,6 +730,7 @@ private fun TickingTimeTextBox(watchViewModel: WatchViewModel) {
                 if (useUsTimeFormat) "h:mm:ss a" else "HH:mm:ss"
             )
         ),
+        color = Color.White,
         style = MaterialTheme.typography.bodyLarge,
         modifier = Modifier.padding(16.dp)
     )

@@ -55,8 +55,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.coroutines.swisstime.getTextColorForBackground
-import com.coroutines.swisstime.getWatchFaceColor
+
 import com.coroutines.swisstime.utils.darken
+import com.coroutines.swisstime.utils.getWatchFaceColor
 import com.coroutines.worldclock.common.model.WatchInfo
 import java.util.TimeZone
 

@@ -96,56 +96,35 @@ import com.coroutines.worldclock.common.service.TimeZoneService
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun WatchApp(watchPreferencesRepository: WatchPreferencesRepository) {
-    // Get the current context
     val context = LocalContext.current
 
-    // Create a coroutine scope
     val coroutineScope = rememberCoroutineScope()
 
-    // Keep the splash screen selector code but make it inactive
-    // As per requirements: "keep the code for the other implementation, but let it be completely inactive; only Splash Screen API"
-    /*val splashScreenSelector = remember { SplashScreenSelector(context) }
-
-    // Force the Splash Screen API to be active if it's not already
-    if (!splashScreenSelector.isSplashScreenApiActive()) {
-        splashScreenSelector.useSplashScreenApi()
-    }*/
-
-    // Create a ThemePreferencesRepository instance
     val themePreferencesRepository = remember { ThemePreferencesRepository(context) }
 
-    // Create a ThemeViewModel instance
     val themeViewModel = viewModel<ThemeViewModel>(
         factory = ThemeViewModel.Factory(themePreferencesRepository)
     )
 
-    // Collect theme preferences from the ThemeViewModel
     val themeMode by themeViewModel.themeMode.collectAsState()
     val darkMode by themeViewModel.darkMode.collectAsState()
 
-    // Collect the currently selected watch name
     val selectedWatchName by watchPreferencesRepository.selectedWatchName.collectAsState(initial = null)
 
-    // List of watches with their details
     val watches = getWatches()
 
-    // Create a NavController
     val navController = rememberNavController()
 
-    // Create TimeZoneService and TimeZoneRepository instances
     val timeZoneService = remember { TimeZoneService() }
     val timeZoneRepository = remember { TimeZoneRepository(timeZoneService, watchPreferencesRepository) }
 
-    // Create a WatchViewModel instance
     val watchViewModel = viewModel<WatchViewModel>(
         factory = WatchViewModel.Factory(watchPreferencesRepository, timeZoneRepository, watches)
     )
 
-    // Get the current back stack entry
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry.value?.destination
 
-    // Create a drawer state
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
     val uiController = rememberSystemUiController()
@@ -155,7 +134,6 @@ fun WatchApp(watchPreferencesRepository: WatchPreferencesRepository) {
             true -> {
                 uiController.setStatusBarColor(Color.Transparent)
             }
-
             false -> {
                 uiController.setStatusBarColor(Color.Transparent)
             }
@@ -165,13 +143,10 @@ fun WatchApp(watchPreferencesRepository: WatchPreferencesRepository) {
     // Function to select a watch for the widget
     val selectWatchForWidget = { watch: WatchInfo ->
         coroutineScope.launch {
-            // Save the selected watch name
             watchPreferencesRepository.saveSelectedWatch(watch.name)
 
-            // Update the widget
             WatchWidget().updateAll(context)
 
-            // Show a confirmation toast
             Toast.makeText(
                 context,
                 "\"${watch.name}\" selected for widget",
@@ -180,12 +155,10 @@ fun WatchApp(watchPreferencesRepository: WatchPreferencesRepository) {
         }
     }
 
-    // Apply the theme based on the user's preferences
     SwissTimeTheme(
         themeMode = themeMode,
         dynamicColor = false
     ) {
-        // Wrap the Scaffold with ModalNavigationDrawer
         ModalNavigationDrawer(
             drawerState = drawerState,
             drawerContent = {
