@@ -43,7 +43,7 @@ import kotlin.math.sqrt
 import kotlin.math.tan
 
 private const val TAG = "LazyWorldMap"
-
+/*
 /**
  * A lazy-loading world map with day/night visualization that doesn't block page transitions.
  * This component uses a two-phase rendering approach:
@@ -86,8 +86,8 @@ fun LazyWorldMapWithDayNight(
 
     // Calculate sun position only when time changes significantly (every 10 minutes)
     // This is a major optimization as sun position calculation is expensive
-    val sunPosition by remember(cacheKey) {
-        derivedStateOf { calculateSunPosition(gmtTime) }
+    val sunPosition: SunParams by remember(cacheKey) {
+        derivedStateOf { calculateSunPositionNew(gmtTime) }
     }
 
     // Delay full rendering if we're in a page transition
@@ -464,3 +464,4 @@ private fun rev(x: Float): Float {
     if (rv < 0) rv += 360f
     return rv
 }
+*/

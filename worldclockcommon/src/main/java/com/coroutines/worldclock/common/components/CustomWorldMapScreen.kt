@@ -16,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.Path
@@ -144,7 +145,7 @@ fun CustomWorldMapWithDayNight(
             // S23 Ultra has performance class 33 (Android 13)
             // S20 Ultra has performance class 0 or older
             if (Build.VERSION.MEDIA_PERFORMANCE_CLASS >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                350f // S24+ tier - high quality
+                180f // S24+ tier - high quality
             } else {
                 180f // S20 tier and below - performance mode
             }
@@ -159,7 +160,7 @@ fun CustomWorldMapWithDayNight(
             }
 
             when {
-                cores >= 8 && maxFreq >= 3200000 -> 350f // S24-tier
+                cores >= 8 && maxFreq >= 3200000 -> 180f// S24-tier
                 else -> 180f // S20-tier and below
             }
         }
@@ -246,15 +247,6 @@ fun CustomWorldMapWithDayNight(
                 .aspectRatio(2f)
                 .background(Color.Transparent)
         ) {
-            // World map
-           /* Image(
-                painter = painterResource(id = R.drawable.world),
-                contentDescription = "Earth Map",
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.FillWidth
-            )*/
-
-           // val drawable= Drawable.
 
             val bitmap = getBitmap(R.drawable.world)!!
 
@@ -369,117 +361,89 @@ fun CustomWorldMapWithDayNight(
              }
 
              // Create paths for the day and night sides
-           val dayPath = Path()
+             val dayPath = Path()
              val nightPath = Path()
 
              // Determine if the sun is in the eastern or western hemisphere
              val sunLong = rev(RA * 15f - GMST0 * 15f - hourDecimal * 15f)
              val isSunInEasternHemisphere = sunLong < 180f
 
-             /*
-            if (terminatorPoints.isNotEmpty()) {
-                if (isSunInEasternHemisphere) {
-                    // Sun is in the eastern hemisphere, day is in the eastern hemisphere (right side)
 
-                    // Day path (right side)
-                    dayPath.moveTo(terminatorPoints.first().first.x, 0f) // Start at the top-right of the terminator
-                    dayPath.lineTo(width, 0f) // Go to top-right corner
-                    dayPath.lineTo(width, height) // Go to bottom-right corner
-                    dayPath.lineTo(terminatorPoints.last().first.x, height) // Go to the bottom-right of the terminator
+             val stepSize = (width / pixelDensity).coerceAtLeast(1f).toInt()
 
-                    // Follow the terminator curve up (right side)
-                    for (i in terminatorPoints.size - 2 downTo 0) {
-                        dayPath.lineTo(terminatorPoints[i].first.x, terminatorPoints[i].first.y)
-                    }
-                    dayPath.close() // Close the path
-
-                    // Night path (left side)
-                    nightPath.moveTo(0f, 0f) // Start at top-left corner
-                    nightPath.lineTo(terminatorPoints.first().second.x, 0f) // Go to the top-left of the terminator
-
-                    // Follow the terminator curve down (left side)
-                    for (i in 1 until terminatorPoints.size) {
-                        nightPath.lineTo(terminatorPoints[i].second.x, terminatorPoints[i].second.y)
-                    }
-                    nightPath.lineTo(0f, height) // Go to bottom-left corner
-                    nightPath.close() // Close the path
-                } else {
-                    // Sun is in the western hemisphere, day is in the western hemisphere (left side)
-
-                    // Day path (left side)
-                    dayPath.moveTo(0f, 0f) // Start at top-left corner
-                    dayPath.lineTo(terminatorPoints.first().second.x, 0f) // Go to the top-left of the terminator
-
-                    // Follow the terminator curve down (left side)
-                    for (i in 1 until terminatorPoints.size) {
-                        dayPath.lineTo(terminatorPoints[i].second.x, terminatorPoints[i].second.y)
-                    }
-                    dayPath.lineTo(0f, height) // Go to bottom-left corner
-                    dayPath.close() // Close the path
-
-                    // Night path (right side)
-                    nightPath.moveTo(terminatorPoints.first().first.x, 0f) // Start at the top-right of the terminator
-                    nightPath.lineTo(width, 0f) // Go to top-right corner
-                    nightPath.lineTo(width, height) // Go to bottom-right corner
-                    nightPath.lineTo(terminatorPoints.last().first.x, height) // Go to the bottom-right of the terminator
-
-                    // Follow the terminator curve up (right side)
-                    for (i in terminatorPoints.size - 2 downTo 0) {
-                        nightPath.lineTo(terminatorPoints[i].first.x, terminatorPoints[i].first.y)
-                    }
-                    nightPath.close() // Close the path
-                }
-            } else {
-                // If no terminator points (e.g., polar day/night), create simple paths
-                if (isSunInEasternHemisphere) {
-                    // Day is on the right side
-                    dayPath.moveTo(width / 2, 0f)
-                    dayPath.lineTo(width, 0f)
-                    dayPath.lineTo(width, height)
-                    dayPath.lineTo(width / 2, height)
-                    dayPath.close()
-
-                    nightPath.moveTo(0f, 0f)
-                    nightPath.lineTo(width / 2, 0f)
-                    nightPath.lineTo(width / 2, height)
-                    nightPath.lineTo(0f, height)
-                    nightPath.close()
-                } else {
-                    // Day is on the left side
-                    dayPath.moveTo(0f, 0f)
-                    dayPath.lineTo(width / 2, 0f)
-                    dayPath.lineTo(width / 2, height)
-                    dayPath.lineTo(0f, height)
-                    dayPath.close()
-
-                    nightPath.moveTo(width / 2, 0f)
-                    nightPath.lineTo(width, 0f)
-                    nightPath.lineTo(width, height)
-                    nightPath.lineTo(width / 2, height)
-                    nightPath.close()
-                }
-            }
-
-            // No overlay for the day side to avoid blue tint
-
-            // Draw a very subtle dark overlay for the night side
-            drawPath(
-                path = nightPath,
-                color = Color(0xFF000033).copy(alpha = 0.9f) // Subtle dark blue for night
-            )
-
-          */
-
-             // Draw the blur effect at the terminator
-             // This is based on the plot function in earth.py
-             // We'll create a gradient effect near the terminator line
-
-             // For each pixel in the image (simplified to reduce computation)
-             // Adjust step size based on screen width to ensure consistent visual quality across devices
-
-
-             val stepSize = (width / pixelDensity).coerceAtLeast(1f).toInt() // Scale step size with screen width
              for (y in 0 until height.toInt() step stepSize) {
+                 for (x in 0 until width.toInt() step stepSize) {
+                     val xOffset = width * 0.16f
+                     val adjustedX = x + xOffset
+                     val longitude = (adjustedX / width * 360f) - 180f
+                     val latitude = 90f - (y / height * 180f)
+
+                     val latRad = latitude * (PI / 180f).toFloat()
+                     val SIDTIME = GMST0 + hourDecimal + longitude/15f
+                     val HA = rev((SIDTIME - RA)) * 15f
+                     val HArad = HA * (PI / 180f).toFloat()
+                     val declRad = Decl * (PI / 180f).toFloat()
+
+                     val xval = cos(HArad) * cos(declRad)
+                     val yval = sin(HArad) * cos(declRad)
+                     val zval = sin(declRad)
+
+                     val xhor = xval * sin(latRad) - zval * cos(latRad)
+                     val yhor = yval
+                     val zhor = xval * cos(latRad) + zval * sin(latRad)
+
+                     val altitude = atan2(zhor, sqrt(xhor*xhor + yhor*yhor)) * (180f / PI.toFloat())
+
+                     // OLD CODE
+                     /*
+                     if (altitude > blur && phong) {
+                         // Day side with Phong shading - no tint
+                     } else if (altitude < -blur) {
+                         // Night side - very subtle dark tint
+                         drawCircle(
+                             color = nightOverlayColor.copy(alpha = 0.13f),
+                             radius = stepSize.toFloat(),
+                             center = Offset(x.toFloat(), y.toFloat())
+                         )
+                     } else {
+                         // Terminator region - very subtle blend
+                         val alpha = (altitude + blur) / (blur * 2f)
+                         if (alpha < 0.5f) {
+                             drawCircle(
+                                 color = nightOverlayColor.copy(alpha = 0.13f * (1f - alpha.coerceIn(0f, 1f))),
+                                 radius = stepSize.toFloat(),
+                                 center = Offset(x.toFloat(), y.toFloat())
+                             )
+                         }
+                     }
+                     */
+
+                     // NEW
+                     val nightAlpha = when {
+                         altitude < -blur -> 0.42f // Deeper night
+                         altitude > blur -> 0.0f  // Full day
+                         else -> {
+                             // Smooth terminator blend
+                             val t = (altitude + blur) / (blur * 2f)
+                             0.42f * (1f - t)
+                         }
+                     }
+
+                     if (nightAlpha > 0.01f) {
+                         drawRect(
+                             color = nightOverlayColor.copy(alpha = nightAlpha),
+                             topLeft = Offset(x.toFloat(), y.toFloat()),
+                             size = Size(stepSize.toFloat(), stepSize.toFloat())
+                         )
+                     }
+                 }
+             }
+
+             /*val stepSize = (width / pixelDensity).coerceAtLeast(1f).toInt() // Scale step size with screen width
+
+
+
+              for (y in 0 until height.toInt() step stepSize) {
                  for (x in 0 until width.toInt() step stepSize) {
                      // Convert x,y to longitude, latitude
                      // For equirectangular projection, x maps linearly to longitude from -180° to 180°
@@ -533,7 +497,7 @@ fun CustomWorldMapWithDayNight(
                          // No drawing for the day side of the terminator to avoid blue tint
                      }
                  }
-             }
+             } */
          }
         }
     }

@@ -18,7 +18,7 @@ import java.util.TimeZone
 /**
  * ViewModel for managing watch selection and time zone
  */
-class WatchViewModel(
+class WatchViewModelX(
     private val watchPreferencesRepository: WatchPreferencesRepository,
     private val timeZoneRepository: TimeZoneRepository,
     val watches: List<WatchInfo>
@@ -369,8 +369,8 @@ class WatchViewModel(
     ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(WatchViewModel::class.java)) {
-                return WatchViewModel(watchPreferencesRepository, timeZoneRepository, watches) as T
+            if (modelClass.isAssignableFrom(WatchViewModelX::class.java)) {
+                return WatchViewModelX(watchPreferencesRepository, timeZoneRepository, watches) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }
