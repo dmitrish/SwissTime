@@ -16,7 +16,7 @@ import kotlinx.coroutines.delay
 import java.util.*
 import kotlin.math.*
 
-// Colors inspired by IWC Portugieser
+
 private val ClockFaceColor = Color(0xFFF5F5F5)
 private val ClockBorderColor = Color(0xFF303030)
 private val HourHandColor = Color(0xFF000080)
