@@ -51,6 +51,19 @@ World Clock with timezones is a mighty little app that adds fun to timekeeping. 
   </tr>
 </table>
 
+<table style="width:100%">
+  <tr>
+    <th>Tablet Time Screen in Landscape</th>
+   
+  </tr>
+  <tr>
+    <td>
+      <img src="https://github.com/dmitrish/SwissTime/blob/main/art/landscapetimescreen.gif"/>
+    </td>
+   
+  </tr>
+</table>
+
 <p></p>
 <table style="width:100%">
   <tr>
