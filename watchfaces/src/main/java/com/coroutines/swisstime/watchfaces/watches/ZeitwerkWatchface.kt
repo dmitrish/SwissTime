@@ -35,7 +35,7 @@ private val LumeColor = Color(0xFF90EE90) // Light green lume for hands and mark
 private val CenterDotColor = Color(0xFFE0E0E0) // Silver center dot
 
 @Composable
-fun Zeitwerk(
+fun ZeitwerkWatchface(
     modifier: Modifier = Modifier,
     timeZone: TimeZone = TimeZone.getDefault()
 ) {
@@ -303,6 +303,6 @@ fun ZeitwerkPreview() {
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            Zeitwerk()
+            ZeitwerkWatchface()
         }
 }

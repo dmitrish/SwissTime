@@ -47,6 +47,7 @@ android {
 dependencies {
     implementation(project(":worldclockcommon"))
     implementation(project(":livewallpaper"))
+    implementation(project(":watchfaces"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
