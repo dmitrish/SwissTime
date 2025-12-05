@@ -1,5 +1,23 @@
 package com.coroutines.swisstime.watchfaces
 
+import com.coroutines.swisstime.watchfaces.watches.AventinusClassiqueWatchface
+import com.coroutines.swisstime.watchfaces.watches.CenturioLuminorWatchface
+import com.coroutines.swisstime.watchfaces.watches.ChantDuTempsWatchface
+import com.coroutines.swisstime.watchfaces.watches.ChronomagusWatchface
+import com.coroutines.swisstime.watchfaces.watches.ConstantinusAureusChronometerWatchface
+import com.coroutines.swisstime.watchfaces.watches.EdgeOfSecondWatchface
+import com.coroutines.swisstime.watchfaces.watches.HorologiaRomanumWatchface
+import com.coroutines.swisstime.watchfaces.watches.JurgsenZenithor
+import com.coroutines.swisstime.watchfaces.watches.KandinskyEveningWatchface
+import com.coroutines.swisstime.watchfaces.watches.KnotUrushiWatchface
+import com.coroutines.swisstime.watchfaces.watches.LeonardAutomaticWatchface
+import com.coroutines.swisstime.watchfaces.watches.LucernaRomaWatchface
+import com.coroutines.swisstime.watchfaces.watches.PontifexChronometraWatchface
+import com.coroutines.swisstime.watchfaces.watches.RomaMarinaWatchface
+import com.coroutines.swisstime.watchfaces.watches.ValentinianusWatchface
+import com.coroutines.swisstime.watchfaces.watches.VostokRussianMilitaryWatchface
+import com.coroutines.swisstime.watchfaces.watches.YamaNoTokiWatchface
+import com.coroutines.swisstime.watchfaces.watches.ZeitwerkWatchface
 import com.coroutines.worldclock.common.model.WatchInfo
 import java.util.TimeZone
 
@@ -39,7 +57,7 @@ public fun getWatches(): List<WatchInfo> {
         WatchInfo(
             name = "Valentinianus Classique",
             description = "The Valentinianus Classique embodies the essence of pure style with its minimalist design and exceptional craftsmanship. Founded in 1755, Valentinianus is one of the oldest watch manufacturers in the world, known for its elegant timepieces.",
-            composable = { modifier, timeZone -> Valentinianus(modifier = modifier, timeZone = TimeZone.getDefault() ) }
+            composable = { modifier, timeZone -> ValentinianusWatchface(modifier = modifier, timeZone = TimeZone.getDefault() ) }
         ),
         WatchInfo(
             name = "Concordia Felicitas",
@@ -54,7 +72,7 @@ public fun getWatches(): List<WatchInfo> {
         WatchInfo(
             name = "Horologia Romanum",
             description = "The Horologia Romanum features a clean dial design inspired by precision marine chronometers. Known for its large case size and elegant simplicity, it represents HR's commitment to technical excellence and timeless design.",
-            composable = { modifier, timeZone -> HorologiaRomanum(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+            composable = { modifier, timeZone -> HorologiaRomanumWatchface(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
         ),
 
         /*  WatchInfo(
@@ -76,48 +94,48 @@ public fun getWatches(): List<WatchInfo> {
         WatchInfo(
             name = "Leonard Automatic Collection",
             description = "The Leonard Automaic showcases the brand's heritage of elegance and precision. With its classic design featuring roman numerals and a moonphase display, it represents Leonards' commitment to traditional watchmaking values and timeless aesthetics.",
-            composable = { modifier, timeZone -> LeonardAutomatic(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+            composable = { modifier, timeZone -> LeonardAutomaticWatchface(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
         ),
         WatchInfo(
             name = "山の時",
             description = "The 山の時 (Yama-no-Toki) collection, named after founder 山の時, represents the pinnacle of the brand's watchmaking expertise. Featuring in-house movements and exquisite finishing, these timepieces combine technical innovation with elegant design.",
-            composable = { modifier, timeZone -> YamaNoToki(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+            composable = { modifier, timeZone -> YamaNoTokiWatchface(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
         ),
         WatchInfo(
             name = "Constantinus Aureus Marine Chronometer",
             description = "The Constantinus Aureus Chronometer continues the brand's heritage of producing precise marine chronometers for navigation. With its distinctive power reserve indicator and date display, it combines traditional craftsmanship with modern innovation.",
-            composable = { modifier, timeZone -> ConstantinusAureusChronometer(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+            composable = { modifier, timeZone -> ConstantinusAureusChronometerWatchface(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
         ),
         WatchInfo(
             name = "Roma Marina",
             description = "The Roma Marina, first introduced in 1975, features an integrated bracelet and octagonal bezel. With its distinctive hobnail pattern dial, it represents the brand's ability to combine technical excellence with distinctive design elements.",
-            composable = { modifier, timeZone -> RomaMarina(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+            composable = { modifier, timeZone -> RomaMarinaWatchface(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
         ),
         WatchInfo(
             name = "Kandinsky Evening",
             description = "The Kandinsky Evening watch face is inspired by Wassily Kandinsky's famous 'Circles in a Circle' painting. It features a light background with multiple colored circles of various sizes and intersecting lines, creating a vibrant and artistic timepiece that celebrates the abstract art movement.",
-            composable = { modifier, timeZone -> KandinskyEvening(modifier = modifier, timeZone = timeZone) }
+            composable = { modifier, timeZone -> KandinskyEveningWatchface(modifier = modifier, timeZone = timeZone) }
         ),
         WatchInfo(
             name = "Pontifex Chronometra",
             description = "The Pontifex Chronometra combines distinctive design elements with exceptional craftsmanship. Founded in 1996, this independent Swiss manufacturer draws on traditional techniques while incorporating modern innovations, resulting in watches with unique teardrop lugs and meticulously finished movements.",
-            composable = { modifier, timeZone -> PontifexChronometra(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+            composable = { modifier, timeZone -> PontifexChronometraWatchface(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
         ),
         WatchInfo(
             name = "Knot Urushi",
             description = "The Knot Urushi is a collaboration between modern watchmaking and traditional Japanese craftsmanship. Its deep jet black dial is created through the meticulous Urushi lacquer technique, involving repeated painting, drying, and sharpening by skilled artisans. The dial is adorned with gold powder scraped from gold ingots, creating a subtle shimmer effect as light plays across the surface. With its minimalist silver hands and markers, this timepiece exemplifies the perfect harmony between Japanese aesthetics and precision timekeeping.",
-            composable = { modifier, timeZone -> Knot(modifier = modifier, timeZone = timeZone) }
+            composable = { modifier, timeZone -> KnotUrushiWatchface(modifier = modifier, timeZone = timeZone) }
         ),
         WatchInfo(
             name = "Centurio Luminor",
             description = "The Centurio Luminor is renowned for its minimalist design and signature fumé dial that gradually darkens from center to edge. Founded in 1848, this independent Swiss manufacturer creates timepieces that combine traditional craftsmanship with contemporary aesthetics and innovative complications.",
-            composable = { modifier, timeZone -> CenturioLuminor(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+            composable = { modifier, timeZone -> CenturioLuminorWatchface(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
         ),
 
         WatchInfo(
             name = "Chronomagus Regum",
             description = "The Chronomagus Regum is celebrated for its ultra-thin profile and minimalist design. Since the 1950s, Chronomagus has been a pioneer in creating incredibly slim watches, with the Regum line showcasing the brand's expertise in producing elegant timepieces that combine technical innovation with refined aesthetics.",
-            composable = { modifier, timeZone -> ChronomagusRegum(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+            composable = { modifier, timeZone -> ChronomagusWatchface(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
         ),
         /*  WatchInfo(
               name = "Oris Aquis",
@@ -174,24 +192,24 @@ public fun getWatches(): List<WatchInfo> {
         WatchInfo(
             name = "Aventinus Classique",
             description = "The Aventinus Classique embodies the timeless elegance of Jean-Louis Aventinus's original designs. With its coin-edge case, guilloche dial, and distinctive Aventins hands with hollow moon tips, it represents the pinnacle of traditional Swiss watchmaking and horological heritage.",
-            composable = { modifier, timeZone -> AventinusClassique(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+            composable = { modifier, timeZone -> AventinusClassiqueWatchface(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
         ),
         WatchInfo(
             name = "Lucerna Roma",
             description = "The Lucerna Roma features a distinctive tonneau (barrel) shape case and bold, colorful numerals. Known as the 'Master of Inventions', Lucerna Roma combines avant-garde design with traditional Swiss watchmaking expertise to create timepieces that are both technically impressive and visually striking.",
-            composable = { modifier, timeZone -> LucernaRoma(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+            composable = { modifier, timeZone -> LucernaRomaWatchface(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
         ),
 
         WatchInfo(
             name = "Chant du Temps",
             description = "The Chant Du Temps exemplifies pure, minimalist elegance with its slim profile and clean dial. As one of the oldest continuously operating watch manufacturers, Chant Du Temps combines centuries of tradition with contemporary refinement in this timeless dress watch.",
-            composable = { modifier, timeZone -> ChantDuTemps(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+            composable = { modifier, timeZone -> ChantDuTempsWatchface(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
         ),
 
         WatchInfo(
             name = "Грань Секунды",
             description = "The Грань Секунды combines classic design with sophisticated complications like power reserve indicators and chronographs. Founded in St. Petersburg in 1888, Грань Секунды represents Russian watchmaking tradition with its elegant aesthetics and technical excellence.",
-            composable = { modifier, timeZone -> EdgeOfSecond(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+            composable = { modifier, timeZone -> EdgeOfSecondWatchface(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
         ),
 
         /* WatchInfo(
@@ -207,13 +225,13 @@ public fun getWatches(): List<WatchInfo> {
         WatchInfo(
             name = "Alpenglühen Zeitwerk",
             description = "The Alpenglühen Zeitwerk features a deep blue dial inspired by the Atlantic Ocean, combining artistry with functionality. This German-made timepiece combines Bauhaus minimalism with dive watch functionality, featuring a waterproof design, luminous markers, and the distinctive red seconds hand that is a signature of Alpenglühen Zeitwerk watches.",
-            composable = { modifier, timeZone -> Zeitwerk(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+            composable = { modifier, timeZone -> ZeitwerkWatchface(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
         ),
 
         WatchInfo(
             name = "Vostok Military",
             description = "Vostok Military pays tribute to the rugged Amphibia watches produced for the Soviet and Russian armed forces. Known for their durable cases, ingenious Amphibia waterproofing with a self‑sealing caseback, and bold utilitarian dials, these mechanical timepieces are built to withstand harsh conditions while delivering dependable everyday timekeeping.",
-            composable = { modifier, timeZone -> VostokRussianMilitary(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+            composable = { modifier, timeZone -> VostokRussianMilitaryWatchface(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
         )
 
 
