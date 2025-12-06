@@ -7,7 +7,7 @@ import com.coroutines.swisstime.watchfaces.watches.ChronomagusWatchface
 import com.coroutines.swisstime.watchfaces.watches.ConstantinusAureusChronometerWatchface
 import com.coroutines.swisstime.watchfaces.watches.EdgeOfSecondWatchface
 import com.coroutines.swisstime.watchfaces.watches.HorologiaRomanumWatchface
-import com.coroutines.swisstime.watchfaces.watches.JurgsenZenithor
+import com.coroutines.swisstime.watchfaces.watches.JurgsenZenithorWatchface
 import com.coroutines.swisstime.watchfaces.watches.KandinskyEveningWatchface
 import com.coroutines.swisstime.watchfaces.watches.KnotUrushiWatchface
 import com.coroutines.swisstime.watchfaces.watches.LeonardAutomaticWatchface

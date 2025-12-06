@@ -11,10 +11,12 @@ buildscript {
 }
 
 plugins {
-    alias(libs.plugins.android.application) apply false
+    // Use unversioned IDs for Android plugins to avoid conflicts with AGP on buildSrc classpath
+    id("com.android.application") apply false
+    id("com.android.library") apply false
+    id("com.android.test") apply false
+
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.compose) apply false
-    alias(libs.plugins.android.library) apply false
-    alias(libs.plugins.android.test) apply false
     alias(libs.plugins.baselineprofile) apply false
 }

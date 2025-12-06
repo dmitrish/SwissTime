@@ -63,3 +63,40 @@ World Clock with timezones is a mighty little app that adds fun to timekeeping. 
 </table>
 <p></p>
 
+
+
+
+---
+
+## Baseline Profile: Where to find guidance and how to run it
+
+If you're looking for where the Baseline Profile guidance is provided, here are the essentials directly in this repository:
+
+- How to run from Android Studio
+  - Connect a device/emulator (API 33+ recommended; rooted API 28+ also works).
+  - In Run/Debug configurations, choose "Generate Baseline Profile" or right‑click baselineprofile/src/main/java/com/coroutines/baselineprofile/BaselineProfileGenerator.kt and Run.
+  - The generator starts the app, waits for the Welcome screen to settle ("Tap to zoom" visible), collects the profile, and copies it into the app module.
+
+- How to run from the command line
+  - ./gradlew :app:generateReleaseBaselineProfile
+  - The baselineprofile module is configured to use connected devices (see baselineprofile/build.gradle.kts).
+
+- What gets generated (and where)
+  - Baseline profile: app/src/main/baselineProfiles/baseline-prof.txt
+  - Startup profile (used for dex layout): app/src/main/startupProfiles/startup-prof.txt
+
+- How it gets into your AAB/APK
+  - The Android Gradle plugin packages baseline-prof.txt into assets/dexopt/baseline.prof.
+  - androidx.profileinstaller installs it on first launch; Google Play also uses it from the AAB to precompile hot code paths at install time.
+
+- Verify in your bundle
+  - Build: ./gradlew :app:bundleRelease
+  - Inspect: unzip app/build/outputs/bundle/release/app-release.aab and look for base/assets/dexopt/baseline.prof
+
+- Troubleshooting
+  - If the generator times out waiting for UI, ensure you see the "Tap to zoom" text on the Welcome screen or switch device locale to English.
+  - Re-run with logs: ./gradlew :app:generateReleaseBaselineProfile --info
+  - Make sure a device is connected and unlocked.
+More sources in this repo:
+- baselineprofile/src/main/java/com/coroutines/baselineprofile/BaselineProfileGenerator.kt (generator + UI wait logic)
+- baselineprofile/src/main/java/com/coroutines/baselineprofile/StartupBenchmarks.kt (compare startup with/without profiles)

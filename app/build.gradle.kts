@@ -1,5 +1,7 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
-    alias(libs.plugins.android.application)
+    id("com.android.application")
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("app.cash.paparazzi") version "2.0.0-alpha02"
@@ -7,6 +9,7 @@ plugins {
 }
 
 apply(plugin = "shot")
+apply(plugin = "com.coroutines.android.app.compose")
 
 android {
     namespace = "com.coroutines.swisstime"
@@ -36,8 +39,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
+        }
     }
     buildFeatures {
         compose = true
