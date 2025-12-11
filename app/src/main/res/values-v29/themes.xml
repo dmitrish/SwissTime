@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.SwissTime" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">#FF2F4F4F</item>
+        <item name="android:windowBackground">@color/nyc_blue</item>
+        <item name="android:windowActionBar">false</item>
+    </style>
+    
+    <style name="Theme.SplashScreen" parent="android:Theme.Material.Light.NoActionBar"/>
+
+    <style name="Theme.PostSplash" parent="android:Theme.Material.Light.NoActionBar" >
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="android:statusBarColor">@color/dark_navy</item>
+        <item name="android:navigationBarColor">@color/dark_navy</item>
+        <item name="android:windowBackground">@drawable/splashstatic</item>
+        <item name="windowSplashScreenBackground">@color/splash_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/static_watch_face</item>
+    </style>
+</resources>

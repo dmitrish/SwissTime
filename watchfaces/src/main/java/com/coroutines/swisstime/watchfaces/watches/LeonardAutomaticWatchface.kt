@@ -38,306 +38,280 @@ private val CenterDotColor = Color(0xFF00008B) // Dark blue center dot
 
 @Composable
 fun LeonardAutomaticWatchface(
-    modifier: Modifier = Modifier,
-    timeZone: TimeZone = TimeZone.getDefault()
+  modifier: Modifier = Modifier,
+  timeZone: TimeZone = TimeZone.getDefault()
 ) {
-    WatchfaceScaffold(
-        modifier = modifier,
-        timeZone = timeZone,
-        staticContent = { center, radius, _ ->
-            drawLeonardClockFace(center, radius)
-            drawLeonardHourMarkersAndNumbers(center, radius, timeZone)
-        },
-        animatedContent = { center, radius, currentTime, _ ->
-            val time = currentTime.toWatchTime()
-            drawLeonardClockHands(center, radius, time)
-            drawLeonardCenterDot(center, radius)
-        }
-    )
+  WatchfaceScaffold(
+    modifier = modifier,
+    timeZone = timeZone,
+    staticContent = { center, radius, _ ->
+      drawLeonardClockFace(center, radius)
+      drawLeonardHourMarkersAndNumbers(center, radius, timeZone)
+    },
+    animatedContent = { center, radius, currentTime, _ ->
+      val time = currentTime.toWatchTime()
+      drawLeonardClockHands(center, radius, time)
+      drawLeonardCenterDot(center, radius)
+    }
+  )
 }
 
 private fun DrawScope.drawLeonardClockFace(center: Offset, radius: Float) {
-    // Draw outer circle (border)
+  // Draw outer circle (border)
+  drawCircle(color = ClockBorderColor, radius = radius, center = center, style = Stroke(width = 6f))
+
+  // Draw inner circle (face)
+  drawCircle(color = ClockFaceColor, radius = radius - 3f, center = center)
+
+  // Draw subtle guilloche pattern (concentric circles)
+  for (i in 1..8) {
     drawCircle(
-        color = ClockBorderColor,
-        radius = radius,
-        center = center,
-        style = Stroke(width = 6f)
+      color = Color.Black.copy(alpha = 0.03f),
+      radius = radius * (0.9f - i * 0.1f),
+      center = center,
+      style = Stroke(width = 1f)
     )
+  }
 
-    // Draw inner circle (face)
+  // Draw Longines logo
+  val logoPaint =
+    Paint().apply {
+      color = Color.Black.hashCode()
+      textSize = radius * 0.12f
+      textAlign = Paint.Align.CENTER
+      isFakeBoldText = true
+      isAntiAlias = true
+    }
+
+  drawContext.canvas.nativeCanvas.drawText("LÉONARD", center.x, center.y - radius * 0.3f, logoPaint)
+
+  // Draw "AUTOMATIC" text
+  val automaticPaint =
+    Paint().apply {
+      color = Color.Black.hashCode()
+      textSize = radius * 0.06f
+      textAlign = Paint.Align.CENTER
+      isFakeBoldText = false
+      isAntiAlias = true
+    }
+
+  drawContext.canvas.nativeCanvas.drawText(
+    "AUTOMATIC",
+    center.x,
+    center.y - radius * 0.15f,
+    automaticPaint
+  )
+
+  // Draw moonphase display at 6 o'clock
+  val moonphaseY = center.y + radius * 0.4f
+  val moonphaseWidth = radius * 0.4f
+  val moonphaseHeight = radius * 0.2f
+
+  // Moonphase background (night sky)
+  drawRect(
+    color = MoonphaseColor,
+    topLeft = Offset(center.x - moonphaseWidth / 2, moonphaseY - moonphaseHeight / 2),
+    size = Size(moonphaseWidth, moonphaseHeight)
+  )
+
+  // Add stars to the night sky
+  val random = Random(1234) // Fixed seed for consistent star pattern
+  for (i in 0 until 20) {
+    val starX = center.x - moonphaseWidth / 2 + random.nextFloat() * moonphaseWidth
+    val starY = moonphaseY - moonphaseHeight / 2 + random.nextFloat() * moonphaseHeight
+    val starSize = radius * 0.005f + random.nextFloat() * radius * 0.005f
+
+    drawCircle(color = Color.White, radius = starSize, center = Offset(starX, starY))
+  }
+
+  // Draw moon (position based on lunar phase)
+  // For simplicity, we'll just draw a full moon
+  val moonRadius = moonphaseHeight * 0.4f
+  val moonX = center.x
+
+  // Full moon
+  drawCircle(color = MoonColor, radius = moonRadius, center = Offset(moonX, moonphaseY))
+
+  // Add some craters to the moon for detail
+  val craters =
+    listOf(Triple(0.3f, 0.2f, 0.1f), Triple(-0.2f, -0.3f, 0.15f), Triple(0.1f, -0.1f, 0.08f))
+
+  for ((xOffset, yOffset, sizeRatio) in craters) {
     drawCircle(
-        color = ClockFaceColor,
-        radius = radius - 3f,
-        center = center
+      color = MoonColor.copy(alpha = 0.7f),
+      radius = moonRadius * sizeRatio,
+      center = Offset(moonX + moonRadius * xOffset, moonphaseY + moonRadius * yOffset)
     )
+  }
 
-    // Draw subtle guilloche pattern (concentric circles)
-    for (i in 1..8) {
-        drawCircle(
-            color = Color.Black.copy(alpha = 0.03f),
-            radius = radius * (0.9f - i * 0.1f),
-            center = center,
-            style = Stroke(width = 1f)
-        )
-    }
-
-    // Draw Longines logo
-    val logoPaint = Paint().apply {
-        color = Color.Black.hashCode()
-        textSize = radius * 0.12f
-        textAlign = Paint.Align.CENTER
-        isFakeBoldText = true
-        isAntiAlias = true
-    }
-
-    drawContext.canvas.nativeCanvas.drawText(
-        "LÉONARD",
-        center.x,
-        center.y - radius * 0.3f,
-        logoPaint
-    )
-
-    // Draw "AUTOMATIC" text
-    val automaticPaint = Paint().apply {
-        color = Color.Black.hashCode()
-        textSize = radius * 0.06f
-        textAlign = Paint.Align.CENTER
-        isFakeBoldText = false
-        isAntiAlias = true
-    }
-
-    drawContext.canvas.nativeCanvas.drawText(
-        "AUTOMATIC",
-        center.x,
-        center.y - radius * 0.15f,
-        automaticPaint
-    )
-
-    // Draw moonphase display at 6 o'clock
-    val moonphaseY = center.y + radius * 0.4f
-    val moonphaseWidth = radius * 0.4f
-    val moonphaseHeight = radius * 0.2f
-
-    // Moonphase background (night sky)
-    drawRect(
-        color = MoonphaseColor,
-        topLeft = Offset(center.x - moonphaseWidth / 2, moonphaseY - moonphaseHeight / 2),
-        size = Size(moonphaseWidth, moonphaseHeight)
-    )
-
-    // Add stars to the night sky
-    val random = Random(1234) // Fixed seed for consistent star pattern
-    for (i in 0 until 20) {
-        val starX = center.x - moonphaseWidth / 2 + random.nextFloat() * moonphaseWidth
-        val starY = moonphaseY - moonphaseHeight / 2 + random.nextFloat() * moonphaseHeight
-        val starSize = radius * 0.005f + random.nextFloat() * radius * 0.005f
-
-        drawCircle(
-            color = Color.White,
-            radius = starSize,
-            center = Offset(starX, starY)
-        )
-    }
-
-    // Draw moon (position based on lunar phase)
-    // For simplicity, we'll just draw a full moon
-    val moonRadius = moonphaseHeight * 0.4f
-    val moonX = center.x
-
-    // Full moon
-    drawCircle(
-        color = MoonColor,
-        radius = moonRadius,
-        center = Offset(moonX, moonphaseY)
-    )
-
-    // Add some craters to the moon for detail
-    val craters = listOf(
-        Triple(0.3f, 0.2f, 0.1f),
-        Triple(-0.2f, -0.3f, 0.15f),
-        Triple(0.1f, -0.1f, 0.08f)
-    )
-
-    for ((xOffset, yOffset, sizeRatio) in craters) {
-        drawCircle(
-            color = MoonColor.copy(alpha = 0.7f),
-            radius = moonRadius * sizeRatio,
-            center = Offset(
-                moonX + moonRadius * xOffset,
-                moonphaseY + moonRadius * yOffset
-            )
-        )
-    }
-
-    // Draw decorative frame around moonphase
-    drawRect(
-        color = ClockBorderColor,
-        topLeft = Offset(center.x - moonphaseWidth / 2, moonphaseY - moonphaseHeight / 2),
-        size = Size(moonphaseWidth, moonphaseHeight),
-        style = Stroke(width = 2f)
-    )
+  // Draw decorative frame around moonphase
+  drawRect(
+    color = ClockBorderColor,
+    topLeft = Offset(center.x - moonphaseWidth / 2, moonphaseY - moonphaseHeight / 2),
+    size = Size(moonphaseWidth, moonphaseHeight),
+    style = Stroke(width = 2f)
+  )
 }
 
-private fun DrawScope.drawLeonardHourMarkersAndNumbers(center: Offset, radius: Float, timeZone: TimeZone) {
-    // Longines Master Collection typically uses Roman numerals
-    val romanNumerals = listOf("I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII")
+private fun DrawScope.drawLeonardHourMarkersAndNumbers(
+  center: Offset,
+  radius: Float,
+  timeZone: TimeZone
+) {
+  // Longines Master Collection typically uses Roman numerals
+  val romanNumerals =
+    listOf("I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII")
 
-    val textPaint = Paint().apply {
-        color = NumbersColor.hashCode()
-        textSize = radius * 0.12f
-        textAlign = Paint.Align.CENTER
-        isFakeBoldText = false // Elegant thin font for Roman numerals
-        isAntiAlias = true
+  val textPaint =
+    Paint().apply {
+      color = NumbersColor.hashCode()
+      textSize = radius * 0.12f
+      textAlign = Paint.Align.CENTER
+      isFakeBoldText = false // Elegant thin font for Roman numerals
+      isAntiAlias = true
     }
 
-    // Draw Roman numerals
-    for (i in 0 until 12) {
-        // Skip VI (6 o'clock) where the moonphase is
-        if (i == 5) continue
+  // Draw Roman numerals
+  for (i in 0 until 12) {
+    // Skip VI (6 o'clock) where the moonphase is
+    if (i == 5) continue
 
-        val angle = Math.PI / 6 * i - Math.PI / 3
-        val numberRadius = radius * 0.75f
-        val numberX = center.x + cos(angle).toFloat() * numberRadius
-        val numberY = center.y + sin(angle).toFloat() * numberRadius + textPaint.textSize / 3
+    val angle = Math.PI / 6 * i - Math.PI / 3
+    val numberRadius = radius * 0.75f
+    val numberX = center.x + cos(angle).toFloat() * numberRadius
+    val numberY = center.y + sin(angle).toFloat() * numberRadius + textPaint.textSize / 3
 
-        drawContext.canvas.nativeCanvas.drawText(
-            romanNumerals[i],
-            numberX,
-            numberY,
-            textPaint
-        )
+    drawContext.canvas.nativeCanvas.drawText(romanNumerals[i], numberX, numberY, textPaint)
+  }
+
+  // Draw minute markers (small dots)
+  for (i in 0 until 60) {
+    if (i % 5 == 0) continue // Skip where hour markers are
+
+    val angle = Math.PI * 2 * i / 60
+    val markerRadius = radius * 0.01f
+    val markerX = center.x + cos(angle).toFloat() * radius * 0.85f
+    val markerY = center.y + sin(angle).toFloat() * radius * 0.85f
+
+    drawCircle(color = MarkersColor, radius = markerRadius, center = Offset(markerX, markerY))
+  }
+
+  // Draw date window at 3 o'clock
+  val dateX = center.x + radius * 0.6f
+  val dateY = center.y
+
+  // Date window
+  drawRect(
+    color = Color.White,
+    topLeft = Offset(dateX - radius * 0.08f, dateY - radius * 0.06f),
+    size = Size(radius * 0.16f, radius * 0.12f)
+  )
+  drawRect(
+    color = Color.Black,
+    topLeft = Offset(dateX - radius * 0.08f, dateY - radius * 0.06f),
+    size = Size(radius * 0.16f, radius * 0.12f),
+    style = Stroke(width = 1f)
+  )
+
+  // Date text
+  val datePaint =
+    Paint().apply {
+      color = Color.Black.hashCode()
+      textSize = radius * 0.08f
+      textAlign = Paint.Align.CENTER
+      isFakeBoldText = true
+      isAntiAlias = true
     }
 
-    // Draw minute markers (small dots)
-    for (i in 0 until 60) {
-        if (i % 5 == 0) continue // Skip where hour markers are
-
-        val angle = Math.PI * 2 * i / 60
-        val markerRadius = radius * 0.01f
-        val markerX = center.x + cos(angle).toFloat() * radius * 0.85f
-        val markerY = center.y + sin(angle).toFloat() * radius * 0.85f
-
-        drawCircle(
-            color = MarkersColor,
-            radius = markerRadius,
-            center = Offset(markerX, markerY)
-        )
-    }
-
-    // Draw date window at 3 o'clock
-    val dateX = center.x + radius * 0.6f
-    val dateY = center.y
-
-    // Date window
-    drawRect(
-        color = Color.White,
-        topLeft = Offset(dateX - radius * 0.08f, dateY - radius * 0.06f),
-        size = Size(radius * 0.16f, radius * 0.12f)
-    )
-    drawRect(
-        color = Color.Black,
-        topLeft = Offset(dateX - radius * 0.08f, dateY - radius * 0.06f),
-        size = Size(radius * 0.16f, radius * 0.12f),
-        style = Stroke(width = 1f)
-    )
-
-    // Date text
-    val datePaint = Paint().apply {
-        color = Color.Black.hashCode()
-        textSize = radius * 0.08f
-        textAlign = Paint.Align.CENTER
-        isFakeBoldText = true
-        isAntiAlias = true
-    }
-
-    val day = Calendar.getInstance(timeZone).get(Calendar.DAY_OF_MONTH).toString()
-    drawContext.canvas.nativeCanvas.drawText(
-        day,
-        dateX,
-        dateY + radius * 0.03f,
-        datePaint
-    )
+  val day = Calendar.getInstance(timeZone).get(Calendar.DAY_OF_MONTH).toString()
+  drawContext.canvas.nativeCanvas.drawText(day, dateX, dateY + radius * 0.03f, datePaint)
 }
 
 private fun DrawScope.drawLeonardClockHands(center: Offset, radius: Float, time: WatchTime) {
-    // Hour hand - elegant leaf shape (blued steel)
-    rotate(time.hourAngle, pivot = center) {
-        val hourHandPath = Path().apply {
-            moveTo(center.x, center.y - radius * 0.5f) // Tip
-            quadraticTo(
-                center.x + radius * 0.04f, center.y - radius * 0.25f, // Control point
-                center.x + radius * 0.02f, center.y // End point
-            )
-            quadraticTo(
-                center.x, center.y + radius * 0.1f, // Control point
-                center.x - radius * 0.02f, center.y // End point
-            )
-            quadraticTo(
-                center.x - radius * 0.04f, center.y - radius * 0.25f, // Control point
-                center.x, center.y - radius * 0.5f // End point (back to start)
-            )
-            close()
-        }
-        drawPath(hourHandPath, HourHandColor)
-    }
-
-    // Minute hand - longer leaf shape
-    rotate(time.minuteAngle, pivot = center) {
-        val minuteHandPath = Path().apply {
-            moveTo(center.x, center.y - radius * 0.7f) // Tip
-            quadraticTo(
-                center.x + radius * 0.03f, center.y - radius * 0.35f, // Control point
-                center.x + radius * 0.015f, center.y // End point
-            )
-            quadraticTo(
-                center.x, center.y + radius * 0.1f, // Control point
-                center.x - radius * 0.015f, center.y // End point
-            )
-            quadraticTo(
-                center.x - radius * 0.03f, center.y - radius * 0.35f, // Control point
-                center.x, center.y - radius * 0.7f // End point (back to start)
-            )
-            close()
-        }
-        drawPath(minuteHandPath, MinuteHandColor)
-    }
-
-    // Second hand - thin with small counterbalance
-    rotate(time.secondAngle, pivot = center) {
-        // Main second hand
-        drawLine(
-            color = SecondHandColor,
-            start = Offset(center.x, center.y + radius * 0.15f),
-            end = Offset(center.x, center.y - radius * 0.75f),
-            strokeWidth = 1.5f,
-            cap = StrokeCap.Round
+  // Hour hand - elegant leaf shape (blued steel)
+  rotate(time.hourAngle, pivot = center) {
+    val hourHandPath =
+      Path().apply {
+        moveTo(center.x, center.y - radius * 0.5f) // Tip
+        quadraticTo(
+          center.x + radius * 0.04f,
+          center.y - radius * 0.25f, // Control point
+          center.x + radius * 0.02f,
+          center.y // End point
         )
-
-        // Counterbalance
-        drawCircle(
-            color = SecondHandColor,
-            radius = radius * 0.03f,
-            center = Offset(center.x, center.y + radius * 0.1f)
+        quadraticTo(
+          center.x,
+          center.y + radius * 0.1f, // Control point
+          center.x - radius * 0.02f,
+          center.y // End point
         )
-    }
+        quadraticTo(
+          center.x - radius * 0.04f,
+          center.y - radius * 0.25f, // Control point
+          center.x,
+          center.y - radius * 0.5f // End point (back to start)
+        )
+        close()
+      }
+    drawPath(hourHandPath, HourHandColor)
+  }
+
+  // Minute hand - longer leaf shape
+  rotate(time.minuteAngle, pivot = center) {
+    val minuteHandPath =
+      Path().apply {
+        moveTo(center.x, center.y - radius * 0.7f) // Tip
+        quadraticTo(
+          center.x + radius * 0.03f,
+          center.y - radius * 0.35f, // Control point
+          center.x + radius * 0.015f,
+          center.y // End point
+        )
+        quadraticTo(
+          center.x,
+          center.y + radius * 0.1f, // Control point
+          center.x - radius * 0.015f,
+          center.y // End point
+        )
+        quadraticTo(
+          center.x - radius * 0.03f,
+          center.y - radius * 0.35f, // Control point
+          center.x,
+          center.y - radius * 0.7f // End point (back to start)
+        )
+        close()
+      }
+    drawPath(minuteHandPath, MinuteHandColor)
+  }
+
+  // Second hand - thin with small counterbalance
+  rotate(time.secondAngle, pivot = center) {
+    // Main second hand
+    drawLine(
+      color = SecondHandColor,
+      start = Offset(center.x, center.y + radius * 0.15f),
+      end = Offset(center.x, center.y - radius * 0.75f),
+      strokeWidth = 1.5f,
+      cap = StrokeCap.Round
+    )
+
+    // Counterbalance
+    drawCircle(
+      color = SecondHandColor,
+      radius = radius * 0.03f,
+      center = Offset(center.x, center.y + radius * 0.1f)
+    )
+  }
 }
 
 private fun DrawScope.drawLeonardCenterDot(center: Offset, radius: Float) {
-    drawCircle(
-        color = CenterDotColor,
-        radius = radius * 0.03f,
-        center = center
-    )
+  drawCircle(color = CenterDotColor, radius = radius * 0.03f, center = center)
 }
 
 @Preview(showBackground = true)
 @Composable
 fun LeonardAutomaticPreview() {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            LeonardAutomaticWatchface()
-        }
+  Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    LeonardAutomaticWatchface()
+  }
 }

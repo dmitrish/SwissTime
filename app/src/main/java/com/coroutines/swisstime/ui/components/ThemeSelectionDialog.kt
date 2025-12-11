@@ -30,80 +30,70 @@ import com.coroutines.worldclock.common.theme.ThemeMode
  */
 @Composable
 fun ThemeSelectionDialog(
-    themeMode: ThemeMode,
-    onThemeModeChange: (ThemeMode) -> Unit,
-    onDismiss: () -> Unit
+  themeMode: ThemeMode,
+  onThemeModeChange: (ThemeMode) -> Unit,
+  onDismiss: () -> Unit
 ) {
-    Dialog(
-        onDismissRequest = onDismiss
+  Dialog(onDismissRequest = onDismiss) {
+    Card(
+      modifier = Modifier.fillMaxWidth().padding(16.dp),
+      shape = RoundedCornerShape(16.dp),
+      colors =
+        CardDefaults.cardColors(
+          containerColor = DarkNavy.darken(0.3f) // MaterialTheme.colorScheme.surface
+        )
     ) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = DarkNavy.darken(0.3f)// MaterialTheme.colorScheme.surface
-            )
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Text(
-                    text = "Select Theme",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
+      Column(modifier = Modifier.padding(16.dp)) {
+        Text(
+          text = "Select Theme",
+          style = MaterialTheme.typography.titleLarge,
+          color = MaterialTheme.colorScheme.onSurface
+        )
 
-                Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-                // Day Theme option
-                ThemeOption(
-                    title = "Day Theme",
-                    description = "Default theme with navy background",
-                    selected = themeMode == ThemeMode.DAY,
-                    onClick = {
-                        onThemeModeChange(ThemeMode.DAY)
-                        onDismiss()
-                    }
-                )
+        // Day Theme option
+        ThemeOption(
+          title = "Day Theme",
+          description = "Default theme with navy background",
+          selected = themeMode == ThemeMode.DAY,
+          onClick = {
+            onThemeModeChange(ThemeMode.DAY)
+            onDismiss()
+          }
+        )
 
-                Divider(modifier = Modifier.padding(vertical = 8.dp))
+        Divider(modifier = Modifier.padding(vertical = 8.dp))
 
-                // Night Theme option
-                ThemeOption(
-                    title = "Night Theme",
-                    description = "Dark theme with black background",
-                    selected = themeMode == ThemeMode.NIGHT,
-                    onClick = {
-                        onThemeModeChange(ThemeMode.NIGHT)
-                        onDismiss()
-                    }
-                )
+        // Night Theme option
+        ThemeOption(
+          title = "Night Theme",
+          description = "Dark theme with black background",
+          selected = themeMode == ThemeMode.NIGHT,
+          onClick = {
+            onThemeModeChange(ThemeMode.NIGHT)
+            onDismiss()
+          }
+        )
 
-                Divider(modifier = Modifier.padding(vertical = 8.dp))
+        Divider(modifier = Modifier.padding(vertical = 8.dp))
 
-                // System Default option
-                ThemeOption(
-                    title = "System Default",
-                    description = "Follow system dark mode settings",
-                    selected = themeMode == ThemeMode.SYSTEM,
-                    onClick = {
-                        onThemeModeChange(ThemeMode.SYSTEM)
-                        onDismiss()
-                    }
-                )
+        // System Default option
+        ThemeOption(
+          title = "System Default",
+          description = "Follow system dark mode settings",
+          selected = themeMode == ThemeMode.SYSTEM,
+          onClick = {
+            onThemeModeChange(ThemeMode.SYSTEM)
+            onDismiss()
+          }
+        )
 
-                Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-                // Cancel button
-                TextButton(
-                    onClick = onDismiss,
-                    modifier = Modifier.align(Alignment.End)
-                ) {
-                    Text("Cancel")
-                }
-            }
-        }
+        // Cancel button
+        TextButton(onClick = onDismiss, modifier = Modifier.align(Alignment.End)) { Text("Cancel") }
+      }
     }
+  }
 }

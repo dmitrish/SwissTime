@@ -17,4 +17,25 @@ plugins {
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.android.test) apply false
     alias(libs.plugins.baselineprofile) apply false
+    alias(libs.plugins.spotless) apply false
+}
+
+subprojects {
+    apply(plugin = "com.diffplug.spotless")
+    
+    configure<com.diffplug.gradle.spotless.SpotlessExtension> {
+        kotlin {
+            ktfmt().googleStyle()
+            target("**/*.kt")
+            targetExclude("**/build/**/*.kt")
+        }
+        kotlinGradle {
+            ktfmt().googleStyle()
+        }
+    }
+    
+    // Automatically check formatting on build
+    tasks.matching { it.name == "check" }.configureEach {
+        dependsOn("spotlessCheck")
+    }
 }

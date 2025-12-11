@@ -1,0 +1,16 @@
+R_DEF: Internal format may change without notice
+local
+string chronomagus_regum_wallpaper_description
+string chronomagus_regum_wallpaper_name
+string digital_clock_wallpaper_description
+string digital_clock_wallpaper_name
+string roma_marina_wallpaper_description
+string roma_marina_wallpaper_name
+string zeitwerk_wallpaper_description
+string zeitwerk_wallpaper_name
+xml aventinus_classique_wallpaper
+xml chronomagus_regum_wallpaper
+xml digital_clock_wallpaper
+xml leonard_automatic_wallpaper
+xml roma_marina_wallpaper
+xml zeitwerk_wallpaper

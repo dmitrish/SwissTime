@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shared Element Transition — Implementation Summary</title>
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; max-width: 900px; margin: 0 auto; padding: 20px; color: #333; }
+    h1, h2, h3 { color: #2c3e50; }
+    h1 { border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+    h2 { border-bottom: 1px solid #bdc3c7; padding-bottom: 5px; margin-top: 30px; }
+    code { background-color: #f8f8f8; padding: 2px 5px; border-radius: 3px; font-family: 'Courier New', monospace; font-size: 0.9em; }
+    pre { background-color: #f8f8f8; padding: 15px; border-radius: 5px; overflow-x: auto; border: 1px solid #ddd; }
+    .note { background-color: #e8f4f8; padding: 15px; border-left: 5px solid #3498db; margin: 20px 0; }
+    .checklist li { margin-bottom: 6px; }
+    .file { font-weight: bold; }
+    .small { color: #666; font-size: 0.95em; }
+  </style>
+</head>
+<body>
+  <h1>Shared Element Transition — Implementation Summary</h1>
+  <p class="small">Last updated: 2025-11-19 13:57</p>
+
+  <h2>1. Introduction</h2>
+  <p>
+    This document summarizes the changes made to implement a smooth shared element transition in the Welcome → Time
+    navigation flow. The selected watch on the Welcome screen now animates seamlessly into place on the Time screen
+    using Jetpack Compose's official shared transition APIs.
+  </p>
+
+  <h2>2. Goals</h2>
+  <ul>
+    <li>Use the official Compose Shared Transition APIs (no third-party dependency).</li>
+    <li>Smooth motion: add an eased tween for the shared element movement.</li>
+    <li>Prevent double-scaling during navigation to avoid visual jank.</li>
+    <li>Ensure the destination element exists immediately so the transition has a ready target.</li>
+  </ul>
+
+  <h2>3. High-level approach</h2>
+  <ul>
+    <li>Wrap the app's NavHost with <code>SharedTransitionLayout</code> and pass the provided scopes to destinations.</li>
+    <li>Apply <code>Modifier.sharedElement(...)</code> to the focused watch on the Welcome screen and to its counterpart on the Time screen using the same shared key.</li>
+    <li>Add a custom <code>boundsTransform</code> using a FastOutSlowIn easing tween (~420ms) for more natural motion.</li>
+    <li>Temporarily disable local scale transforms while the shared transition is in flight to avoid double-scaling.</li>
+  </ul>
+
+  <h2>4. Files changed</h2>
+  <ul>
+    <li class="file">app/src/main/java/com/coroutines/swisstime/ui/components/SwissTimePager.kt</li>
+    <li class="file">app/src/main/java/com/coroutines/swisstime/ui/screens/WelcomeScreen.kt</li>
+    <li class="file">app/src/main/java/com/coroutines/swisstime/navigation/NavGraph.kt</li>
+    <li class="file">app/src/main/java/com/coroutines/swisstime/ui/screens/TimeScreen.kt</li>
+    <li class="file">app/src/main/java/com/coroutines/swisstime/ui/screens/SelectedWatchScreen2.kt</li>
+    <li class="file">app/build.gradle.kts</li>
+  </ul>
+
+  <h2>5. Key code snippets</h2>
+
+  <h3>5.1 NavGraph — SharedTransitionLayout root</h3>
+  <pre><code>@Composable
+@OptIn(androidx.compose.animation.ExperimentalSharedTransitionApi::class)
+fun NavGraph(...) {
+  androidx.compose.animation.SharedTransitionLayout {
+    val sharedScope = this
+    NavHost(
+      navController = navController,
+      startDestination = "decide",
+      ...
+    ) {
+      composable(Screen.Welcome.route) {
+        WelcomeScreen(
+          watchViewModel = watchViewModel,
+          onBackClick = { navController.navigate(Screen.Time.route) },
+          sharedTransitionScope = sharedScope,
+          animatedVisibilityScope = this
+        )
+      }
+      composable(Screen.Time.route) {
+        TimeScreen(
+          watchViewModel = watchViewModel,
+          sharedTransitionScope = sharedScope,
+          animatedVisibilityScope = this
+        )
+      }
+    }
+  }
+}
+</code></pre>
+
+  <h3>5.2 Welcome screen pager — shared element + eased tween + anti double-scale</h3>
+  <pre><code>@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+fun SwissTimePager(..., sharedTransitionScope: SharedTransitionScope?, animatedVisibilityScope: AnimatedVisibilityScope?) {
+  var isNavigating by remember { mutableStateOf(false) }
+  ...
+  val focused = pageOffset &lt; 0.001f
+  val finalScale = depthScale * zoom
+
+  var mod = Modifier
+    .size(220.dp)
+    .then(clickableModifier)
+    .graphicsLayer {
+      // Disable local scaling while shared element flies
+      val applied = if (focused && sharedTransitionScope != null && animatedVisibilityScope != null && isNavigating) 1f else finalScale
+      scaleX = applied; scaleY = applied; this.alpha = alpha
+    }
+
+  if (focused && sharedTransitionScope != null && animatedVisibilityScope != null) {
+    with(sharedTransitionScope) {
+      mod = mod.sharedElement(
+        sharedContentState = androidx.compose.animation.rememberSharedContentState(key = "watch-${watch.name}"),
+        animatedVisibilityScope = animatedVisibilityScope,
+        boundsTransform = { _, _ ->
+          androidx.compose.animation.core.tween(durationMillis = 420, easing = androidx.compose.animation.core.FastOutSlowInEasing)
+        }
+      )
+    }
+  }
+
+  // Button marks navigating to avoid double scaling
+  Button(onClick = { isNavigating = true; saveSelectionAndNavigate() }) { Text("Select this watch") }
+}
+</code></pre>
+
+  <h3>5.3 WelcomeScreen — pass scopes through</h3>
+  <pre><code>@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+fun WelcomeScreen(..., sharedTransitionScope: SharedTransitionScope?, animatedVisibilityScope: AnimatedVisibilityScope?) {
+  SwissTimePager(
+    watchViewModel = watchViewModel,
+    onBackClick = onBackClick,
+    sharedTransitionScope = sharedTransitionScope,
+    animatedVisibilityScope = animatedVisibilityScope
+  )
+}
+</code></pre>
+
+  <h3>5.4 Destination readiness</h3>
+  <p>
+    The Time screen composes its central watch container immediately as before, ensuring the landing target exists at
+    the start of the transition. No conditional gating delays its composition.
+  </p>
+
+  <h2>6. API and import notes</h2>
+  <ul>
+    <li><code>sharedElement</code> is a member extension available only within <code>SharedTransitionScope</code>. Do not import <code>androidx.compose.animation.sharedElement</code> directly.</li>
+    <li><code>rememberSharedContentState</code> can be imported or referenced fully-qualified from <code>androidx.compose.animation</code>.</li>
+    <li>Annotate call sites with <code>@OptIn(ExperimentalSharedTransitionApi::class)</code>.</li>
+  </ul>
+
+  <h2>7. Version requirements</h2>
+  <ul>
+    <li>Compose BOM: <code>2025.10.01</code> (project already uses a modern BOM)</li>
+    <li>animation artifact: <code>androidx.compose.animation:animation</code> added to app module</li>
+    <li>Navigation Compose: 2.9.3 (already present)</li>
+  </ul>
+
+  <h2>8. Tips for smoother motion</h2>
+  <ul class="checklist">
+    <li>Keep aspect ratios similar between source and destination.</li>
+    <li>Avoid heavy recompositions inside the shared subtree while it is moving.</li>
+    <li>Consider <code>sharedBounds</code> if the internal subtree is complex.</li>
+    <li>Optional: fade surrounding chrome during the transition for added polish.</li>
+  </ul>
+
+  <h2>9. Troubleshooting</h2>
+  <ul>
+    <li>Unresolved reference for <code>sharedElement</code>: ensure the call is made inside <code>with(sharedTransitionScope) { ... }</code> and scopes are non-null.</li>
+    <li>Jank during motion: ensure local scaling is disabled while the shared element is in flight.</li>
+    <li>Transition doesn’t start: confirm that the same key (e.g., <code>watch-<em>name</em></code>) is used on both screens and that both elements are laid out.</li>
+  </ul>
+
+  <h2>10. Outcome</h2>
+  <p>
+    The Welcome → Time navigation now uses an officially supported shared element transition with a custom eased motion,
+    avoids double-scaling artifacts, and ensures the destination element is available immediately for a smooth, polished
+    experience.
+  </p>
+</body>
+</html>

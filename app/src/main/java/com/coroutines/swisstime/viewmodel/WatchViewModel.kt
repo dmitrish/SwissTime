@@ -7,372 +7,378 @@ import com.coroutines.worldclock.common.model.WatchInfo
 import com.coroutines.worldclock.common.repository.TimeZoneInfo
 import com.coroutines.worldclock.common.repository.TimeZoneRepository
 import com.coroutines.worldclock.common.repository.WatchPreferencesRepository
+import java.util.Date
+import java.util.TimeZone
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.util.Date
-import java.util.TimeZone
 
-/**
- * ViewModel for managing watch selection and time zone
- */
+/** ViewModel for managing watch selection and time zone */
 class WatchViewModelX(
-    private val watchPreferencesRepository: WatchPreferencesRepository,
-    private val timeZoneRepository: TimeZoneRepository,
-    val watches: List<WatchInfo>
+  private val watchPreferencesRepository: WatchPreferencesRepository,
+  private val timeZoneRepository: TimeZoneRepository,
+  val watches: List<WatchInfo>
 ) : ViewModel() {
 
-    // Get the selected watch as a StateFlow
-    val selectedWatch: StateFlow<WatchInfo?> = watchPreferencesRepository.selectedWatchName
-        .map { watchName ->
-            // Find the watch with the matching name
-            watchName?.let { name ->
-                watches.find { it.name == name }
-            }
+  // Get the selected watch as a StateFlow
+  val selectedWatch: StateFlow<WatchInfo?> =
+    watchPreferencesRepository.selectedWatchName
+      .map { watchName ->
+        // Find the watch with the matching name
+        watchName?.let { name -> watches.find { it.name == name } }
+      }
+      .stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = null
+      )
+
+  // Get the list of selected watches (watches that have been explicitly selected by the user)
+  private val _selectedWatches =
+    kotlinx.coroutines.flow.MutableStateFlow<List<WatchInfo>>(emptyList())
+  val selectedWatches: StateFlow<List<WatchInfo>> = _selectedWatches
+
+  // Flag to indicate when selectedWatches has received its first value from repository
+  private val _selectedWatchesLoaded = kotlinx.coroutines.flow.MutableStateFlow(false)
+  val selectedWatchesLoaded: StateFlow<Boolean> = _selectedWatchesLoaded
+
+  init {
+    // Initialize selected watches from preferences
+    viewModelScope.launch {
+      watchPreferencesRepository.selectedWatchNames.collect { watchNames ->
+        val selectedWatchesList = watchNames.mapNotNull { name -> watches.find { it.name == name } }
+        _selectedWatches.value = selectedWatchesList
+        // Mark as loaded after first (and subsequent) emissions
+        if (!_selectedWatchesLoaded.value) {
+          _selectedWatchesLoaded.value = true
         }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = null
-        )
+      }
+    }
+  }
 
-    // Get the list of selected watches (watches that have been explicitly selected by the user)
-    private val _selectedWatches = kotlinx.coroutines.flow.MutableStateFlow<List<WatchInfo>>(emptyList())
-    val selectedWatches: StateFlow<List<WatchInfo>> = _selectedWatches
+  // Get all available time zones
+  val allTimeZones: List<TimeZoneInfo> = timeZoneRepository.getAllTimeZones()
 
-    // Flag to indicate when selectedWatches has received its first value from repository
-    private val _selectedWatchesLoaded = kotlinx.coroutines.flow.MutableStateFlow(false)
-    val selectedWatchesLoaded: StateFlow<Boolean> = _selectedWatchesLoaded
+  // Cache for sorted time zones to avoid expensive sorting operations
+  private var sortedTimeZonesCache: List<TimeZoneInfo>? = null
 
-    init {
-        // Initialize selected watches from preferences
-        viewModelScope.launch {
-            watchPreferencesRepository.selectedWatchNames.collect { watchNames ->
-                val selectedWatchesList = watchNames.mapNotNull { name ->
-                    watches.find { it.name == name }
-                }
-                _selectedWatches.value = selectedWatchesList
-                // Mark as loaded after first (and subsequent) emissions
-                if (!_selectedWatchesLoaded.value) {
-                    _selectedWatchesLoaded.value = true
-                }
-            }
-        }
+  // Get time zones sorted by their distance from GMT
+  fun getSortedTimeZones(): List<TimeZoneInfo> {
+    // Return cached result if available
+    sortedTimeZonesCache?.let {
+      return it
     }
 
-    // Get all available time zones
-    val allTimeZones: List<TimeZoneInfo> = timeZoneRepository.getAllTimeZones()
+    // Sort time zones by their distance from GMT
+    val sorted =
+      allTimeZones.sortedBy { timeZoneInfo ->
+        // Check if we already have this time zone in the cache
+        timeZoneCache[timeZoneInfo.id]?.rawOffset
+          ?: run {
+            // Get the raw offset in milliseconds from GMT
+            val timeZone = TimeZone.getTimeZone(timeZoneInfo.id)
+            // Cache the time zone for future use
+            timeZoneCache[timeZoneInfo.id] = timeZone
+            timeZone.rawOffset
+          }
+      }
 
-    // Cache for sorted time zones to avoid expensive sorting operations
-    private var sortedTimeZonesCache: List<TimeZoneInfo>? = null
+    // Cache the result
+    sortedTimeZonesCache = sorted
+    return sorted
+  }
 
-    // Get time zones sorted by their distance from GMT
-    fun getSortedTimeZones(): List<TimeZoneInfo> {
-        // Return cached result if available
-        sortedTimeZonesCache?.let { return it }
-
-        // Sort time zones by their distance from GMT
-        val sorted = allTimeZones.sortedBy { timeZoneInfo ->
-            // Check if we already have this time zone in the cache
-            timeZoneCache[timeZoneInfo.id]?.rawOffset ?: run {
-                // Get the raw offset in milliseconds from GMT
-                val timeZone = TimeZone.getTimeZone(timeZoneInfo.id)
-                // Cache the time zone for future use
-                timeZoneCache[timeZoneInfo.id] = timeZone
-                timeZone.rawOffset
-            }
-        }
-
-        // Cache the result
-        sortedTimeZonesCache = sorted
-        return sorted
-    }
-
-    // Get the selected time zone as a StateFlow
-    val selectedTimeZone: StateFlow<TimeZoneInfo> = timeZoneRepository.selectedTimeZoneInfo
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = TimeZoneInfo(
-                id = TimeZone.getDefault().id,
-                displayName = TimeZone.getDefault().getDisplayName(
-                    TimeZone.getDefault().inDaylightTime(java.util.Date()),
-                    TimeZone.LONG
-                )
-            )
+  // Get the selected time zone as a StateFlow
+  val selectedTimeZone: StateFlow<TimeZoneInfo> =
+    timeZoneRepository.selectedTimeZoneInfo.stateIn(
+      scope = viewModelScope,
+      started = SharingStarted.WhileSubscribed(5000),
+      initialValue =
+        TimeZoneInfo(
+          id = TimeZone.getDefault().id,
+          displayName =
+            TimeZone.getDefault()
+              .getDisplayName(TimeZone.getDefault().inDaylightTime(java.util.Date()), TimeZone.LONG)
         )
+    )
 
-    // Get the TimeZone object for the selected time zone
-    val selectedTimeZoneObject: StateFlow<TimeZone> = timeZoneRepository.selectedTimeZoneId
-        .map { timeZoneId ->
-            TimeZone.getTimeZone(timeZoneId)
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = TimeZone.getDefault()
-        )
+  // Get the TimeZone object for the selected time zone
+  val selectedTimeZoneObject: StateFlow<TimeZone> =
+    timeZoneRepository.selectedTimeZoneId
+      .map { timeZoneId -> TimeZone.getTimeZone(timeZoneId) }
+      .stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = TimeZone.getDefault()
+      )
 
-    // Get the time format preference
-    val useUsTimeFormat: StateFlow<Boolean> = watchPreferencesRepository.useUsTimeFormat
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = true // Default to US format
-        )
+  // Get the time format preference
+  val useUsTimeFormat: StateFlow<Boolean> =
+    watchPreferencesRepository.useUsTimeFormat.stateIn(
+      scope = viewModelScope,
+      started = SharingStarted.WhileSubscribed(5000),
+      initialValue = true // Default to US format
+    )
 
-    // Get the watch removal gesture preference
-    val useDoubleTapForRemoval: StateFlow<Boolean> = watchPreferencesRepository.useDoubleTapForRemoval
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = false // Default to Long Press
-        )
+  // Get the watch removal gesture preference
+  val useDoubleTapForRemoval: StateFlow<Boolean> =
+    watchPreferencesRepository.useDoubleTapForRemoval.stateIn(
+      scope = viewModelScope,
+      started = SharingStarted.WhileSubscribed(5000),
+      initialValue = false // Default to Long Press
+    )
 
-    // Cache for TimeZone objects to avoid repeated lookups
-    private val timeZoneCache = mutableMapOf<String, TimeZone>()
+  // Cache for TimeZone objects to avoid repeated lookups
+  private val timeZoneCache = mutableMapOf<String, TimeZone>()
 
-    // Get the TimeZone object for a specific watch
-    fun getWatchTimeZone(watchName: String): StateFlow<TimeZone> {
-        return watchPreferencesRepository.getWatchTimeZoneId(watchName, viewModelScope)
-            .map { timeZoneId ->
-                if (timeZoneId != null) {
-                    // Check cache first
-                    timeZoneCache[timeZoneId]?.let { return@map it }
-
-                    // Create a new TimeZone object
-                    val timeZone = TimeZone.getTimeZone(timeZoneId)
-
-                    // Cache the result
-                    timeZoneCache[timeZoneId] = timeZone
-                    timeZone
-                } else {
-                    // Default to the selected time zone if no specific time zone is set for this watch
-                    selectedTimeZoneObject.value
-                }
-            }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000),
-                initialValue = selectedTimeZoneObject.value
-            )
-    }
-
-    // Cache for time zone info to avoid repeated expensive lookups
-    private val timeZoneInfoCache = mutableMapOf<String, TimeZoneInfo>()
-
-    // Get the TimeZoneInfo for a specific watch
-    fun getWatchTimeZoneInfo(watchName: String): StateFlow<TimeZoneInfo> {
-        // Eagerly try to get the time zone ID and create the TimeZoneInfo for initial value
-        // This helps with performance during page transitions
-        val initialTimeZoneId = watchPreferencesRepository.getWatchTimeZoneIdBlocking(watchName)
-        val initialTimeZoneInfo = if (initialTimeZoneId != null) {
-            // Check if we already have this time zone in the cache
-            timeZoneInfoCache[initialTimeZoneId]?.let { return@let it } ?: run {
-                // If not in cache, create it now and cache it
-                val timeZone = TimeZone.getTimeZone(initialTimeZoneId)
-                val isDaylightTime = timeZone.inDaylightTime(Date())
-                val timeZoneInfo = TimeZoneInfo(
-                    id = initialTimeZoneId,
-                    displayName = timeZone.getDisplayName(isDaylightTime, TimeZone.LONG)
-                )
-                timeZoneInfoCache[initialTimeZoneId] = timeZoneInfo
-                timeZoneInfo
-            }
-        } else {
-            selectedTimeZone.value
-        }
-
-        // Use Flow for immediate updates when timezone is changed in the dropdown
-        return watchPreferencesRepository.getWatchTimeZoneId(watchName, viewModelScope)
-            .map { tzId ->
-                if (tzId != null) {
-                    // Check cache first
-                    timeZoneInfoCache[tzId]?.let { return@map it }
-
-                    val timeZone = TimeZone.getTimeZone(tzId)
-                    val isDaylightTime = timeZone.inDaylightTime(Date())
-
-                    // Create a new TimeZoneInfo directly without searching through all time zones
-                    val timeZoneInfo = TimeZoneInfo(
-                        id = tzId,
-                        displayName = timeZone.getDisplayName(isDaylightTime, TimeZone.LONG)
-                    )
-
-                    // Cache the result
-                    timeZoneInfoCache[tzId] = timeZoneInfo
-                    timeZoneInfo
-                } else {
-                    // Default to the selected time zone info if no specific time zone is set for this watch
-                    selectedTimeZone.value
-                }
-            }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000),
-                initialValue = initialTimeZoneInfo
-            )
-    }
-
-    // Get a cached TimeZoneInfo by ID, or create a new one if not in cache
-    fun getCachedTimeZoneInfo(timeZoneId: String): TimeZoneInfo {
-        // Check cache first
-        timeZoneInfoCache[timeZoneId]?.let { return it }
-
-        // If not in cache, create a new TimeZoneInfo
-        val timeZone = TimeZone.getTimeZone(timeZoneId)
-        val isDaylightTime = timeZone.inDaylightTime(Date())
-        val timeZoneInfo = TimeZoneInfo(
-            id = timeZoneId,
-            displayName = timeZone.getDisplayName(isDaylightTime, TimeZone.LONG)
-        )
-
-        // Cache the result
-        timeZoneInfoCache[timeZoneId] = timeZoneInfo
-        return timeZoneInfo
-    }
-
-    // Get the time zone ID for a watch directly (blocking)
-    // This is more efficient than using a flow during page transitions
-    fun getWatchTimeZoneIdDirect(watchName: String): String? {
-        return watchPreferencesRepository.getWatchTimeZoneIdBlocking(watchName)
-    }
-
-    // Get a TimeZone object directly without using flows
-    // This is more efficient during page transitions
-    fun getTimeZoneDirect(watchName: String): TimeZone {
-        val timeZoneId = getWatchTimeZoneIdDirect(watchName)
+  // Get the TimeZone object for a specific watch
+  fun getWatchTimeZone(watchName: String): StateFlow<TimeZone> {
+    return watchPreferencesRepository
+      .getWatchTimeZoneId(watchName, viewModelScope)
+      .map { timeZoneId ->
         if (timeZoneId != null) {
-            // Check cache first
-            timeZoneCache[timeZoneId]?.let { return it }
+          // Check cache first
+          timeZoneCache[timeZoneId]?.let {
+            return@map it
+          }
 
-            // Create a new TimeZone object
-            val timeZone = TimeZone.getTimeZone(timeZoneId)
+          // Create a new TimeZone object
+          val timeZone = TimeZone.getTimeZone(timeZoneId)
 
-            // Cache the result
-            timeZoneCache[timeZoneId] = timeZone
-            return timeZone
+          // Cache the result
+          timeZoneCache[timeZoneId] = timeZone
+          timeZone
+        } else {
+          // Default to the selected time zone if no specific time zone is set for this watch
+          selectedTimeZoneObject.value
         }
+      }
+      .stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = selectedTimeZoneObject.value
+      )
+  }
 
-        // Fallback to default
-        return TimeZone.getDefault()
+  // Cache for time zone info to avoid repeated expensive lookups
+  private val timeZoneInfoCache = mutableMapOf<String, TimeZoneInfo>()
+
+  // Get the TimeZoneInfo for a specific watch
+  fun getWatchTimeZoneInfo(watchName: String): StateFlow<TimeZoneInfo> {
+    // Eagerly try to get the time zone ID and create the TimeZoneInfo for initial value
+    // This helps with performance during page transitions
+    val initialTimeZoneId = watchPreferencesRepository.getWatchTimeZoneIdBlocking(watchName)
+    val initialTimeZoneInfo =
+      if (initialTimeZoneId != null) {
+        // Check if we already have this time zone in the cache
+        timeZoneInfoCache[initialTimeZoneId]?.let {
+          return@let it
+        }
+          ?: run {
+            // If not in cache, create it now and cache it
+            val timeZone = TimeZone.getTimeZone(initialTimeZoneId)
+            val isDaylightTime = timeZone.inDaylightTime(Date())
+            val timeZoneInfo =
+              TimeZoneInfo(
+                id = initialTimeZoneId,
+                displayName = timeZone.getDisplayName(isDaylightTime, TimeZone.LONG)
+              )
+            timeZoneInfoCache[initialTimeZoneId] = timeZoneInfo
+            timeZoneInfo
+          }
+      } else {
+        selectedTimeZone.value
+      }
+
+    // Use Flow for immediate updates when timezone is changed in the dropdown
+    return watchPreferencesRepository
+      .getWatchTimeZoneId(watchName, viewModelScope)
+      .map { tzId ->
+        if (tzId != null) {
+          // Check cache first
+          timeZoneInfoCache[tzId]?.let {
+            return@map it
+          }
+
+          val timeZone = TimeZone.getTimeZone(tzId)
+          val isDaylightTime = timeZone.inDaylightTime(Date())
+
+          // Create a new TimeZoneInfo directly without searching through all time zones
+          val timeZoneInfo =
+            TimeZoneInfo(
+              id = tzId,
+              displayName = timeZone.getDisplayName(isDaylightTime, TimeZone.LONG)
+            )
+
+          // Cache the result
+          timeZoneInfoCache[tzId] = timeZoneInfo
+          timeZoneInfo
+        } else {
+          // Default to the selected time zone info if no specific time zone is set for this watch
+          selectedTimeZone.value
+        }
+      }
+      .stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = initialTimeZoneInfo
+      )
+  }
+
+  // Get a cached TimeZoneInfo by ID, or create a new one if not in cache
+  fun getCachedTimeZoneInfo(timeZoneId: String): TimeZoneInfo {
+    // Check cache first
+    timeZoneInfoCache[timeZoneId]?.let {
+      return it
     }
 
-    // Save the time zone for a specific watch
-    fun saveWatchTimeZone(watchName: String, timeZoneId: String) {
-        viewModelScope.launch {
-            watchPreferencesRepository.saveWatchTimeZone(watchName, timeZoneId)
-        }
+    // If not in cache, create a new TimeZoneInfo
+    val timeZone = TimeZone.getTimeZone(timeZoneId)
+    val isDaylightTime = timeZone.inDaylightTime(Date())
+    val timeZoneInfo =
+      TimeZoneInfo(
+        id = timeZoneId,
+        displayName = timeZone.getDisplayName(isDaylightTime, TimeZone.LONG)
+      )
+
+    // Cache the result
+    timeZoneInfoCache[timeZoneId] = timeZoneInfo
+    return timeZoneInfo
+  }
+
+  // Get the time zone ID for a watch directly (blocking)
+  // This is more efficient than using a flow during page transitions
+  fun getWatchTimeZoneIdDirect(watchName: String): String? {
+    return watchPreferencesRepository.getWatchTimeZoneIdBlocking(watchName)
+  }
+
+  // Get a TimeZone object directly without using flows
+  // This is more efficient during page transitions
+  fun getTimeZoneDirect(watchName: String): TimeZone {
+    val timeZoneId = getWatchTimeZoneIdDirect(watchName)
+    if (timeZoneId != null) {
+      // Check cache first
+      timeZoneCache[timeZoneId]?.let {
+        return it
+      }
+
+      // Create a new TimeZone object
+      val timeZone = TimeZone.getTimeZone(timeZoneId)
+
+      // Cache the result
+      timeZoneCache[timeZoneId] = timeZone
+      return timeZone
     }
 
-    // Save the selected watch
-    fun saveSelectedWatch(watch: WatchInfo) {
-        viewModelScope.launch {
-            watchPreferencesRepository.saveSelectedWatch(watch.name)
+    // Fallback to default
+    return TimeZone.getDefault()
+  }
 
-            // Add the watch to the selected watches list if it's not already there
-            val currentWatches = _selectedWatches.value
-            if (!currentWatches.contains(watch)) {
-                _selectedWatches.value = currentWatches + watch
+  // Save the time zone for a specific watch
+  fun saveWatchTimeZone(watchName: String, timeZoneId: String) {
+    viewModelScope.launch { watchPreferencesRepository.saveWatchTimeZone(watchName, timeZoneId) }
+  }
 
-                // Persist the updated list of selected watches
-                watchPreferencesRepository.addSelectedWatch(watch.name)
-            }
-        }
+  // Save the selected watch
+  fun saveSelectedWatch(watch: WatchInfo) {
+    viewModelScope.launch {
+      watchPreferencesRepository.saveSelectedWatch(watch.name)
+
+      // Add the watch to the selected watches list if it's not already there
+      val currentWatches = _selectedWatches.value
+      if (!currentWatches.contains(watch)) {
+        _selectedWatches.value = currentWatches + watch
+
+        // Persist the updated list of selected watches
+        watchPreferencesRepository.addSelectedWatch(watch.name)
+      }
     }
+  }
 
-    // Clear the selected watch
-    fun clearSelectedWatch() {
-        viewModelScope.launch {
-            watchPreferencesRepository.clearSelectedWatch()
+  // Clear the selected watch
+  fun clearSelectedWatch() {
+    viewModelScope.launch {
+      watchPreferencesRepository.clearSelectedWatch()
 
-            // Also remove the watch from the selected watches list
-            val selectedWatch = selectedWatch.value
-            if (selectedWatch != null) {
-                val currentWatches = _selectedWatches.value
-                _selectedWatches.value = currentWatches.filter { it.name != selectedWatch.name }
-
-                // Persist the removal of the watch from the selected watches list
-                watchPreferencesRepository.removeSelectedWatch(selectedWatch.name)
-            }
-        }
-    }
-
-    // Clear all selected watches
-    fun clearAllSelectedWatches() {
-        viewModelScope.launch {
-            _selectedWatches.value = emptyList()
-
-            // Persist the clearing of all selected watches
-            watchPreferencesRepository.clearAllSelectedWatches()
-        }
-    }
-
-    // Save the selected time zone
-    fun saveSelectedTimeZone(timeZoneId: String) {
-        viewModelScope.launch {
-            timeZoneRepository.saveSelectedTimeZone(timeZoneId)
-        }
-    }
-
-    // Save the time format preference
-    fun saveTimeFormat(useUsFormat: Boolean) {
-        viewModelScope.launch {
-            watchPreferencesRepository.saveTimeFormat(useUsFormat)
-        }
-    }
-
-    // Save the watch removal gesture preference
-    fun saveWatchRemovalGesture(useDoubleTap: Boolean) {
-        viewModelScope.launch {
-            watchPreferencesRepository.saveWatchRemovalGesture(useDoubleTap)
-        }
-    }
-
-    // Toggle a watch's selection status (add if not selected, remove if already selected)
-    fun toggleWatchSelection(watch: WatchInfo): Boolean {
+      // Also remove the watch from the selected watches list
+      val selectedWatch = selectedWatch.value
+      if (selectedWatch != null) {
         val currentWatches = _selectedWatches.value
-        val isCurrentlySelected = currentWatches.any { it.name == watch.name }
+        _selectedWatches.value = currentWatches.filter { it.name != selectedWatch.name }
 
-        viewModelScope.launch {
-            if (isCurrentlySelected) {
-                // If the watch is already selected, remove it
-                val updatedWatches = currentWatches.filter { it.name != watch.name }
-                _selectedWatches.value = updatedWatches
+        // Persist the removal of the watch from the selected watches list
+        watchPreferencesRepository.removeSelectedWatch(selectedWatch.name)
+      }
+    }
+  }
 
-                // Persist the updated list
-                watchPreferencesRepository.clearAllSelectedWatches()
-                updatedWatches.forEach { watchInfo ->
-                    watchPreferencesRepository.addSelectedWatch(watchInfo.name)
-                }
-            } else {
-                // If the watch is not selected, add it
-                _selectedWatches.value = currentWatches + watch
+  // Clear all selected watches
+  fun clearAllSelectedWatches() {
+    viewModelScope.launch {
+      _selectedWatches.value = emptyList()
 
-                // Persist the addition
-                watchPreferencesRepository.addSelectedWatch(watch.name)
-            }
+      // Persist the clearing of all selected watches
+      watchPreferencesRepository.clearAllSelectedWatches()
+    }
+  }
+
+  // Save the selected time zone
+  fun saveSelectedTimeZone(timeZoneId: String) {
+    viewModelScope.launch { timeZoneRepository.saveSelectedTimeZone(timeZoneId) }
+  }
+
+  // Save the time format preference
+  fun saveTimeFormat(useUsFormat: Boolean) {
+    viewModelScope.launch { watchPreferencesRepository.saveTimeFormat(useUsFormat) }
+  }
+
+  // Save the watch removal gesture preference
+  fun saveWatchRemovalGesture(useDoubleTap: Boolean) {
+    viewModelScope.launch { watchPreferencesRepository.saveWatchRemovalGesture(useDoubleTap) }
+  }
+
+  // Toggle a watch's selection status (add if not selected, remove if already selected)
+  fun toggleWatchSelection(watch: WatchInfo): Boolean {
+    val currentWatches = _selectedWatches.value
+    val isCurrentlySelected = currentWatches.any { it.name == watch.name }
+
+    viewModelScope.launch {
+      if (isCurrentlySelected) {
+        // If the watch is already selected, remove it
+        val updatedWatches = currentWatches.filter { it.name != watch.name }
+        _selectedWatches.value = updatedWatches
+
+        // Persist the updated list
+        watchPreferencesRepository.clearAllSelectedWatches()
+        updatedWatches.forEach { watchInfo ->
+          watchPreferencesRepository.addSelectedWatch(watchInfo.name)
         }
+      } else {
+        // If the watch is not selected, add it
+        _selectedWatches.value = currentWatches + watch
 
-        return !isCurrentlySelected // Return the new selection state
+        // Persist the addition
+        watchPreferencesRepository.addSelectedWatch(watch.name)
+      }
     }
 
-    /**
-     * Factory for creating WatchViewModel instances
-     */
-    class Factory(
-        private val watchPreferencesRepository: WatchPreferencesRepository,
-        private val timeZoneRepository: TimeZoneRepository,
-        private val watches: List<WatchInfo>
-    ) : ViewModelProvider.Factory {
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(WatchViewModelX::class.java)) {
-                return WatchViewModelX(watchPreferencesRepository, timeZoneRepository, watches) as T
-            }
-            throw IllegalArgumentException("Unknown ViewModel class")
-        }
+    return !isCurrentlySelected // Return the new selection state
+  }
+
+  /** Factory for creating WatchViewModel instances */
+  class Factory(
+    private val watchPreferencesRepository: WatchPreferencesRepository,
+    private val timeZoneRepository: TimeZoneRepository,
+    private val watches: List<WatchInfo>
+  ) : ViewModelProvider.Factory {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+      if (modelClass.isAssignableFrom(WatchViewModelX::class.java)) {
+        return WatchViewModelX(watchPreferencesRepository, timeZoneRepository, watches) as T
+      }
+      throw IllegalArgumentException("Unknown ViewModel class")
     }
+  }
 }

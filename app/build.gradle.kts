@@ -1,148 +1,156 @@
 plugins {
-    id("swisstime.android.application")
-    id("swisstime.android.application.compose")
-    id("app.cash.paparazzi") version "2.0.0-alpha02"
-    alias(libs.plugins.baselineprofile)
+  alias(libs.plugins.android.application)
+  alias(libs.plugins.kotlin.android)
+  alias(libs.plugins.kotlin.compose)
+  id("app.cash.paparazzi") version "2.0.0-alpha02"
+  alias(libs.plugins.baselineprofile)
 }
 
 apply(plugin = "shot")
 
 android {
-    namespace = "com.coroutines.swisstime"
+  namespace = "com.coroutines.swisstime"
+  compileSdk = 36
 
-    defaultConfig {
-        applicationId = "com.coroutines.clockwithtimezone"
-        versionCode = 20
-        versionName = "1.53"
+  defaultConfig {
+    applicationId = "com.coroutines.clockwithtimezone"
+    minSdk = 26 // Temporarily increased from 24 to 26 to resolve Scala and JSON4s library issues
+    //noinspection EditedTargetSdkVersion
+    targetSdk = 36
+    versionCode = 20
+    versionName = "1.53"
 
-        testInstrumentationRunner = "com.karumi.shot.ShotTestRunner"
+    testInstrumentationRunner = "com.karumi.shot.ShotTestRunner"
+  }
+
+  buildTypes {
+    release {
+      isMinifyEnabled = true
+      proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+      signingConfig = signingConfigs.getByName("debug")
+      // signingConfig = signingConfigs.getByName("debug")
+      // signingConfig = signingConfigs.getByName("debug")
     }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            signingConfig = signingConfigs.getByName("debug")
-        }
-    }
+  }
+  compileOptions {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+  }
+  kotlinOptions { jvmTarget = "11" }
+  buildFeatures { compose = true }
 }
 
 dependencies {
-    implementation(project(":worldclockcommon"))
-    implementation(project(":livewallpaper"))
-    implementation(project(":watchfaces"))
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
-    implementation(libs.androidx.window)
-    implementation(libs.androidx.material3.windowsizeclass)
-    implementation(libs.androidx.material3.adaptive)
-    implementation(libs.androidx.material.icons.extended)
-    implementation(libs.androidx.constraintlayout.compose)
-    // Compose Animation for shared element transitions
-    implementation(libs.androidx.animation)
-    implementation(libs.androidx.compose.foundation)
+  implementation(project(":worldclockcommon"))
+  implementation(project(":livewallpaper"))
+  implementation(project(":watchfaces"))
+  implementation(libs.androidx.core.ktx)
+  implementation(libs.androidx.lifecycle.runtime.ktx)
+  implementation(libs.androidx.activity.compose)
+  implementation(platform(libs.androidx.compose.bom))
+  implementation(libs.androidx.ui)
+  implementation(libs.androidx.ui.graphics)
+  implementation(libs.androidx.ui.tooling.preview)
+  implementation(libs.androidx.material3)
+  implementation(libs.androidx.window)
+  implementation(libs.androidx.material3.windowsizeclass)
+  implementation(libs.androidx.material3.adaptive)
+  implementation(libs.androidx.material.icons.extended)
+  implementation(libs.androidx.constraintlayout.compose)
+  // Compose Animation for shared element transitions
+  implementation(libs.androidx.animation)
+  implementation(libs.androidx.compose.foundation)
 
-    // Glance for App Widgets
-    implementation(libs.androidx.glance)
-    implementation(libs.androidx.glance.appwidget)
+  // Glance for App Widgets
+  implementation(libs.androidx.glance)
+  implementation(libs.androidx.glance.appwidget)
 
-    // DataStore for preferences
-    implementation(libs.androidx.datastore.preferences)
+  // DataStore for preferences
+  implementation(libs.androidx.datastore.preferences)
 
-    // Splash Screen API
-    implementation(libs.androidx.core.splashscreen)
+  // Splash Screen API
+  implementation(libs.androidx.core.splashscreen)
 
-    // Navigation
-    implementation(libs.androidx.navigation.compose)
+  // Navigation
+  implementation(libs.androidx.navigation.compose)
 
-    // Play Core for in-app updates and reviews
-    implementation(libs.app.update)
-    implementation(libs.app.update.ktx)
-    implementation(libs.play.review)
-    implementation(libs.play.review.ktx)
-    //implementation ("com.google.android.play:core:1.7.2")
+  // Play Core for in-app updates and reviews
+  implementation(libs.app.update)
+  implementation(libs.app.update.ktx)
+  implementation(libs.play.review)
+  implementation(libs.play.review.ktx)
+  // implementation ("com.google.android.play:core:1.7.2")
 
-    implementation(libs.androidx.runtime.tracing)
+  implementation(libs.androidx.runtime.tracing)
 
-    implementation(libs.coil.compose)
-    implementation(libs.coil.network.okhttp)
-    implementation(libs.androidx.profileinstaller)
+  implementation(libs.coil.compose)
+  implementation(libs.coil.network.okhttp)
+  implementation(libs.androidx.profileinstaller)
 
-    testImplementation(libs.junit)
-    // MockK for mocking in tests
-    testImplementation(libs.mockk)
-    // Play Core testing library for FakeAppUpdateManager
-       //. androidTestImplementation("com.google.android.play:app-update-testing:2.1.0")
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-   // "baselineProfile"(project(":baselineprofile"))
-    baselineProfile(project(":baselineprofile"))
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
-    //androidTestImplementation(libs.kaspresso)
-    androidTestImplementation(libs.shot)
-    androidTestImplementation(libs.androidx.runner.v152)
-    androidTestImplementation(libs.androidx.drawerlayout)
-
-
-
+  testImplementation(libs.junit)
+  // MockK for mocking in tests
+  testImplementation(libs.mockk)
+  // Play Core testing library for FakeAppUpdateManager
+  // . androidTestImplementation("com.google.android.play:app-update-testing:2.1.0")
+  androidTestImplementation(libs.androidx.junit)
+  androidTestImplementation(libs.androidx.espresso.core)
+  androidTestImplementation(platform(libs.androidx.compose.bom))
+  androidTestImplementation(libs.androidx.ui.test.junit4)
+  // "baselineProfile"(project(":baselineprofile"))
+  baselineProfile(project(":baselineprofile"))
+  debugImplementation(libs.androidx.ui.tooling)
+  debugImplementation(libs.androidx.ui.test.manifest)
+  // androidTestImplementation(libs.kaspresso)
+  androidTestImplementation(libs.shot)
+  androidTestImplementation(libs.androidx.runner.v152)
+  androidTestImplementation(libs.androidx.drawerlayout)
 }
 
 /*
-// Task to ensure generated baseline and startup profiles are copied into src/main for check-in
-// This helps when the Baseline Profile plugin doesn't automatically copy them on your setup.
+ // Task to ensure generated baseline and startup profiles are copied into src/main for check-in
+ // This helps when the Baseline Profile plugin doesn't automatically copy them on your setup.
 
-// Copy the generated profiles from src/release/generated/... into src/main/...
-val syncBaselineProfilesToMain by tasks.registering {
-    // This task is safe to run repeatedly; it just overwrites files in src/main
-    // Not configuration cache compatible due to use of Project APIs in doLast; this is a dev-only helper.
-    notCompatibleWithConfigurationCache("Uses Project APIs in task action; dev-only helper task")
-    doLast {
-        val generatedDir = file("src/release/generated/baselineProfiles")
-        val baselineSrc = file("src/main/baselineProfiles")
-        val startupSrc = file("src/main/startupProfiles")
+ // Copy the generated profiles from src/release/generated/... into src/main/...
+ val syncBaselineProfilesToMain by tasks.registering {
+     // This task is safe to run repeatedly; it just overwrites files in src/main
+     // Not configuration cache compatible due to use of Project APIs in doLast; this is a dev-only helper.
+     notCompatibleWithConfigurationCache("Uses Project APIs in task action; dev-only helper task")
+     doLast {
+         val generatedDir = file("src/release/generated/baselineProfiles")
+         val baselineSrc = file("src/main/baselineProfiles")
+         val startupSrc = file("src/main/startupProfiles")
 
-        if (!generatedDir.exists()) {
-            logger.lifecycle("[baseline] No generated profiles found at: ${generatedDir}. Run :app:generateReleaseBaselineProfile with a connected device.")
-            return@doLast
-        }
+         if (!generatedDir.exists()) {
+             logger.lifecycle("[baseline] No generated profiles found at: ${generatedDir}. Run :app:generateReleaseBaselineProfile with a connected device.")
+             return@doLast
+         }
 
-        val baselineFile = file("src/release/generated/baselineProfiles/baseline-prof.txt")
-        val startupFile = file("src/release/generated/baselineProfiles/startup-prof.txt")
+         val baselineFile = file("src/release/generated/baselineProfiles/baseline-prof.txt")
+         val startupFile = file("src/release/generated/baselineProfiles/startup-prof.txt")
 
-        baselineSrc.mkdirs()
-        startupSrc.mkdirs()
+         baselineSrc.mkdirs()
+         startupSrc.mkdirs()
 
-        if (baselineFile.exists()) {
-            copy {
-                from(baselineFile)
-                into(baselineSrc)
-            }
-            logger.lifecycle("[baseline] Copied baseline profile to: ${baselineSrc}/baseline-prof.txt")
-        } else {
-            logger.lifecycle("[baseline] baseline-prof.txt not found in generated directory.")
-        }
+         if (baselineFile.exists()) {
+             copy {
+                 from(baselineFile)
+                 into(baselineSrc)
+             }
+             logger.lifecycle("[baseline] Copied baseline profile to: ${baselineSrc}/baseline-prof.txt")
+         } else {
+             logger.lifecycle("[baseline] baseline-prof.txt not found in generated directory.")
+         }
 
-        if (startupFile.exists()) {
-            copy {
-                from(startupFile)
-                into(startupSrc)
-            }
-            logger.lifecycle("[baseline] Copied startup profile to: ${startupSrc}/startup-prof.txt")
-        } else {
-            logger.lifecycle("[baseline] startup-prof.txt not found in generated directory.")
-        }
-    }
-}
+         if (startupFile.exists()) {
+             copy {
+                 from(startupFile)
+                 into(startupSrc)
+             }
+             logger.lifecycle("[baseline] Copied startup profile to: ${startupSrc}/startup-prof.txt")
+         } else {
+             logger.lifecycle("[baseline] startup-prof.txt not found in generated directory.")
+         }
+     }
+ }
 
-*/
-
-
+ */
