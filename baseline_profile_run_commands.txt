@@ -1,0 +1,57 @@
+Copy-paste commands to generate the Baseline Profile and build the AAB
+
+macOS/Linux
+------------
+# 0) Ensure only one device is connected (optional)
+adb devices
+
+# 1) Uninstall old app if signatures differ (avoids INSTALL_FAILED_UPDATE_INCOMPATIBLE)
+adb uninstall com.coroutines.clockwithtimezone || true
+
+# 2) Generate the baseline profile (device must be unlocked)
+./gradlew :app:generateReleaseBaselineProfile
+
+# 3) Build the release bundle (AAB)
+./gradlew :app:bundleRelease
+
+# 4) Verify the baseline profile is packaged (AGP 8+ path)
+unzip -l app/build/outputs/bundle/release/app-release.aab | grep -i baseline.prof
+# Expected output contains:
+# BUNDLE-METADATA/com.android.tools.build.profiles/baseline.prof
+
+# Optional: Install release APK to device and confirm AOT
+./gradlew :app:installRelease
+adb logcat | grep -i -E 'ProfileInstaller|dexopt|dex2oat|PackageManagerDexOptimizer'
+
+
+Windows (PowerShell)
+--------------------
+# 0) Ensure only one device is connected (optional)
+adb devices
+
+# 1) Uninstall old app if signatures differ
+adb uninstall com.coroutines.clockwithtimezone
+
+# 2) Generate the baseline profile
+./gradlew.bat :app:generateReleaseBaselineProfile
+
+# 3) Build the release bundle (AAB)
+./gradlew.bat :app:bundleRelease
+
+# 4) Verify baseline profile is packaged
+# If you have unzip via Git for Windows, run:
+unzip -l app/build/outputs/bundle/release/app-release.aab | findstr /i baseline.prof
+# Expect: BUNDLE-METADATA/com.android.tools.build.profiles/baseline.prof
+# Otherwise, open the AAB with 7-Zip and search for baseline.prof.
+
+# Optional: Install release APK and confirm AOT
+./gradlew.bat :app:installRelease
+adb logcat | findstr /i "ProfileInstaller dexopt dex2oat PackageManagerDexOptimizer"
+
+Notes
+-----
+- If multiple devices are connected, set the target first:
+  macOS/Linux: export ANDROID_SERIAL=<device_serial>
+  Windows PowerShell: $env:ANDROID_SERIAL = "<device_serial>"
+- Device must be unlocked for the generator to drive the UI.
+- Locale should be English for the current selectors ("Tap to zoom", "Select this watch"). If not, switch locale or ask us to swap to contentDescription-based selectors.

@@ -1,7 +1,5 @@
 package com.coroutines.swisstime.ui.screens
 
-import com.coroutines.swisstime.ui.adaptive.LocalWindowSizeClass
-import com.coroutines.swisstime.ui.adaptive.*
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.aspectRatio
@@ -26,224 +24,227 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import com.coroutines.swisstime.ui.adaptive.*
+import com.coroutines.swisstime.ui.adaptive.LocalWindowSizeClass
 import com.coroutines.swisstime.ui.components.SwissTimePager
 import com.coroutines.swisstime.viewmodel.WatchViewModel
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun WelcomeScreen(
-    watchViewModel: WatchViewModel,
-    onBackClick: () -> Unit,
-    sharedTransitionScope: androidx.compose.animation.SharedTransitionScope? = null,
-    animatedVisibilityScope: androidx.compose.animation.AnimatedVisibilityScope? = null,
+  watchViewModel: WatchViewModel,
+  onBackClick: () -> Unit,
+  sharedTransitionScope: androidx.compose.animation.SharedTransitionScope? = null,
+  animatedVisibilityScope: androidx.compose.animation.AnimatedVisibilityScope? = null,
 ) {
 
-    val windowSizeClass = LocalWindowSizeClass.current
-    val widthClass = windowSizeClass.widthSizeClass
-    val heightClass = windowSizeClass.heightSizeClass
+  val windowSizeClass = LocalWindowSizeClass.current
+  val widthClass = windowSizeClass.widthSizeClass
+  val heightClass = windowSizeClass.heightSizeClass
 
+  // Data and state owned by WelcomeScreen
+  val watches = com.coroutines.swisstime.watchfaces.getWatches()
+  val middle = if (watches.isNotEmpty()) watches.size / 2 else 0
+  val pagerState =
+    androidx.compose.foundation.pager.rememberPagerState(
+      initialPage = middle,
+      pageCount = { watches.size }
+    )
 
-    // Data and state owned by WelcomeScreen
-    val watches = com.coroutines.swisstime.watchfaces.getWatches()
-    val middle = if (watches.isNotEmpty()) watches.size / 2 else 0
-    val pagerState = androidx.compose.foundation.pager.rememberPagerState(initialPage = middle, pageCount = { watches.size })
+  var isZoomed by remember { mutableStateOf(false) }
 
-    var isZoomed by remember { mutableStateOf(false) }
+  // Reset zoom when page changes
+  LaunchedEffect(pagerState.currentPage) { isZoomed = false }
 
-    // Reset zoom when page changes
-    LaunchedEffect(pagerState.currentPage) {
-        isZoomed = false
+  BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+    val maxHeight = this.maxHeight
+
+    val watchSize =
+      when (isLandscape()) {
+        false ->
+          when (heightClass) {
+            WindowHeightSizeClass.Compact -> maxHeight * 0.22f
+            WindowHeightSizeClass.Medium -> maxHeight * 0.30f
+            WindowHeightSizeClass.Expanded -> maxHeight * 0.3f
+            else -> maxHeight * 0.10f
+          }
+        true ->
+          when (heightClass) {
+            WindowHeightSizeClass.Compact -> maxHeight * 0.4f
+            WindowHeightSizeClass.Medium -> maxHeight * 0.44f
+            WindowHeightSizeClass.Expanded -> maxHeight * 0.3f
+            else -> 220.dp
+          }
+      }
+
+    val topMargin =
+      when (isLandscape()) {
+        false ->
+          when (heightClass) {
+            WindowHeightSizeClass.Compact -> maxHeight * 0.08f
+            WindowHeightSizeClass.Medium -> maxHeight * 0.10f
+            WindowHeightSizeClass.Expanded -> maxHeight * 0.20f
+            else -> maxHeight * 0.15f
+          }
+        true ->
+          when (heightClass) {
+            WindowHeightSizeClass.Compact -> maxHeight * 0.03f
+            WindowHeightSizeClass.Medium -> maxHeight * 0.10f
+            WindowHeightSizeClass.Expanded -> maxHeight * 0.08f
+            else -> maxHeight * 0.15f
+          }
+      }
+
+    ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+      val (title, chooseText, descText, pager, button) = createRefs()
+
+      val isLandscape = isLandscape() // will use in non compposable scope, so must compute here
+
+      // Create a horizontal chain when in landscape
+      if (isLandscape) {
+        createHorizontalChain(
+          title,
+          chooseText,
+          chainStyle = ChainStyle.Packed // Keeps them together, centered
+        )
+      }
+
+      Text(
+        text = "Let's get started!",
+        modifier =
+          Modifier.constrainAs(title) {
+              if (isLandscape) {
+                top.linkTo(parent.top, margin = topMargin)
+                // Chain will handle horizontal positioning
+              } else {
+                top.linkTo(parent.top, margin = topMargin)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+              }
+            }
+            .padding(horizontal = if (isLandscape) 2.dp else 24.dp),
+        textAlign = if (isLandscape) TextAlign.Start else TextAlign.Center,
+        style = MaterialTheme.typography.headlineLarge
+      )
+
+      Text(
+        text = "Choose your first watch",
+        modifier =
+          Modifier.constrainAs(chooseText) {
+              if (isLandscape) {
+                top.linkTo(title.top) // Align to same baseline/top
+                bottom.linkTo(title.bottom)
+                // Chain will handle horizontal positioning
+              } else {
+                top.linkTo(title.bottom, margin = 10.dp)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+              }
+            }
+            .padding(horizontal = if (isLandscape) 2.dp else 24.dp),
+        textAlign = if (isLandscape) TextAlign.Start else TextAlign.Center,
+        style = MaterialTheme.typography.headlineMedium
+      )
+
+      if (isLandscape() && heightClass == WindowHeightSizeClass.Compact) {
+        Text(
+          text = "",
+          modifier =
+            Modifier.constrainAs(descText) {
+                top.linkTo(chooseText.bottom, margin = 5.dp)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+              }
+              .padding(horizontal = 24.dp),
+          textAlign = TextAlign.Center,
+          maxLines = 3,
+          overflow = TextOverflow.Ellipsis,
+          style = MaterialTheme.typography.bodyMedium
+        )
+      } else {
+        Text(
+          text = firstSentence(watches.getOrNull(pagerState.currentPage)?.description),
+          modifier =
+            Modifier.constrainAs(descText) {
+                top.linkTo(chooseText.bottom, margin = 50.dp)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+              }
+              .padding(horizontal = 24.dp)
+              .padding(bottom = 8.dp),
+          textAlign = TextAlign.Center,
+          maxLines = 3,
+          overflow = TextOverflow.Ellipsis,
+          style = MaterialTheme.typography.bodyMedium
+        )
+      }
+
+      androidx.compose.foundation.layout.Box(
+        modifier =
+          Modifier.constrainAs(pager) {
+              top.linkTo(descText.bottom, margin = 16.dp)
+              bottom.linkTo(button.top, margin = 16.dp)
+              start.linkTo(parent.start)
+              end.linkTo(parent.end)
+              height = Dimension.fillToConstraints
+              width = Dimension.fillToConstraints
+            }
+            .aspectRatio(1f)
+      ) {
+        SwissTimePager(
+          pagerState = pagerState,
+          pageCount = watches.size,
+          watchSize = watchSize,
+          isZoomed = isZoomed,
+          onToggleZoom = { isZoomed = !isZoomed },
+          sharedTransitionScope = sharedTransitionScope,
+          animatedVisibilityScope = animatedVisibilityScope,
+          pageKey = { index -> "watch-${watches[index].name}" },
+          pageContent = { index ->
+            val watch = watches[index]
+            watch.composable(Modifier.fillMaxSize(), java.util.TimeZone.getDefault())
+          }
+        )
+      }
+
+      // Constant-height bottom container to avoid vertical nudge when toggling zoom
+      val bottomHeight = 56.dp
+      androidx.compose.foundation.layout.Box(
+        modifier =
+          Modifier.constrainAs(button) {
+              bottom.linkTo(parent.bottom, margin = 40.dp)
+              start.linkTo(parent.start)
+              end.linkTo(parent.end)
+            }
+            .padding(horizontal = 24.dp)
+            .height(bottomHeight)
+            .fillMaxWidth()
+      ) {
+        if (isZoomed) {
+          Button(
+            onClick = {
+              watchViewModel.saveSelectedWatch(watch = watches[pagerState.currentPage])
+              onBackClick()
+            },
+            modifier = Modifier.fillMaxSize()
+          ) {
+            Text(text = "Select this watch")
+          }
+        } else {
+          Text(
+            text = "Tap to zoom",
+            modifier = Modifier.fillMaxSize(),
+            textAlign = TextAlign.Center
+          )
+        }
+      }
     }
-
-
-
-    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-        val maxHeight = this.maxHeight
-
-        val watchSize = when (isLandscape()) {
-            false -> when (heightClass) {
-                WindowHeightSizeClass.Compact -> maxHeight * 0.22f
-                WindowHeightSizeClass.Medium  -> maxHeight * 0.30f
-                WindowHeightSizeClass.Expanded -> maxHeight * 0.3f
-                else ->maxHeight * 0.10f
-            }
-            true ->  when (heightClass) {
-                WindowHeightSizeClass.Compact -> maxHeight * 0.4f
-                WindowHeightSizeClass.Medium  -> maxHeight * 0.44f
-                WindowHeightSizeClass.Expanded -> maxHeight * 0.3f
-                else -> 220.dp
-            }
-        }
-
-        val topMargin = when (isLandscape()) {
-            false -> when (heightClass) {
-                WindowHeightSizeClass.Compact -> maxHeight * 0.08f
-                WindowHeightSizeClass.Medium  -> maxHeight * 0.10f
-                WindowHeightSizeClass.Expanded -> maxHeight * 0.20f
-                else -> maxHeight * 0.15f
-            }
-            true -> when (heightClass) {
-                WindowHeightSizeClass.Compact -> maxHeight * 0.03f
-                WindowHeightSizeClass.Medium  -> maxHeight * 0.10f
-                WindowHeightSizeClass.Expanded -> maxHeight * 0.08f
-                else -> maxHeight * 0.15f
-            }
-        }
-
-
-        ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-            val (title, chooseText, descText, pager, button) = createRefs()
-
-            val isLandscape = isLandscape() // will use in non compposable scope, so must compute here
-
-
-            // Create a horizontal chain when in landscape
-            if (isLandscape) {
-                createHorizontalChain(
-                    title, chooseText,
-                    chainStyle = ChainStyle.Packed // Keeps them together, centered
-                )
-            }
-
-            Text(
-                text = "Let's get started!",
-                modifier = Modifier
-                    .constrainAs(title) {
-                        if (isLandscape) {
-                            top.linkTo(parent.top, margin = topMargin)
-                            // Chain will handle horizontal positioning
-                        } else {
-                            top.linkTo(parent.top, margin = topMargin)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                        }
-                    }
-                    .padding(horizontal = if (isLandscape)  2.dp else 24.dp),
-                textAlign = if (isLandscape) TextAlign.Start else TextAlign.Center,
-                style = MaterialTheme.typography.headlineLarge
-            )
-
-            Text(
-                text = "Choose your first watch",
-                modifier = Modifier
-                    .constrainAs(chooseText) {
-                        if (isLandscape) {
-                            top.linkTo(title.top) // Align to same baseline/top
-                            bottom.linkTo(title.bottom)
-                            // Chain will handle horizontal positioning
-                        } else {
-                            top.linkTo(title.bottom, margin = 10.dp)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                        }
-                    }
-                    .padding(horizontal = if (isLandscape)  2.dp else 24.dp),
-                textAlign = if (isLandscape) TextAlign.Start else TextAlign.Center,
-                style = MaterialTheme.typography.headlineMedium
-            )
-
-
-            if (isLandscape() && heightClass == WindowHeightSizeClass.Compact) {
-                Text(
-                    text = "",
-                    modifier = Modifier
-                        .constrainAs(descText) {
-                            top.linkTo(chooseText.bottom, margin = 5.dp)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                        }
-                        .padding(horizontal = 24.dp),
-
-                    textAlign = TextAlign.Center,
-                    maxLines = 3,
-                    overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-            else{
-                Text(
-                    text = firstSentence(watches.getOrNull(pagerState.currentPage)?.description),
-                    modifier = Modifier
-                        .constrainAs(descText) {
-                            top.linkTo(chooseText.bottom, margin = 50.dp)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                        }
-                        .padding(horizontal = 24.dp)
-                        .padding(bottom = 8.dp),
-                    textAlign = TextAlign.Center,
-                    maxLines = 3,
-                    overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-
-            androidx.compose.foundation.layout.Box(
-                modifier = Modifier
-                    .constrainAs(pager) {
-                        top.linkTo(descText.bottom, margin = 16.dp)
-                        bottom.linkTo(button.top, margin = 16.dp)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        height = Dimension.fillToConstraints
-                        width = Dimension.fillToConstraints
-                    }
-                    .aspectRatio(1f)
-            ) {
-                SwissTimePager(
-                    pagerState = pagerState,
-                    pageCount = watches.size,
-                    watchSize = watchSize,
-                    isZoomed = isZoomed,
-                    onToggleZoom = { isZoomed = !isZoomed },
-                    sharedTransitionScope = sharedTransitionScope,
-                    animatedVisibilityScope = animatedVisibilityScope,
-                    pageKey = { index -> "watch-${watches[index].name}" },
-                    pageContent = { index ->
-                        val watch = watches[index]
-                        watch.composable(Modifier.fillMaxSize(), java.util.TimeZone.getDefault())
-                    }
-                )
-            }
-
-            // Constant-height bottom container to avoid vertical nudge when toggling zoom
-            val bottomHeight = 56.dp
-            androidx.compose.foundation.layout.Box(
-                modifier = Modifier
-                    .constrainAs(button) {
-                        bottom.linkTo(parent.bottom, margin = 40.dp)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    }
-                    .padding(horizontal = 24.dp)
-                    .height(bottomHeight)
-                    .fillMaxWidth()
-            ) {
-                if (isZoomed) {
-                    Button(
-                        onClick = {
-                            watchViewModel.saveSelectedWatch(watch = watches[pagerState.currentPage])
-                            onBackClick()
-                        },
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        Text(text = "Select this watch")
-                    }
-                } else {
-                    Text(
-                        text = "Tap to zoom",
-                        modifier = Modifier.fillMaxSize(),
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
-        }
-    }
+  }
 }
 
 private fun firstSentence(description: String?): String {
-    val text = description?.trim().orEmpty()
-    if (text.isEmpty()) return ""
-    val parts = text.split(Regex("(?<=[.!?])\\s+"))
-    return parts.firstOrNull().orEmpty()
+  val text = description?.trim().orEmpty()
+  if (text.isEmpty()) return ""
+  val parts = text.split(Regex("(?<=[.!?])\\s+"))
+  return parts.firstOrNull().orEmpty()
 }

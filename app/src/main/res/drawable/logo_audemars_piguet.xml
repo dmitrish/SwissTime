@@ -1,0 +1,27 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="240dp"
+    android:height="240dp"
+    android:viewportWidth="240"
+    android:viewportHeight="240">
+    
+    <!-- AP Shield -->
+    <path
+        android:pathData="M120,60 L160,80 L160,140 L120,160 L80,140 L80,80 Z"
+        android:fillColor="#000000"/>
+    <path
+        android:pathData="M120,70 L150,85 L150,135 L120,150 L90,135 L90,85 Z"
+        android:fillColor="#FFFFFF"/>
+    
+    <!-- AP Letters -->
+    <path
+        android:pathData="M105,100 L105,120 L115,120 L115,115 L110,115 L110,110 L115,110 L115,105 L110,105 L110,100 Z"
+        android:fillColor="#000000"/>
+    <path
+        android:pathData="M120,100 C115,100 110,105 110,110 C110,115 115,120 120,120 C125,120 130,115 130,110 C130,105 125,100 120,100 Z M120,105 C122.5,105 125,107.5 125,110 C125,112.5 122.5,115 120,115 C117.5,115 115,112.5 115,110 C115,107.5 117.5,105 120,105 Z"
+        android:fillColor="#000000"/>
+    
+    <!-- AUDEMARS PIGUET text -->
+    <path
+        android:pathData="M60,170 L180,170 L180,180 L60,180 Z"
+        android:fillColor="#000000"/>
+</vector>

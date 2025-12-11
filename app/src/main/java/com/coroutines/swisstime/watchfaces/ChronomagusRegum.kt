@@ -21,13 +21,13 @@ import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.tooling.preview.Preview
 import com.coroutines.swisstime.ui.theme.SwissTimeTheme
-import kotlinx.coroutines.delay
 import java.util.Calendar
 import java.util.TimeZone
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
+import kotlinx.coroutines.delay
 
 // Colors inspired by Chronomagus Regum
 private val ClockFaceColor = Color(0xFF000080) // Deep blue dial
@@ -40,231 +40,208 @@ private val LogoColor = Color(0xFFFFFFFF) // White logo
 
 @Composable
 fun ChronomagusRegum(
-    modifier: Modifier = Modifier,
-    currentTime: Calendar = Calendar.getInstance(),
-    timeZone: TimeZone = TimeZone.getDefault()
+  modifier: Modifier = Modifier,
+  currentTime: Calendar = Calendar.getInstance(),
+  timeZone: TimeZone = TimeZone.getDefault()
 ) {
-    // Use the provided time zone to get the current time
-    // Use timeZone as a key to ensure it's recreated when the timeZone changes
-    var internalTime by remember(timeZone) { mutableStateOf(Calendar.getInstance(timeZone)) }
+  // Use the provided time zone to get the current time
+  // Use timeZone as a key to ensure it's recreated when the timeZone changes
+  var internalTime by remember(timeZone) { mutableStateOf(Calendar.getInstance(timeZone)) }
 
-    // Update time every second using the provided time zone
-    LaunchedEffect(key1 = timeZone) {
-        while (true) {
-            internalTime = Calendar.getInstance(timeZone)
-            delay(1000) // Update every second
-        }
+  // Update time every second using the provided time zone
+  LaunchedEffect(key1 = timeZone) {
+    while (true) {
+      internalTime = Calendar.getInstance(timeZone)
+      delay(1000) // Update every second
     }
+  }
 
-    Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        // Draw the clock
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            val center = Offset(size.width / 2, size.height / 2)
-            val radius = min(size.width, size.height) / 2 * 0.8f
+  Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    // Draw the clock
+    Canvas(modifier = Modifier.fillMaxSize()) {
+      val center = Offset(size.width / 2, size.height / 2)
+      val radius = min(size.width, size.height) / 2 * 0.8f
 
-            // Draw clock face
-            drawClockFace(center, radius)
+      // Draw clock face
+      drawClockFace(center, radius)
 
-            // Get current time values
-            val hour = internalTime.get(Calendar.HOUR)
-            val minute = internalTime.get(Calendar.MINUTE)
-            val second = internalTime.get(Calendar.SECOND)
+      // Get current time values
+      val hour = internalTime.get(Calendar.HOUR)
+      val minute = internalTime.get(Calendar.MINUTE)
+      val second = internalTime.get(Calendar.SECOND)
 
-            // Draw hour markers
-            drawHourMarkers(center, radius)
+      // Draw hour markers
+      drawHourMarkers(center, radius)
 
-            // Draw clock hands
-            drawClockHands(center, radius, hour, minute, second)
+      // Draw clock hands
+      drawClockHands(center, radius, hour, minute, second)
 
-            // Draw center dot
-            drawCircle(
-                color = HourHandColor,
-                radius = radius * 0.01f,
-                center = center
-            )
+      // Draw center dot
+      drawCircle(color = HourHandColor, radius = radius * 0.01f, center = center)
 
-            // DrawChronomagus Regum
-            drawLogo(center, radius)
-        }
+      // DrawChronomagus Regum
+      drawLogo(center, radius)
     }
+  }
 }
 
 private fun DrawScope.drawClockFace(center: Offset, radius: Float) {
-    // Draw outer circle (case) - very thin to represent the ultra-thin profile
-    drawCircle(
-        color = ClockBorderColor,
-        radius = radius,
-        center = center,
-        style = Stroke(width = 4f)
-    )
+  // Draw outer circle (case) - very thin to represent the ultra-thin profile
+  drawCircle(color = ClockBorderColor, radius = radius, center = center, style = Stroke(width = 4f))
 
-    // Draw inner circle (face)
-    drawCircle(
-        color = ClockFaceColor,
-        radius = radius - 2f,
-        center = center
-    )
+  // Draw inner circle (face)
+  drawCircle(color = ClockFaceColor, radius = radius - 2f, center = center)
 }
 
 private fun DrawScope.drawHourMarkers(center: Offset, radius: Float) {
-    // Chronomagus Regum typically has very minimalist hour markers
-    // Often just simple thin lines or small dots
+  // Chronomagus Regum typically has very minimalist hour markers
+  // Often just simple thin lines or small dots
 
-    for (i in 0 until 12) {
-        val angle = PI / 6 * i
+  for (i in 0 until 12) {
+    val angle = PI / 6 * i
 
-        // For 3, 6, 9, and 12 o'clock, use slightly longer markers
-        val markerLength = if (i % 3 == 0) radius * 0.05f else radius * 0.03f
-        val markerWidth = if (i % 3 == 0) 1.5f else 1f
+    // For 3, 6, 9, and 12 o'clock, use slightly longer markers
+    val markerLength = if (i % 3 == 0) radius * 0.05f else radius * 0.03f
+    val markerWidth = if (i % 3 == 0) 1.5f else 1f
 
-        val startX = center.x + cos(angle).toFloat() * (radius * 0.85f)
-        val startY = center.y + sin(angle).toFloat() * (radius * 0.85f)
-        val endX = center.x + cos(angle).toFloat() * (radius * 0.85f - markerLength)
-        val endY = center.y + sin(angle).toFloat() * (radius * 0.85f - markerLength)
+    val startX = center.x + cos(angle).toFloat() * (radius * 0.85f)
+    val startY = center.y + sin(angle).toFloat() * (radius * 0.85f)
+    val endX = center.x + cos(angle).toFloat() * (radius * 0.85f - markerLength)
+    val endY = center.y + sin(angle).toFloat() * (radius * 0.85f - markerLength)
 
-        // Draw minimalist markers
-        drawLine(
-            color = MarkersColor,
-            start = Offset(startX, startY),
-            end = Offset(endX, endY),
-            strokeWidth = markerWidth,
-            cap = StrokeCap.Round
-        )
-    }
+    // Draw minimalist markers
+    drawLine(
+      color = MarkersColor,
+      start = Offset(startX, startY),
+      end = Offset(endX, endY),
+      strokeWidth = markerWidth,
+      cap = StrokeCap.Round
+    )
+  }
 
-    // Add small dots at each hour position for a more refined look
-    for (i in 0 until 12) {
-        val angle = PI / 6 * i
-        val dotRadius = if (i % 3 == 0) 1.5f else 1f
+  // Add small dots at each hour position for a more refined look
+  for (i in 0 until 12) {
+    val angle = PI / 6 * i
+    val dotRadius = if (i % 3 == 0) 1.5f else 1f
 
-        val dotX = center.x + cos(angle).toFloat() * (radius * 0.9f)
-        val dotY = center.y + sin(angle).toFloat() * (radius * 0.9f)
+    val dotX = center.x + cos(angle).toFloat() * (radius * 0.9f)
+    val dotY = center.y + sin(angle).toFloat() * (radius * 0.9f)
 
-        drawCircle(
-            color = MarkersColor,
-            radius = dotRadius,
-            center = Offset(dotX, dotY)
-        )
-    }
+    drawCircle(color = MarkersColor, radius = dotRadius, center = Offset(dotX, dotY))
+  }
 }
 
 private fun DrawScope.drawClockHands(
-    center: Offset,
-    radius: Float,
-    hour: Int,
-    minute: Int,
-    second: Int
+  center: Offset,
+  radius: Float,
+  hour: Int,
+  minute: Int,
+  second: Int
 ) {
-    // Hour hand - very thin and elegant
-    val hourAngle = (hour * 30 + minute * 0.5f)
-    rotate(hourAngle, pivot = center) {
-        // Simple thin line for hour hand
-        drawLine(
-            color = HourHandColor,
-            start = center,
-            end = Offset(center.x, center.y - radius * 0.5f),
-            strokeWidth = 2f,
-            cap = StrokeCap.Round
-        )
-    }
+  // Hour hand - very thin and elegant
+  val hourAngle = (hour * 30 + minute * 0.5f)
+  rotate(hourAngle, pivot = center) {
+    // Simple thin line for hour hand
+    drawLine(
+      color = HourHandColor,
+      start = center,
+      end = Offset(center.x, center.y - radius * 0.5f),
+      strokeWidth = 2f,
+      cap = StrokeCap.Round
+    )
+  }
 
-    // Minute hand - longer and equally thin
-    val minuteAngle = minute * 6f
-    rotate(minuteAngle, pivot = center) {
-        // Simple thin line for minute hand
-        drawLine(
-            color = MinuteHandColor,
-            start = center,
-            end = Offset(center.x, center.y - radius * 0.7f),
-            strokeWidth = 1.5f,
-            cap = StrokeCap.Round
-        )
-    }
+  // Minute hand - longer and equally thin
+  val minuteAngle = minute * 6f
+  rotate(minuteAngle, pivot = center) {
+    // Simple thin line for minute hand
+    drawLine(
+      color = MinuteHandColor,
+      start = center,
+      end = Offset(center.x, center.y - radius * 0.7f),
+      strokeWidth = 1.5f,
+      cap = StrokeCap.Round
+    )
+  }
 
-    // Second hand - extremely thin
-    val secondAngle = second * 6f
-    rotate(secondAngle, pivot = center) {
-        // Ultra-thin line for second hand
-        drawLine(
-            color = SecondHandColor,
-            start = center,
-            end = Offset(center.x, center.y - radius * 0.8f),
-            strokeWidth = 0.5f,
-            cap = StrokeCap.Round
-        )
-    }
+  // Second hand - extremely thin
+  val secondAngle = second * 6f
+  rotate(secondAngle, pivot = center) {
+    // Ultra-thin line for second hand
+    drawLine(
+      color = SecondHandColor,
+      start = center,
+      end = Offset(center.x, center.y - radius * 0.8f),
+      strokeWidth = 0.5f,
+      cap = StrokeCap.Round
+    )
+  }
 }
 
 private fun DrawScope.drawLogo(center: Offset, radius: Float) {
-    val logoPaint = Paint().apply {
-        color = LogoColor.hashCode()
-        textSize = radius * 0.08f
-        textAlign = Paint.Align.CENTER
-        isFakeBoldText = false // Chronomagus Regum logo is typically thin and elegant
-        isAntiAlias = true
+  val logoPaint =
+    Paint().apply {
+      color = LogoColor.hashCode()
+      textSize = radius * 0.08f
+      textAlign = Paint.Align.CENTER
+      isFakeBoldText = false // Chronomagus Regum logo is typically thin and elegant
+      isAntiAlias = true
     }
 
-    // Draw "Chronomagus Regum" text
-    drawContext.canvas.nativeCanvas.drawText(
-        "CHRONOMAGUS",
-        center.x,
-        center.y - radius * 0.3f,
-        logoPaint
-    )
+  // Draw "Chronomagus Regum" text
+  drawContext.canvas.nativeCanvas.drawText(
+    "CHRONOMAGUS",
+    center.x,
+    center.y - radius * 0.3f,
+    logoPaint
+  )
 
-    // Draw "ALTIPLANO" text
-    val modelPaint = Paint().apply {
-        color = LogoColor.hashCode()
-        textSize = radius * 0.06f
-        textAlign = Paint.Align.CENTER
-        isAntiAlias = true
+  // Draw "ALTIPLANO" text
+  val modelPaint =
+    Paint().apply {
+      color = LogoColor.hashCode()
+      textSize = radius * 0.06f
+      textAlign = Paint.Align.CENTER
+      isAntiAlias = true
     }
 
-    drawContext.canvas.nativeCanvas.drawText(
-        "REGIUM",
-        center.x,
-        center.y - radius * 0.2f,
-        modelPaint
-    )
+  drawContext.canvas.nativeCanvas.drawText("REGIUM", center.x, center.y - radius * 0.2f, modelPaint)
 
-    // Draw "SWISS MADE" text
-    val swissMadePaint = Paint().apply {
-        color = LogoColor.hashCode()
-        textSize = radius * 0.04f
-        textAlign = Paint.Align.CENTER
-        isAntiAlias = true
+  // Draw "SWISS MADE" text
+  val swissMadePaint =
+    Paint().apply {
+      color = LogoColor.hashCode()
+      textSize = radius * 0.04f
+      textAlign = Paint.Align.CENTER
+      isAntiAlias = true
     }
 
-    drawContext.canvas.nativeCanvas.drawText(
-        "Fabricatum Romae",
-        center.x,
-        center.y + radius * 0.5f,
-        swissMadePaint
-    )
+  drawContext.canvas.nativeCanvas.drawText(
+    "Fabricatum Romae",
+    center.x,
+    center.y + radius * 0.5f,
+    swissMadePaint
+  )
 
-    // Draw "ULTRA-THIN" text - a key feature of the Altiplano
-    val ultraThinPaint = Paint().apply {
-        color = LogoColor.hashCode()
-        textSize = radius * 0.05f
-        textAlign = Paint.Align.CENTER
-        isAntiAlias = true
+  // Draw "ULTRA-THIN" text - a key feature of the Altiplano
+  val ultraThinPaint =
+    Paint().apply {
+      color = LogoColor.hashCode()
+      textSize = radius * 0.05f
+      textAlign = Paint.Align.CENTER
+      isAntiAlias = true
     }
 
-    drawContext.canvas.nativeCanvas.drawText(
-        "ULTRA-THIN",
-        center.x,
-        center.y + radius * 0.2f,
-        ultraThinPaint
-    )
+  drawContext.canvas.nativeCanvas.drawText(
+    "ULTRA-THIN",
+    center.x,
+    center.y + radius * 0.2f,
+    ultraThinPaint
+  )
 }
 
 @Preview(showBackground = true)
 @Composable
 fun ChronomagusRegumPreviews() {
-    SwissTimeTheme {
-        ChronomagusRegum()
-    }
+  SwissTimeTheme { ChronomagusRegum() }
 }

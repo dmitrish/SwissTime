@@ -14,22 +14,17 @@ import com.coroutines.swisstime.ui.screens.BrandLogo
 // Composable for the horizontal row of brand logos
 @Composable
 fun BrandLogosRow(
-    brandLogos: List<BrandLogo>,
-    onClick: (BrandLogo) -> Unit,
-    modifier: Modifier = Modifier
+  brandLogos: List<BrandLogo>,
+  onClick: (BrandLogo) -> Unit,
+  modifier: Modifier = Modifier
 ) {
-    LazyRow(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        contentPadding = PaddingValues(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        items(brandLogos) { brandLogo ->
-            BrandLogoRowItem(
-                brandLogo = brandLogo,
-                onClick = { onClick(brandLogo) }
-            )
-        }
+  LazyRow(
+    modifier = modifier.fillMaxWidth().padding(vertical = 8.dp),
+    contentPadding = PaddingValues(horizontal = 16.dp),
+    horizontalArrangement = Arrangement.spacedBy(8.dp)
+  ) {
+    items(brandLogos) { brandLogo ->
+      BrandLogoRowItem(brandLogo = brandLogo, onClick = { onClick(brandLogo) })
     }
+  }
 }

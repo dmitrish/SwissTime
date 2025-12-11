@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="400" viewBox="0 0 800 400">
+  <!-- World map outline in SVG format -->
+  <!-- North America -->
+  <path d="M150,80 L120,100 L100,150 L120,200 L150,220 L180,210 L200,180 L190,150 L170,120 Z" fill="#388E3C" />
+  
+  <!-- South America -->
+  <path d="M200,230 L180,250 L190,300 L210,330 L230,320 L240,290 L230,260 L210,240 Z" fill="#388E3C" />
+  
+  <!-- Europe -->
+  <path d="M350,100 L330,120 L340,150 L370,170 L400,160 L410,130 L390,110 Z" fill="#388E3C" />
+  
+  <!-- Africa -->
+  <path d="M380,180 L360,200 L370,250 L400,280 L430,270 L450,230 L440,190 L410,180 Z" fill="#388E3C" />
+  
+  <!-- Asia -->
+  <path d="M450,80 L430,100 L440,150 L480,200 L550,190 L600,150 L590,100 L550,80 L500,90 Z" fill="#388E3C" />
+  
+  <!-- Australia -->
+  <path d="M650,250 L630,270 L640,300 L670,310 L690,290 L680,260 Z" fill="#388E3C" />
+  
+  <!-- Antarctica (simplified) -->
+  <path d="M300,350 L250,360 L350,370 L450,360 L550,370 L600,360 L500,350 L400,360 Z" fill="#388E3C" />
+</svg>

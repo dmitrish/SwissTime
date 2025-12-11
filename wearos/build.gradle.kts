@@ -1,72 +1,84 @@
 plugins {
-    id("swisstime.android.application")
-    id("swisstime.android.application.compose")
+  alias(libs.plugins.android.application)
+  alias(libs.plugins.kotlin.android)
+  alias(libs.plugins.kotlin.compose)
 }
 
 android {
-    namespace = "com.coroutines.swisstime.wearos"
+  namespace = "com.coroutines.swisstime.wearos"
+  compileSdk = 36
 
-    defaultConfig {
-        applicationId = "com.coroutines.clockwithtimezone.wearos"
-        minSdk = 30 // WearOS minimum SDK
-        versionCode = 1
-        versionName = "1.0"
+  defaultConfig {
+    applicationId = "com.coroutines.clockwithtimezone.wearos"
+    minSdk = 30 // WearOS minimum SDK
+    targetSdk = 36
+    versionCode = 1
+    versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+  }
+
+  signingConfigs {
+    create("release") {
+      // Using debug keystore for development purposes
+      storeFile = file("${System.getProperty("user.home")}/.android/debug.keystore")
+      storePassword = "android"
+      keyAlias = "androiddebugkey"
+      keyPassword = "android"
     }
+  }
 
-    signingConfigs {
-        create("release") {
-            // Using debug keystore for development purposes
-            storeFile = file("${System.getProperty("user.home")}/.android/debug.keystore")
-            storePassword = "android"
-            keyAlias = "androiddebugkey"
-            keyPassword = "android"
-        }
+  buildTypes {
+    release {
+      isMinifyEnabled = true
+      proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+      signingConfig = signingConfigs.getByName("release")
     }
+  }
 
-    buildTypes {
-        release {
-            isMinifyEnabled = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            signingConfig = signingConfigs.getByName("release")
-        }
-    }
+  compileOptions {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+  }
+
+  kotlinOptions { jvmTarget = "11" }
+
+  buildFeatures { compose = true }
 }
 
 dependencies {
-    // Add worldclockcommon module as a dependency
-    implementation(project(":worldclockcommon"))
+  // Add worldclockcommon module as a dependency
+  implementation(project(":worldclockcommon"))
 
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
+  implementation(libs.androidx.core.ktx)
+  implementation(libs.androidx.lifecycle.runtime.ktx)
+  implementation(libs.androidx.activity.compose)
+  implementation(platform(libs.androidx.compose.bom))
+  implementation(libs.androidx.ui)
+  implementation(libs.androidx.ui.graphics)
+  implementation(libs.androidx.ui.tooling.preview)
+  implementation(libs.androidx.material3)
 
-    // WearOS specific dependencies
-    implementation(libs.androidx.wear)
-    implementation(libs.androidx.compose.foundation)
-    implementation(libs.wear.compose.material)
-    implementation(libs.wear.compose.navigation)
+  // WearOS specific dependencies
+  implementation(libs.androidx.wear)
+  implementation(libs.androidx.compose.foundation)
+  implementation(libs.wear.compose.material)
+  implementation(libs.wear.compose.navigation)
 
-    // DataStore for preferences
-    implementation(libs.androidx.datastore.preferences)
+  // DataStore for preferences
+  implementation(libs.androidx.datastore.preferences)
 
-    // Navigation
-    implementation(libs.androidx.navigation.compose)
+  // Navigation
+  implementation(libs.androidx.navigation.compose)
 
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
+  testImplementation(libs.junit)
+  androidTestImplementation(libs.androidx.junit)
+  androidTestImplementation(libs.androidx.espresso.core)
+  androidTestImplementation(platform(libs.androidx.compose.bom))
+  androidTestImplementation(libs.androidx.ui.test.junit4)
+  debugImplementation(libs.androidx.ui.tooling)
+  debugImplementation(libs.androidx.ui.test.manifest)
 
-    // Material icons for Compose (needed for Icons.Filled.*)
-    implementation(libs.androidx.material.icons.extended)
+  // Material icons for Compose (needed for Icons.Filled.*)
+  implementation(libs.androidx.material.icons.extended)
 }

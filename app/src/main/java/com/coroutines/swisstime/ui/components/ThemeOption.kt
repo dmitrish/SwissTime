@@ -20,47 +20,39 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun ThemeOption(
-    title: String,
-    description: String,
-    selected: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+  title: String,
+  description: String,
+  selected: Boolean,
+  onClick: () -> Unit,
+  modifier: Modifier = Modifier
 ) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        RadioButton(
-            selected = selected,
-            onClick = onClick
-        )
+  Row(
+    modifier = modifier.fillMaxWidth().clickable(onClick = onClick).padding(vertical = 8.dp),
+    verticalAlignment = Alignment.CenterVertically
+  ) {
+    RadioButton(selected = selected, onClick = onClick)
 
-        Spacer(modifier = Modifier.width(8.dp))
+    Spacer(modifier = Modifier.width(8.dp))
 
-        Column(
-            modifier = Modifier.weight(1f)
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            Text(
-                text = description,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-            )
-        }
-
-        if (selected) {
-            Icon(
-                imageVector = Icons.Filled.Check,
-                contentDescription = "Selected",
-                tint = MaterialTheme.colorScheme.primary
-            )
-        }
+    Column(modifier = Modifier.weight(1f)) {
+      Text(
+        text = title,
+        style = MaterialTheme.typography.bodyLarge,
+        color = MaterialTheme.colorScheme.onSurface
+      )
+      Text(
+        text = description,
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+      )
     }
+
+    if (selected) {
+      Icon(
+        imageVector = Icons.Filled.Check,
+        contentDescription = "Selected",
+        tint = MaterialTheme.colorScheme.primary
+      )
+    }
+  }
 }
