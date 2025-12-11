@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paparazzi Screenshot Testing in SwissTime</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1, h2, h3, h4 {
+            color: #2c3e50;
+        }
+        h1 {
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            border-bottom: 1px solid #bdc3c7;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+        code {
+            background-color: #f8f8f8;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        pre {
+            background-color: #f8f8f8;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            border: 1px solid #ddd;
+        }
+        .highlight {
+            background-color: #ffffcc;
+            padding: 2px;
+        }
+        .note {
+            background-color: #e8f4f8;
+            padding: 15px;
+            border-left: 5px solid #3498db;
+            margin: 20px 0;
+        }
+        .image-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .image-container img {
+            max-width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Paparazzi Screenshot Testing in SwissTime</h1>
+    
+    <h2>1. Introduction to Screenshot Testing</h2>
+    <p>
+        Screenshot testing is a form of visual regression testing that captures screenshots of UI components and compares them against baseline images to detect visual changes. This approach ensures that UI components maintain their visual appearance as the codebase evolves, preventing unintended visual regressions.
+    </p>
+    <p>
+        In the SwissTime project, we use <a href="https://github.com/cashapp/paparazzi" target="_blank">Paparazzi</a>, a screenshot testing library developed by Cash App (Square), to test the visual appearance of our UI components. Paparazzi renders views on the JVM without requiring a physical device or emulator, making it faster and more reliable than traditional screenshot testing approaches.
+    </p>
+
+    <h2>2. What Paparazzi Tests in SwissTime</h2>
+    <p>
+        In the SwissTime project, Paparazzi is used to test the visual appearance of several UI components from the Settings screen. Each component is tested in isolation, with different states and themes, to ensure comprehensive coverage of all visual aspects.
+    </p>
+
+    <h3>2.1. Components Tested</h3>
+    <p>
+        The following components are tested using Paparazzi:
+    </p>
+    <ul>
+        <li><strong>SettingsScreen</strong>: The main settings screen that displays various settings options.</li>
+        <li><strong>ThemeSettingsCard</strong>: A card component that displays theme settings including theme selection and dark mode toggle.</li>
+        <li><strong>TimeFormatSettingsCard</strong>: A card component that displays time format settings (12-hour vs 24-hour).</li>
+        <li><strong>WatchRemovalGestureSettingsCard</strong>: A card component that displays watch removal gesture settings (double tap vs long press).</li>
+    </ul>
+
+    <h3>2.2. Visual Aspects Tested</h3>
+    <p>
+        For each component, the following visual aspects are tested:
+    </p>
+    <ul>
+        <li><strong>Layout</strong>: The overall layout of the component, including spacing, alignment, and sizing.</li>
+        <li><strong>Colors</strong>: The colors used in the component, including background colors, text colors, and contrast.</li>
+        <li><strong>Typography</strong>: The text styling, including font sizes, weights, and colors.</li>
+        <li><strong>State-dependent appearance</strong>: How the component appears in different states (e.g., toggle on/off).</li>
+        <li><strong>Theme-dependent appearance</strong>: How the component appears in different themes (light/dark).</li>
+    </ul>
+
+    <h3>2.3. States and Configurations Tested</h3>
+    <p>
+        Each component is tested in various states and configurations to ensure comprehensive coverage:
+    </p>
+
+    <h4>SettingsScreen</h4>
+    <ul>
+        <li>Light theme with default settings</li>
+        <li>Dark theme</li>
+        <li>24-hour time format</li>
+        <li>Double tap removal gesture</li>
+    </ul>
+
+    <h4>ThemeSettingsCard</h4>
+    <ul>
+        <li>Light theme with day mode</li>
+        <li>Light theme with night mode</li>
+        <li>Light theme with system mode</li>
+        <li>Light theme with dark mode enabled</li>
+        <li>Dark theme with day mode</li>
+        <li>Dark theme with night mode</li>
+        <li>Dark theme with system mode</li>
+    </ul>
+
+    <h4>TimeFormatSettingsCard</h4>
+    <ul>
+        <li>Light theme with US time format (12-hour with AM/PM)</li>
+        <li>Light theme with 24-hour format</li>
+        <li>Dark theme with US time format</li>
+        <li>Dark theme with 24-hour format</li>
+    </ul>
+
+    <h4>WatchRemovalGestureSettingsCard</h4>
+    <ul>
+        <li>Light theme with double tap removal gesture</li>
+        <li>Light theme with long press removal gesture</li>
+        <li>Dark theme with double tap removal gesture</li>
+        <li>Dark theme with long press removal gesture</li>
+    </ul>
+
+    <h2>3. Testing Approach</h2>
+    <p>
+        The testing approach used in the SwissTime project follows these principles:
+    </p>
+
+    <h3>3.1. Component Isolation</h3>
+    <p>
+        Each component is tested in isolation, without dependencies on other components or the actual ViewModels. This approach allows us to focus on the visual appearance of each component without being affected by the behavior of other components.
+    </p>
+    <p>
+        For the SettingsScreen, we use a simplified version of the component that doesn't require ViewModels or other dependencies. For the individual card components, we use the real components from the app with mocked callbacks.
+    </p>
+
+    <h3>3.2. Real Components with Mocked Dependencies</h3>
+    <p>
+        For the individual card components, we use the real components from the app:
+    </p>
+    <ul>
+        <li>We provide a MaterialTheme wrapper with appropriate color schemes</li>
+        <li>We mock the callbacks (like onThemeClick, onTimeFormatChange, etc.) with no-op functions</li>
+        <li>We allow direct control of the visual state for testing different scenarios</li>
+    </ul>
+
+    <h3>3.3. Comprehensive State Coverage</h3>
+    <p>
+        Each test file tests all relevant states of the component, including:
+    </p>
+    <ul>
+        <li>Light theme vs dark theme</li>
+        <li>Different toggle states (on/off)</li>
+        <li>Different text values based on the component's state</li>
+    </ul>
+
+    <h3>3.4. Consistent Structure</h3>
+    <p>
+        All test files follow the same structure:
+    </p>
+    <ul>
+        <li>A Paparazzi rule with the same device configuration</li>
+        <li>A ThemedContent wrapper composable that provides MaterialTheme</li>
+        <li>Test methods for different states of the component</li>
+        <li>Comprehensive documentation explaining the purpose of each component and test method</li>
+    </ul>
+
+    <h2>4. Example: Testing the ThemeSettingsCard</h2>
+    <p>
+        Let's look at an example of how the ThemeSettingsCard is tested using Paparazzi:
+    </p>
+
+    <pre>
+@Test
+fun testThemeSettingsCard_lightTheme_dayMode() {
+    paparazzi.snapshot {
+        Surface(color = Color(0xFFFAFAFA)) {
+            ThemedContent(darkTheme = false) {
+                ThemeSettingsCard(
+                    themeMode = ThemeMode.DAY,
+                    darkMode = false,
+                    onThemeClick = { /* No-op for testing */ },
+                    onDarkModeChange = { /* No-op for testing */ }
+                )
+            }
+        }
+    }
+}
+    </pre>
+
+    <p>
+        This test method:
+    </p>
+    <ol>
+        <li>Uses the Paparazzi snapshot method to capture a screenshot</li>
+        <li>Creates a Surface with a light background color</li>
+        <li>Applies a light theme using the ThemedContent wrapper</li>
+        <li>Renders the ThemeSettingsCard with day mode and dark mode disabled</li>
+        <li>Mocks the callbacks with no-op functions</li>
+    </ol>
+
+    <p>
+        The test verifies:
+    </p>
+    <ul>
+        <li>The card appearance in light theme</li>
+        <li>The theme text shows "Day Theme"</li>
+        <li>The theme preview shows the light navy color</li>
+        <li>The dark mode toggle is off</li>
+    </ul>
+
+    <h2>5. Why Screenshot Testing is Needed</h2>
+    <p>
+        Screenshot testing is essential for UI components because it helps catch visual regressions that might not be detected by other types of tests. Here are some specific reasons why screenshot testing is needed for the SwissTime project:
+    </p>
+
+    <h3>5.1. Detecting Visual Regressions</h3>
+    <p>
+        Screenshot testing helps detect visual regressions that might be introduced by code changes. For example:
+    </p>
+    <ul>
+        <li>Changes to layout parameters that affect spacing, alignment, or sizing</li>
+        <li>Changes to colors that affect the appearance or contrast of components</li>
+        <li>Changes to text styling that affect readability or visual hierarchy</li>
+        <li>Changes to how components appear in different states or themes</li>
+    </ul>
+
+    <h3>5.2. Ensuring Consistent Appearance Across Themes</h3>
+    <p>
+        The SwissTime app supports multiple themes (day, night, system) and both light and dark modes. Screenshot testing helps ensure that components maintain a consistent appearance across all these themes and modes.
+    </p>
+
+    <h3>5.3. Verifying State-Dependent Appearance</h3>
+    <p>
+        Many components in the SwissTime app have different appearances based on their state. For example, the TimeFormatSettingsCard shows different text based on whether the US time format is enabled or disabled. Screenshot testing helps verify that these state-dependent appearances are correct.
+    </p>
+
+    <h3>5.4. Documenting UI Components</h3>
+    <p>
+        Screenshot tests serve as documentation for UI components, showing how they should appear in different states and themes. This can be valuable for new developers joining the project or for designers reviewing the implementation of their designs.
+    </p>
+
+    <h2>6. Benefits of Paparazzi</h2>
+    <p>
+        Paparazzi offers several benefits over other screenshot testing tools:
+    </p>
+
+    <h3>6.1. No Device Required</h3>
+    <p>
+        Paparazzi renders views on the JVM, without requiring a physical device or emulator. This makes it significantly faster and more reliable than traditional screenshot testing approaches.
+    </p>
+
+    <h3>6.2. Faster Execution</h3>
+    <p>
+        Because Paparazzi doesn't require a device or emulator, tests run much faster. This improves developer productivity and makes it more practical to run screenshot tests as part of the regular development workflow.
+    </p>
+
+    <h3>6.3. Easier Integration</h3>
+    <p>
+        Paparazzi is easier to integrate than other screenshot testing tools. It's available through Maven Central and can be added using the standard Gradle plugins DSL. It doesn't require complex setup or configuration.
+    </p>
+
+    <h3>6.4. Comprehensive Reports</h3>
+    <p>
+        Paparazzi generates comprehensive HTML reports with screenshots, making it easy to review the results of screenshot tests. The reports include both the captured screenshots and any differences from the baseline images.
+    </p>
+
+    <h3>6.5. Video Capture</h3>
+    <p>
+        In addition to static screenshots, Paparazzi can capture videos (animated GIFs) of UI components. This is useful for testing animations and transitions, which are an important part of the user experience.
+    </p>
+
+    <h2>7. Limitations and Future Improvements</h2>
+    <p>
+        While Paparazzi is a powerful tool for screenshot testing, it has some limitations:
+    </p>
+
+    <h3>7.1. No Interaction Testing</h3>
+    <p>
+        Paparazzi tests only verify the visual appearance of components, not their interactions. For example, it can verify that a switch looks correct in both on and off states, but it can't verify that clicking the switch actually changes its state.
+    </p>
+
+    <h3>7.2. Limited Theme Testing</h3>
+    <p>
+        While we use MaterialTheme in our tests, we're using a simplified version with basic color schemes, not the full SwissTimeTheme from the app. This means that some theme-specific details might not be captured by the tests.
+    </p>
+
+    <h3>7.3. Mocked Callbacks</h3>
+    <p>
+        The callbacks in our tests are mocked with no-op functions, so we don't test the actual behavior when interactions occur. This means that we might miss issues with how components respond to user interactions.
+    </p>
+
+    <h3>7.4. Future Improvements</h3>
+    <p>
+        In the future, we could improve our screenshot testing approach by:
+    </p>
+    <ul>
+        <li>Adding tests for more edge cases, such as very long text</li>
+        <li>Adding accessibility tests to verify that components are accessible to all users</li>
+        <li>Adding animation tests using Paparazzi's gif() method to verify animations and transitions</li>
+        <li>Using the full SwissTimeTheme in tests to capture theme-specific details</li>
+    </ul>
+
+    <h2>8. Conclusion</h2>
+    <p>
+        Screenshot testing with Paparazzi is an essential part of the SwissTime project's testing strategy. It helps ensure that UI components maintain their visual appearance as the codebase evolves, preventing unintended visual regressions.
+    </p>
+    <p>
+        By testing components in isolation, with comprehensive coverage of different states and themes, we can catch visual issues early in the development process. This leads to a more consistent and polished user experience.
+    </p>
+    <p>
+        Paparazzi's speed, reliability, and ease of integration make it an excellent choice for screenshot testing in Android projects. Its ability to run on the JVM without requiring a device or emulator makes it practical to run screenshot tests as part of the regular development workflow.
+    </p>
+</body>
+</html>

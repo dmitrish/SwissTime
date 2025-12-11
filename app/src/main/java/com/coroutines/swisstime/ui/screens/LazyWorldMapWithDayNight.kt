@@ -1,46 +1,7 @@
 package com.coroutines.swisstime.ui.screens
 
-import android.util.Log
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import com.coroutines.swisstime.R
-import com.coroutines.swisstime.utils.TimingLogger
-import com.coroutines.swisstime.ui.theme.DarkNavy
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.withContext
-import java.util.Calendar
-import java.util.TimeZone
-import kotlin.math.PI
-import kotlin.math.abs
-import kotlin.math.acos
-import kotlin.math.asin
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.sin
-import kotlin.math.sqrt
-import kotlin.math.tan
 
 private const val TAG = "LazyWorldMap"
 /*
@@ -437,7 +398,7 @@ private fun DrawScope.drawOptimizedNightShading(
                     topLeft = Offset(x.toFloat(), y.toFloat()),
                     size = Size(stepSize.toFloat(), stepSize.toFloat())
                 )
-            } 
+            }
             // Only do the more complex calculation for terminator region
             else if (altitude <= blur) {
                 // Terminator region - blend

@@ -20,59 +20,56 @@ import com.coroutines.swisstime.utils.darken
 /**
  * A card component that displays watch removal gesture settings.
  *
- * @param useDoubleTapForRemoval Whether to use double tap (true) or long press (false) for watch removal
+ * @param useDoubleTapForRemoval Whether to use double tap (true) or long press (false) for watch
+ *   removal
  * @param onRemovalGestureChange Callback for when the removal gesture toggle is changed
  * @param modifier Optional modifier for the card
  */
 @Composable
 fun WatchRemovalGestureSettingsCard(
-    useDoubleTapForRemoval: Boolean,
-    onRemovalGestureChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier
+  useDoubleTapForRemoval: Boolean,
+  onRemovalGestureChange: (Boolean) -> Unit,
+  modifier: Modifier = Modifier
 ) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = DarkNavy.darken(0.3f)// MaterialTheme.colorScheme.surface
-        )
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text(
-                text = "Watch Removal Gesture",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface
-            )
+  Card(
+    modifier = modifier.fillMaxWidth(),
+    colors =
+      CardDefaults.cardColors(
+        containerColor = DarkNavy.darken(0.3f) // MaterialTheme.colorScheme.surface
+      )
+  ) {
+    Column(modifier = Modifier.padding(16.dp)) {
+      Text(
+        text = "Watch Removal Gesture",
+        style = MaterialTheme.typography.titleLarge,
+        color = MaterialTheme.colorScheme.onSurface
+      )
 
-            Spacer(modifier = Modifier.height(16.dp))
+      Spacer(modifier = Modifier.height(16.dp))
 
-            // Watch removal gesture toggle
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Column {
-                    Text(
-                        text = "Use Double Tap",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Text(
-                        text = if (useDoubleTapForRemoval) "Double tap to remove watch" else "Long press to remove watch",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                    )
-                }
-
-                Switch(
-                    checked = useDoubleTapForRemoval,
-                    onCheckedChange = onRemovalGestureChange
-                )
-            }
+      // Watch removal gesture toggle
+      Row(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+      ) {
+        Column {
+          Text(
+            text = "Use Double Tap",
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurface
+          )
+          Text(
+            text =
+              if (useDoubleTapForRemoval) "Double tap to remove watch"
+              else "Long press to remove watch",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+          )
         }
+
+        Switch(checked = useDoubleTapForRemoval, onCheckedChange = onRemovalGestureChange)
+      }
     }
+  }
 }

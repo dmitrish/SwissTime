@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.coroutines.livewallpaper" >
+
+    <uses-sdk android:minSdkVersion="24" />
+
+    <uses-feature
+        android:name="android.software.live_wallpaper"
+        android:required="true" />
+
+    <application>
+        <service
+            android:name="com.coroutines.livewallpaper.DigitalClockWallpaperService"
+            android:exported="true"
+            android:label="@string/digital_clock_wallpaper_name" >
+            <intent-filter>
+                <action android:name="android.service.wallpaper.WallpaperService" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.service.wallpaper"
+                android:resource="@xml/digital_clock_wallpaper" />
+        </service>
+        <service
+            android:name="com.coroutines.livewallpaper.service.PagerWallpaperService"
+            android:exported="true"
+            android:label="@string/digital_clock_wallpaper_name" >
+            <intent-filter>
+                <action android:name="android.service.wallpaper.service.PagerWallpaperService" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.service.wallpaper"
+                android:resource="@xml/digital_clock_wallpaper" />
+        </service>
+        <service
+            android:name="com.coroutines.livewallpaper.service.RomaMarinaWallpaperService"
+            android:exported="true"
+            android:label="@string/roma_marina_wallpaper_name" >
+            <intent-filter>
+                <action android:name="android.service.wallpaper.WallpaperService" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.service.wallpaper"
+                android:resource="@xml/roma_marina_wallpaper" />
+        </service>
+        <service
+            android:name="com.coroutines.livewallpaper.service.ChronomagusRegumWallpaperService"
+            android:exported="true"
+            android:label="@string/chronomagus_regum_wallpaper_name" >
+            <intent-filter>
+                <action android:name="android.service.wallpaper.WallpaperService" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.service.wallpaper"
+                android:resource="@xml/chronomagus_regum_wallpaper" />
+        </service>
+        <service
+            android:name="com.coroutines.livewallpaper.service.ZeitwerkWallpaperService"
+            android:exported="true"
+            android:label="@string/zeitwerk_wallpaper_name" >
+            <intent-filter>
+                <action android:name="android.service.wallpaper.WallpaperService" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.service.wallpaper"
+                android:resource="@xml/zeitwerk_wallpaper" />
+        </service>
+    </application>
+
+</manifest>

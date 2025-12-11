@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -31,21 +29,19 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.nativeCanvas
-import kotlinx.coroutines.delay
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Text
 import com.coroutines.swisstime.wearos.repository.TimeZoneInfo
 import com.coroutines.swisstime.wearos.repository.WatchFaceRepository
 import com.coroutines.worldclock.common.components.CustomWorldMapWithDayNight
-import com.coroutines.worldclock.common.watchface.BaseWatch
 import com.coroutines.worldclock.common.watchface.WorldClockWatchTheme
 import java.util.Calendar
 import java.util.TimeZone
 import kotlin.math.cos
 import kotlin.math.sin
+import kotlinx.coroutines.delay
 
 // Colors for the Zeitwerk watch face
 private val ClockFaceColor = Color(0xFF1A3A5A) // Deep Atlantic blue dial
@@ -59,411 +55,382 @@ private val CenterDotColor = Color(0xFFE0E0E0) // Silver center dot
 private val LogoColor = Color(0xFFFFFFFF) // White logo text
 
 private object ZeitwerkTheme : WorldClockWatchTheme() {
-    override val staticElementsDrawer = listOf(
-        { center: Offset, radius: Float -> drawClockFace(center, radius) },
-        { center: Offset, radius: Float -> drawHourMarkersAndNumbers(center, radius) }
+  override val staticElementsDrawer =
+    listOf(
+      { center: Offset, radius: Float -> drawClockFace(center, radius) },
+      { center: Offset, radius: Float -> drawHourMarkersAndNumbers(center, radius) }
     )
 
-    override val hourHandDrawer: (Offset, Float) -> DrawScope.() -> Unit = { center, radius ->
-        {
-            // Hour hand - straight with lume
-            // Main hour hand - straight and thin
-            drawRoundRect(
-                color = HourHandColor,
-                topLeft = Offset(center.x - radius * 0.02f, center.y - radius * 0.5f),
-                size = Size(radius * 0.04f, radius * 0.5f),
-                cornerRadius = CornerRadius(radius * 0.01f)
-            )
+  override val hourHandDrawer: (Offset, Float) -> DrawScope.() -> Unit = { center, radius ->
+    {
+      // Hour hand - straight with lume
+      // Main hour hand - straight and thin
+      drawRoundRect(
+        color = HourHandColor,
+        topLeft = Offset(center.x - radius * 0.02f, center.y - radius * 0.5f),
+        size = Size(radius * 0.04f, radius * 0.5f),
+        cornerRadius = CornerRadius(radius * 0.01f)
+      )
 
-            // Lume on hour hand tip
-            drawCircle(
-                color = LumeColor,
-                radius = radius * 0.03f,
-                center = Offset(center.x, center.y - radius * 0.45f)
-            )
-        }
+      // Lume on hour hand tip
+      drawCircle(
+        color = LumeColor,
+        radius = radius * 0.03f,
+        center = Offset(center.x, center.y - radius * 0.45f)
+      )
+    }
+  }
+
+  override val minuteHandDrawer: (Offset, Float) -> DrawScope.() -> Unit = { center, radius ->
+    {
+      // Minute hand - longer and thinner
+      // Main minute hand - straight and thin
+      drawRoundRect(
+        color = MinuteHandColor,
+        topLeft = Offset(center.x - radius * 0.015f, center.y - radius * 0.7f),
+        size = Size(radius * 0.03f, radius * 0.7f),
+        cornerRadius = CornerRadius(radius * 0.01f)
+      )
+
+      // Lume on minute hand tip
+      drawCircle(
+        color = LumeColor,
+        radius = radius * 0.025f,
+        center = Offset(center.x, center.y - radius * 0.65f)
+      )
+    }
+  }
+
+  override val secondHandDrawer: (Offset, Float) -> DrawScope.() -> Unit = { center, radius ->
+    {
+      // Second hand - thin red with distinctive circle near tip
+      // Main second hand
+      drawLine(
+        color = SecondHandColor,
+        start = Offset(center.x, center.y + radius * 0.15f),
+        end = Offset(center.x, center.y - radius * 0.75f),
+        strokeWidth = 2f,
+        cap = StrokeCap.Round
+      )
+
+      // Distinctive circle near tip
+      drawCircle(
+        color = SecondHandColor,
+        radius = radius * 0.03f,
+        center = Offset(center.x, center.y - radius * 0.65f)
+      )
+
+      // Counterbalance
+      drawCircle(
+        color = SecondHandColor,
+        radius = radius * 0.02f,
+        center = Offset(center.x, center.y + radius * 0.1f)
+      )
+    }
+  }
+
+  override val centerDotDrawer: (Offset, Float) -> DrawScope.() -> Unit = { center, radius ->
+    { drawCircle(color = CenterDotColor, radius = radius * 0.03f, center = center) }
+  }
+
+  private fun drawClockFace(center: Offset, radius: Float): DrawScope.() -> Unit = {
+    // Scale up to compensate for the scaling in BaseWatch
+    val scaledRadius = radius * 1.1f
+
+    // Draw outer circle (border) - stainless steel case
+    drawCircle(
+      color = ClockBorderColor,
+      radius = scaledRadius,
+      center = center,
+      style = Stroke(width = 8f)
+    )
+
+    // Draw inner circle (face) - Atlantic blue dial
+    drawCircle(color = ClockFaceColor, radius = scaledRadius * 0.95f, center = center)
+  }
+
+  private fun drawHourMarkersAndNumbers(center: Offset, radius: Float): DrawScope.() -> Unit = {
+    // Scale up to compensate for the scaling in BaseWatch
+    val scaledRadius = radius * 1.1f
+
+    // Ahoi uses simple line markers for hours
+    for (i in 0 until 12) {
+      val angle = Math.PI / 6 * i
+
+      // Skip 6 o'clock where the date window is
+      if (i == 6) continue
+
+      val markerLength =
+        if (i % 3 == 0) scaledRadius * 0.1f else scaledRadius * 0.05f // Longer at 12, 3, 9
+      val markerWidth =
+        if (i % 3 == 0) scaledRadius * 0.02f else scaledRadius * 0.01f // Thicker at 12, 3, 9
+
+      val outerX = center.x + cos(angle).toFloat() * scaledRadius * 0.85f
+      val outerY = center.y + sin(angle).toFloat() * scaledRadius * 0.85f
+      val innerX = center.x + cos(angle).toFloat() * (scaledRadius * 0.85f - markerLength)
+      val innerY = center.y + sin(angle).toFloat() * (scaledRadius * 0.85f - markerLength)
+
+      // Draw hour marker
+      drawLine(
+        color = MarkersColor,
+        start = Offset(innerX, innerY),
+        end = Offset(outerX, outerY),
+        strokeWidth = markerWidth,
+        cap = StrokeCap.Round
+      )
+
+      // Add lume dot at the end of the marker
+      if (i % 3 == 0) {
+        drawCircle(color = LumeColor, radius = markerWidth * 0.8f, center = Offset(outerX, outerY))
+      }
     }
 
-    override val minuteHandDrawer: (Offset, Float) -> DrawScope.() -> Unit = { center, radius ->
-        {
-            // Minute hand - longer and thinner
-            // Main minute hand - straight and thin
-            drawRoundRect(
-                color = MinuteHandColor,
-                topLeft = Offset(center.x - radius * 0.015f, center.y - radius * 0.7f),
-                size = Size(radius * 0.03f, radius * 0.7f),
-                cornerRadius = CornerRadius(radius * 0.01f)
-            )
+    // Draw minute markers (smaller lines)
+    for (i in 0 until 60) {
+      // Skip positions where hour markers are
+      if (i % 5 == 0) continue
 
-            // Lume on minute hand tip
-            drawCircle(
-                color = LumeColor,
-                radius = radius * 0.025f,
-                center = Offset(center.x, center.y - radius * 0.65f)
-            )
-        }
+      val angle = Math.PI * 2 * i / 60
+      val markerLength = scaledRadius * 0.02f
+
+      val outerX = center.x + cos(angle).toFloat() * scaledRadius * 0.85f
+      val outerY = center.y + sin(angle).toFloat() * scaledRadius * 0.85f
+      val innerX = center.x + cos(angle).toFloat() * (scaledRadius * 0.85f - markerLength)
+      val innerY = center.y + sin(angle).toFloat() * (scaledRadius * 0.85f - markerLength)
+
+      // Draw minute marker
+      drawLine(
+        color = MarkersColor,
+        start = Offset(innerX, innerY),
+        end = Offset(outerX, outerY),
+        strokeWidth = scaledRadius * 0.005f,
+        cap = StrokeCap.Round
+      )
     }
 
-    override val secondHandDrawer: (Offset, Float) -> DrawScope.() -> Unit = { center, radius ->
-        {
-            // Second hand - thin red with distinctive circle near tip
-            // Main second hand
-            drawLine(
-                color = SecondHandColor,
-                start = Offset(center.x, center.y + radius * 0.15f),
-                end = Offset(center.x, center.y - radius * 0.75f),
-                strokeWidth = 2f,
-                cap = StrokeCap.Round
-            )
+    // Draw date window at 6 o'clock
+    val dateAngle = Math.PI * 1.5 // 6 o'clock
+    val dateX = center.x + cos(dateAngle).toFloat() * scaledRadius * 0.7f
+    val dateY = center.y + sin(dateAngle).toFloat() * scaledRadius * 0.7f
 
-            // Distinctive circle near tip
-            drawCircle(
-                color = SecondHandColor,
-                radius = radius * 0.03f,
-                center = Offset(center.x, center.y - radius * 0.65f)
-            )
+    // Date window - rectangular with rounded corners
+    drawRoundRect(
+      color = Color.White,
+      topLeft = Offset(dateX - scaledRadius * 0.08f, dateY - scaledRadius * 0.06f),
+      size = Size(scaledRadius * 0.16f, scaledRadius * 0.12f),
+      cornerRadius = CornerRadius(scaledRadius * 0.01f)
+    )
 
-            // Counterbalance
-            drawCircle(
-                color = SecondHandColor,
-                radius = radius * 0.02f,
-                center = Offset(center.x, center.y + radius * 0.1f)
-            )
-        }
-    }
+    // Date text
+    val datePaint =
+      Paint().apply {
+        color = Color.Black.hashCode()
+        textSize = scaledRadius * 0.08f
+        textAlign = Paint.Align.CENTER
+        isFakeBoldText = true
+        isAntiAlias = true
+      }
 
-    override val centerDotDrawer: (Offset, Float) -> DrawScope.() -> Unit = { center, radius ->
-        {
-            drawCircle(
-                color = CenterDotColor,
-                radius = radius * 0.03f,
-                center = center
-            )
-        }
-    }
+    val day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH).toString()
+    drawContext.canvas.nativeCanvas.drawText(day, dateX, dateY + scaledRadius * 0.035f, datePaint)
+  }
 
-    private fun drawClockFace(center: Offset, radius: Float): DrawScope.() -> Unit = {
-        // Scale up to compensate for the scaling in BaseWatch
-        val scaledRadius = radius * 1.1f
+  fun drawLogo(center: Offset, radius: Float): DrawScope.() -> Unit = {
+    // Scale up to compensate for the scaling in BaseWatch
+    val scaledRadius = radius * 1.1f
 
-        // Draw outer circle (border) - stainless steel case
-        drawCircle(
-            color = ClockBorderColor,
-            radius = scaledRadius,
-            center = center,
-            style = Stroke(width = 8f)
-        )
+    val logoPaint =
+      Paint().apply {
+        color = LogoColor.hashCode()
+        textSize = scaledRadius * 0.12f
+        textAlign = Paint.Align.CENTER
+        isFakeBoldText = true
+        isAntiAlias = true
+      }
 
-        // Draw inner circle (face) - Atlantic blue dial
-        drawCircle(
-            color = ClockFaceColor,
-            radius = scaledRadius * 0.95f,
-            center = center
-        )
-    }
+    /* drawContext.canvas.nativeCanvas.drawText(
+        "Zeitwerk",
+        center.x,
+        center.y - scaledRadius * 0.3f,
+        logoPaint
+    )*/
 
-    private fun drawHourMarkersAndNumbers(center: Offset, radius: Float): DrawScope.() -> Unit = {
-        // Scale up to compensate for the scaling in BaseWatch
-        val scaledRadius = radius * 1.1f
+    // Draw "Alpenglühen" text
+    val locationPaint =
+      Paint().apply {
+        color = LogoColor.hashCode()
+        textSize = scaledRadius * 0.06f
+        textAlign = Paint.Align.CENTER
+        isFakeBoldText = false
+        isAntiAlias = true
+      }
 
-        // Ahoi uses simple line markers for hours
-        for (i in 0 until 12) {
-            val angle = Math.PI / 6 * i
+    drawContext.canvas.nativeCanvas.drawText(
+      "Alpenglühen",
+      center.x,
+      center.y - scaledRadius * 0.25f,
+      locationPaint
+    )
 
-            // Skip 6 o'clock where the date window is
-            if (i == 6) continue
+    val modelPaint =
+      Paint().apply {
+        color = LogoColor.hashCode()
+        textSize = scaledRadius * 0.08f
+        textAlign = Paint.Align.CENTER
+        isFakeBoldText = false
+        isAntiAlias = true
+      }
 
-            val markerLength = if (i % 3 == 0) scaledRadius * 0.1f else scaledRadius * 0.05f // Longer at 12, 3, 9
-            val markerWidth = if (i % 3 == 0) scaledRadius * 0.02f else scaledRadius * 0.01f // Thicker at 12, 3, 9
+    drawContext.canvas.nativeCanvas.drawText(
+      "ZEIT",
+      center.x,
+      center.y + scaledRadius * 0.56f,
+      modelPaint
+    )
 
-            val outerX = center.x + cos(angle).toFloat() * scaledRadius * 0.85f
-            val outerY = center.y + sin(angle).toFloat() * scaledRadius * 0.85f
-            val innerX = center.x + cos(angle).toFloat() * (scaledRadius * 0.85f - markerLength)
-            val innerY = center.y + sin(angle).toFloat() * (scaledRadius * 0.85f - markerLength)
+    // Draw "AUTOMATIC" text
+    val subModelPaint =
+      Paint().apply {
+        color = LogoColor.hashCode()
+        textSize = scaledRadius * 0.06f
+        textAlign = Paint.Align.CENTER
+        isFakeBoldText = false
+        isAntiAlias = true
+      }
 
-            // Draw hour marker
-            drawLine(
-                color = MarkersColor,
-                start = Offset(innerX, innerY),
-                end = Offset(outerX, outerY),
-                strokeWidth = markerWidth,
-                cap = StrokeCap.Round
-            )
-
-            // Add lume dot at the end of the marker
-            if (i % 3 == 0) {
-                drawCircle(
-                    color = LumeColor,
-                    radius = markerWidth * 0.8f,
-                    center = Offset(outerX, outerY)
-                )
-            }
-        }
-
-        // Draw minute markers (smaller lines)
-        for (i in 0 until 60) {
-            // Skip positions where hour markers are
-            if (i % 5 == 0) continue
-
-            val angle = Math.PI * 2 * i / 60
-            val markerLength = scaledRadius * 0.02f
-
-            val outerX = center.x + cos(angle).toFloat() * scaledRadius * 0.85f
-            val outerY = center.y + sin(angle).toFloat() * scaledRadius * 0.85f
-            val innerX = center.x + cos(angle).toFloat() * (scaledRadius * 0.85f - markerLength)
-            val innerY = center.y + sin(angle).toFloat() * (scaledRadius * 0.85f - markerLength)
-
-            // Draw minute marker
-            drawLine(
-                color = MarkersColor,
-                start = Offset(innerX, innerY),
-                end = Offset(outerX, outerY),
-                strokeWidth = scaledRadius * 0.005f,
-                cap = StrokeCap.Round
-            )
-        }
-
-        // Draw date window at 6 o'clock
-        val dateAngle = Math.PI * 1.5 // 6 o'clock
-        val dateX = center.x + cos(dateAngle).toFloat() * scaledRadius * 0.7f
-        val dateY = center.y + sin(dateAngle).toFloat() * scaledRadius * 0.7f
-
-        // Date window - rectangular with rounded corners
-        drawRoundRect(
-            color = Color.White,
-            topLeft = Offset(dateX - scaledRadius * 0.08f, dateY - scaledRadius * 0.06f),
-            size = Size(scaledRadius * 0.16f, scaledRadius * 0.12f),
-            cornerRadius = CornerRadius(scaledRadius * 0.01f)
-        )
-
-        // Date text
-        val datePaint = Paint().apply {
-            color = Color.Black.hashCode()
-            textSize = scaledRadius * 0.08f
-            textAlign = Paint.Align.CENTER
-            isFakeBoldText = true
-            isAntiAlias = true
-        }
-
-        val day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH).toString()
-        drawContext.canvas.nativeCanvas.drawText(
-            day,
-            dateX,
-            dateY + scaledRadius * 0.035f,
-            datePaint
-        )
-    }
-
-    fun drawLogo(center: Offset, radius: Float): DrawScope.() -> Unit = {
-        // Scale up to compensate for the scaling in BaseWatch
-        val scaledRadius = radius * 1.1f
-
-        val logoPaint = Paint().apply {
-            color = LogoColor.hashCode()
-            textSize = scaledRadius * 0.12f
-            textAlign = Paint.Align.CENTER
-            isFakeBoldText = true
-            isAntiAlias = true
-        }
-
-       /* drawContext.canvas.nativeCanvas.drawText(
-            "Zeitwerk",
-            center.x,
-            center.y - scaledRadius * 0.3f,
-            logoPaint
-        )*/
-
-        // Draw "Alpenglühen" text
-        val locationPaint = Paint().apply {
-            color = LogoColor.hashCode()
-            textSize = scaledRadius * 0.06f
-            textAlign = Paint.Align.CENTER
-            isFakeBoldText = false
-            isAntiAlias = true
-        }
-
-        drawContext.canvas.nativeCanvas.drawText(
-            "Alpenglühen",
-            center.x,
-            center.y - scaledRadius * 0.25f,
-            locationPaint
-        )
-
-        val modelPaint = Paint().apply {
-            color = LogoColor.hashCode()
-            textSize = scaledRadius * 0.08f
-            textAlign = Paint.Align.CENTER
-            isFakeBoldText = false
-            isAntiAlias = true
-        }
-
-        drawContext.canvas.nativeCanvas.drawText(
-            "ZEIT",
-            center.x,
-            center.y + scaledRadius * 0.56f,
-            modelPaint
-        )
-
-        // Draw "AUTOMATIC" text
-        val subModelPaint = Paint().apply {
-            color = LogoColor.hashCode()
-            textSize = scaledRadius * 0.06f
-            textAlign = Paint.Align.CENTER
-            isFakeBoldText = false
-            isAntiAlias = true
-        }
-
-        drawContext.canvas.nativeCanvas.drawText(
-            "AUTOMATIC",
-            center.x,
-            center.y + scaledRadius * 0.67f,
-            subModelPaint
-        )
-    }
+    drawContext.canvas.nativeCanvas.drawText(
+      "AUTOMATIC",
+      center.x,
+      center.y + scaledRadius * 0.67f,
+      subModelPaint
+    )
+  }
 }
 
 @Composable
 fun Zeitwerk(
-    modifier: Modifier = Modifier,
-    timeZone: TimeZone = TimeZone.getDefault(),
-    watchFaceRepository: WatchFaceRepository? = null,
-    onSelectTimeZone: () -> Unit = {}
+  modifier: Modifier = Modifier,
+  timeZone: TimeZone = TimeZone.getDefault(),
+  watchFaceRepository: WatchFaceRepository? = null,
+  onSelectTimeZone: () -> Unit = {}
 ) {
-    var currentTime by remember { mutableStateOf(Calendar.getInstance(timeZone)) }
-    val timeZoneState by rememberUpdatedState(timeZone)
+  var currentTime by remember { mutableStateOf(Calendar.getInstance(timeZone)) }
+  val timeZoneState by rememberUpdatedState(timeZone)
 
-    // Update time every second
-    LaunchedEffect(key1 = true) {
-        while (true) {
-            currentTime = Calendar.getInstance(timeZoneState)
-            delay(1000) // Update every second
-        }
+  // Update time every second
+  LaunchedEffect(key1 = true) {
+    while (true) {
+      currentTime = Calendar.getInstance(timeZoneState)
+      delay(1000) // Update every second
+    }
+  }
+
+  Box(modifier = modifier.fillMaxSize()) {
+    // Draw static elements of the watch face
+    Canvas(modifier = Modifier.fillMaxSize()) {
+      val center = Offset(size.width / 2, size.height / 2)
+      val radius = size.minDimension / 2 * 1.0f
+
+      // Draw static elements
+      ZeitwerkTheme.staticElementsDrawer.forEach { drawer -> drawer(center, radius)(this) }
     }
 
-    Box(modifier = modifier.fillMaxSize()) {
-        // Draw static elements of the watch face
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            val center = Offset(size.width / 2, size.height / 2)
-            val radius = size.minDimension / 2 * 1.0f
+    // Add the world map component in the middle layer (bottom half)
+    Box(
+      modifier =
+        Modifier.fillMaxWidth()
+          .fillMaxHeight(0.7f) // Take up 70% of the screen
+          .align(Alignment.BottomCenter)
+          .padding(bottom = 10.dp), // Minimal bottom padding
+      contentAlignment = Alignment.Center
+    ) {
+      CustomWorldMapWithDayNight(
+        modifier =
+          Modifier.fillMaxWidth(0.7f) // Make the map 90% of the width
+            .fillMaxHeight(0.7f) // Make the map 90% of the height while maintaining aspect ratio
+            .offset(y = (-5).dp), // Raise it slightly
+        nightOverlayColor = ClockFaceColor // Use the watch face color for the night overlay
+      )
+    }
 
-            // Draw static elements
-            ZeitwerkTheme.staticElementsDrawer.forEach { drawer ->
-                drawer(center, radius)(this)
-            }
+    // Draw the logo on top of the watchface and map but below the hands
+    Canvas(modifier = Modifier.fillMaxSize()) {
+      val center = Offset(size.width / 2, size.height / 2)
+      val radius = size.minDimension / 2 * 1.0f
+      ZeitwerkTheme.drawLogo(center, radius)(this)
+    }
+
+    // Draw the timezone selection UI on top of the watchface but below the hands
+    if (watchFaceRepository != null) {
+      // Get the selected timezone
+      val selectedTimeZoneId = watchFaceRepository.getSelectedTimeZoneId().collectAsState()
+
+      // Get the timezone display name using the selectedTimeZoneId state
+      val timeZones = remember { watchFaceRepository.getAllTimeZones() }
+      val timeZoneInfo =
+        remember(selectedTimeZoneId.value) {
+          timeZones.find { it.id == selectedTimeZoneId.value }
+            ?: TimeZoneInfo(id = selectedTimeZoneId.value, displayName = selectedTimeZoneId.value)
         }
 
-        // Add the world map component in the middle layer (bottom half)
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.7f) // Take up 70% of the screen
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 10.dp), // Minimal bottom padding
-            contentAlignment = Alignment.Center
+      // Add a clickable area at the top of the screen where the timezone name is displayed
+      Box(
+        modifier = Modifier.fillMaxWidth().padding(top = 28.dp),
+        contentAlignment = Alignment.TopCenter
+      ) {
+        // Create a clickable row with the timezone name and an icon
+        Row(
+          modifier = Modifier.clickable(onClick = onSelectTimeZone).padding(15.dp),
+          verticalAlignment = Alignment.CenterVertically
         ) {
-            CustomWorldMapWithDayNight(
-                modifier = Modifier
-                    .fillMaxWidth(0.7f) // Make the map 90% of the width
-                    .fillMaxHeight(0.7f) // Make the map 90% of the height while maintaining aspect ratio
-                    .offset(y = (-5).dp), // Raise it slightly
-                nightOverlayColor = ClockFaceColor // Use the watch face color for the night overlay
-            )
+          // Display the timezone name
+          Text(
+            text = timeZoneInfo.displayName,
+            style = MaterialTheme.typography.body2,
+            modifier = Modifier.padding(end = 4.dp)
+          )
+
+          // Add an icon to indicate it's tappable
+          /*  Icon(
+              imageVector = Icons.Filled.KeyboardArrowRight,
+              contentDescription = "Change Timezone",
+              tint = Color.White
+          )*/
         }
-
-        // Draw the logo on top of the watchface and map but below the hands
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            val center = Offset(size.width / 2, size.height / 2)
-            val radius = size.minDimension / 2 * 1.0f
-            ZeitwerkTheme.drawLogo(center, radius)(this)
-        }
-
-        // Draw the timezone selection UI on top of the watchface but below the hands
-        if (watchFaceRepository != null) {
-            // Get the selected timezone
-            val selectedTimeZoneId = watchFaceRepository.getSelectedTimeZoneId().collectAsState()
-
-            // Get the timezone display name using the selectedTimeZoneId state
-            val timeZones = remember { watchFaceRepository.getAllTimeZones() }
-            val timeZoneInfo = remember(selectedTimeZoneId.value) {
-                timeZones.find { it.id == selectedTimeZoneId.value } ?: TimeZoneInfo(
-                    id = selectedTimeZoneId.value,
-                    displayName = selectedTimeZoneId.value
-                )
-            }
-
-            // Add a clickable area at the top of the screen where the timezone name is displayed
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 28.dp),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                // Create a clickable row with the timezone name and an icon
-                Row(
-                    modifier = Modifier
-                        .clickable(onClick = onSelectTimeZone)
-                        .padding(15.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    // Display the timezone name
-                    Text(
-                        text = timeZoneInfo.displayName,
-                        style = MaterialTheme.typography.body2,
-                        modifier = Modifier.padding(end = 4.dp)
-                    )
-
-                    // Add an icon to indicate it's tappable
-                  /*  Icon(
-                        imageVector = Icons.Filled.KeyboardArrowRight,
-                        contentDescription = "Change Timezone",
-                        tint = Color.White
-                    )*/
-                }
-            }
-        }
-
-        // Draw the clock hands on the top layer (after the map)
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            val center = Offset(size.width / 2, size.height / 2)
-            val radius = size.minDimension / 2 * 1.0f
-
-            // Get current time values
-            val hourOfDay = currentTime.get(Calendar.HOUR_OF_DAY)
-            val hour = if (hourOfDay % 12 == 0) 12 else hourOfDay % 12
-            val minute = currentTime.get(Calendar.MINUTE)
-            val second = currentTime.get(Calendar.SECOND)
-
-            // Draw hour hand
-            val hourAngle = (hour * 30 + minute * 0.5f)
-            rotate(hourAngle) {
-                ZeitwerkTheme.hourHandDrawer(center, radius)(this)
-            }
-
-            // Draw minute hand
-            val minuteAngle = minute * 6f
-            rotate(minuteAngle) {
-                ZeitwerkTheme.minuteHandDrawer(center, radius)(this)
-            }
-
-            // Draw second hand
-            val secondAngle = second * 6f
-            rotate(secondAngle) {
-                ZeitwerkTheme.secondHandDrawer(center, radius)(this)
-            }
-
-            // Draw center dot
-            ZeitwerkTheme.centerDotDrawer(center, radius)(this)
-        }
+      }
     }
+
+    // Draw the clock hands on the top layer (after the map)
+    Canvas(modifier = Modifier.fillMaxSize()) {
+      val center = Offset(size.width / 2, size.height / 2)
+      val radius = size.minDimension / 2 * 1.0f
+
+      // Get current time values
+      val hourOfDay = currentTime.get(Calendar.HOUR_OF_DAY)
+      val hour = if (hourOfDay % 12 == 0) 12 else hourOfDay % 12
+      val minute = currentTime.get(Calendar.MINUTE)
+      val second = currentTime.get(Calendar.SECOND)
+
+      // Draw hour hand
+      val hourAngle = (hour * 30 + minute * 0.5f)
+      rotate(hourAngle) { ZeitwerkTheme.hourHandDrawer(center, radius)(this) }
+
+      // Draw minute hand
+      val minuteAngle = minute * 6f
+      rotate(minuteAngle) { ZeitwerkTheme.minuteHandDrawer(center, radius)(this) }
+
+      // Draw second hand
+      val secondAngle = second * 6f
+      rotate(secondAngle) { ZeitwerkTheme.secondHandDrawer(center, radius)(this) }
+
+      // Draw center dot
+      ZeitwerkTheme.centerDotDrawer(center, radius)(this)
+    }
+  }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun ZeitwerkPreview() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Zeitwerk()
-    }
+  Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Zeitwerk() }
 }

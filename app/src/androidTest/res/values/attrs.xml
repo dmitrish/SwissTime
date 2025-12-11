@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Define the missing drawerLayoutStyle attribute -->
+    <attr name="drawerLayoutStyle" format="reference" />
+    
+    <!-- Define a default style for DrawerLayout -->
+    <style name="Widget.DrawerLayout" parent="">
+        <!-- Empty style to satisfy the attribute reference -->
+    </style>
+    
+    <!-- Apply the style to the theme -->
+    <style name="Theme.AppCompat.Light" parent="@android:style/Theme.Material.Light">
+        <item name="drawerLayoutStyle">@style/Widget.DrawerLayout</item>
+    </style>
+    
+    <style name="Theme.AppCompat" parent="@android:style/Theme.Material">
+        <item name="drawerLayoutStyle">@style/Widget.DrawerLayout</item>
+    </style>
+    
+    <style name="Theme.MaterialComponents" parent="@android:style/Theme.Material">
+        <item name="drawerLayoutStyle">@style/Widget.DrawerLayout</item>
+    </style>
+    
+    <style name="Theme.MaterialComponents.Light" parent="@android:style/Theme.Material.Light">
+        <item name="drawerLayoutStyle">@style/Widget.DrawerLayout</item>
+    </style>
+</resources>

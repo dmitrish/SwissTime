@@ -7,7 +7,7 @@ import java.util.TimeZone
 
 @Stable
 data class WatchInfo(
-    val name: String,
-    val description: String,
-    val composable: @Composable (Modifier, TimeZone) -> Unit
+  val name: String,
+  val description: String,
+  val composable: @Composable (Modifier, TimeZone) -> Unit
 )

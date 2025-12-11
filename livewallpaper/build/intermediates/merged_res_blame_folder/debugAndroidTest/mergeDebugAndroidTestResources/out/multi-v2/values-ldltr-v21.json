@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.coroutines.livewallpaper.test.livewallpaper-mergeDebugAndroidTestResources-50:/values-ldltr-v21/values-ldltr-v21.xml",
+            "map": [
+                {
+                    "source": "/Users/shpinardmitri/.gradle/caches/8.13/transforms/b9d379a819335ffdd342689f629a2889/transformed/appcompat-1.7.1/res/values-ldltr-v21/values-ldltr-v21.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "112",
+                        "endOffsets": "163"
+                    }
+                }
+            ]
+        }
+    ]
+}
