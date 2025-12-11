@@ -20,128 +20,111 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import kotlinx.coroutines.delay
 import java.util.Calendar
 import java.util.TimeZone
 import kotlin.math.min
+import kotlinx.coroutines.delay
 
-/**
- * Common scaffold for analog watch faces with resume animation support.
- */
+/** Common scaffold for analog watch faces with resume animation support. */
 @Composable
 fun WatchFaceScaffold(
-    modifier: Modifier = Modifier,
-    timeZone: TimeZone = TimeZone.getDefault(),
-    enableResumeAnimation: Boolean = true,
-    resumeAnimationDurationMs: Int = 200,
-    resumeAnimationTargetAlpha: Float = 0.5f,
-    updateIntervalMs: Long = 1000L,
-    staticContent: DrawScope.(Offset, Float, Calendar) -> Unit,
-    animatedContent: DrawScope.(Offset, Float, Calendar, Float) -> Unit
+  modifier: Modifier = Modifier,
+  timeZone: TimeZone = TimeZone.getDefault(),
+  enableResumeAnimation: Boolean = true,
+  resumeAnimationDurationMs: Int = 200,
+  resumeAnimationTargetAlpha: Float = 0.5f,
+  updateIntervalMs: Long = 1000L,
+  staticContent: DrawScope.(Offset, Float, Calendar) -> Unit,
+  animatedContent: DrawScope.(Offset, Float, Calendar, Float) -> Unit
 ) {
-    var currentTime by remember { mutableStateOf(Calendar.getInstance(timeZone)) }
-    val timeZoneState by rememberUpdatedState(timeZone)
+  var currentTime by remember { mutableStateOf(Calendar.getInstance(timeZone)) }
+  val timeZoneState by rememberUpdatedState(timeZone)
 
-    // Resume detection and animation
-    var justResumed by remember { mutableStateOf(false) }
-    //val lifecycleOwner = LocalLifecycleOwner.current
+  // Resume detection and animation
+  var justResumed by remember { mutableStateOf(false) }
+  // val lifecycleOwner = LocalLifecycleOwner.current
 
-    // Get the ACTIVITY lifecycle, not the NavBackStackEntry lifecycle
-    val context = LocalContext.current
-    val lifecycleOwner = remember(context) {
-        (context as? ComponentActivity)
-    }
+  // Get the ACTIVITY lifecycle, not the NavBackStackEntry lifecycle
+  val context = LocalContext.current
+  val lifecycleOwner = remember(context) { (context as? ComponentActivity) }
 
-    if (enableResumeAnimation) {
-        DisposableEffect(lifecycleOwner) {
-            val observer = LifecycleEventObserver { _, event ->
-                if (event == Lifecycle.Event.ON_RESUME) {
-                    justResumed = true
-                }
-            }
-            lifecycleOwner?.lifecycle?.addObserver(observer)
-            onDispose {
-                lifecycleOwner?.lifecycle?.removeObserver(observer)
-            }
+  if (enableResumeAnimation) {
+    DisposableEffect(lifecycleOwner) {
+      val observer = LifecycleEventObserver { _, event ->
+        if (event == Lifecycle.Event.ON_RESUME) {
+          justResumed = true
         }
+      }
+      lifecycleOwner?.lifecycle?.addObserver(observer)
+      onDispose { lifecycleOwner?.lifecycle?.removeObserver(observer) }
     }
+  }
 
-    val alpha by animateFloatAsState(
-        targetValue = if (enableResumeAnimation && justResumed) resumeAnimationTargetAlpha else 1f,
-        animationSpec = tween(durationMillis = resumeAnimationDurationMs),
-        finishedListener = { justResumed = false },
-        label = "resumeFade"
+  val alpha by
+    animateFloatAsState(
+      targetValue = if (enableResumeAnimation && justResumed) resumeAnimationTargetAlpha else 1f,
+      animationSpec = tween(durationMillis = resumeAnimationDurationMs),
+      finishedListener = { justResumed = false },
+      label = "resumeFade"
     )
 
-    // Time updates
-    LaunchedEffect(Unit) {
-        while (true) {
-            currentTime = Calendar.getInstance(timeZoneState)
-            delay(updateIntervalMs)
-        }
+  // Time updates
+  LaunchedEffect(Unit) {
+    while (true) {
+      currentTime = Calendar.getInstance(timeZoneState)
+      delay(updateIntervalMs)
+    }
+  }
+
+  Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    // Static elements (don't animate)
+    Canvas(modifier = Modifier.fillMaxSize()) {
+      val center = Offset(size.width / 2, size.height / 2)
+      val radius = min(size.width, size.height) / 2 * 0.8f
+
+      // Call as extension function
+      this.staticContent(center, radius, currentTime)
     }
 
-    Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        // Static elements (don't animate)
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            val center = Offset(size.width / 2, size.height / 2)
-            val radius = min(size.width, size.height) / 2 * 0.8f
+    // Animated elements (fade on resume)
+    Canvas(modifier = Modifier.fillMaxSize().graphicsLayer { this.alpha = alpha }) {
+      val center = Offset(size.width / 2, size.height / 2)
+      val radius = min(size.width, size.height) / 2 * 0.8f
 
-            // Call as extension function
-            this.staticContent(center, radius, currentTime)
-        }
-
-        // Animated elements (fade on resume)
-        Canvas(
-            modifier = Modifier
-                .fillMaxSize()
-                .graphicsLayer { this.alpha = alpha }
-        ) {
-            val center = Offset(size.width / 2, size.height / 2)
-            val radius = min(size.width, size.height) / 2 * 0.8f
-
-            // Call as extension function
-            this.animatedContent(center, radius, currentTime, alpha)
-        }
+      // Call as extension function
+      this.animatedContent(center, radius, currentTime, alpha)
     }
+  }
 }
 
-/**
- * Data class representing the current time values for watch hands.
- */
+/** Data class representing the current time values for watch hands. */
 data class WatchTime(
-    val hour: Int,
-    val minute: Int,
-    val second: Int,
-    val hourAngle: Float,
-    val minuteAngle: Float,
-    val secondAngle: Float
+  val hour: Int,
+  val minute: Int,
+  val second: Int,
+  val hourAngle: Float,
+  val minuteAngle: Float,
+  val secondAngle: Float
 ) {
-    companion object {
-        fun from(calendar: Calendar): WatchTime {
-            val hour = calendar.get(Calendar.HOUR)
-            val minute = calendar.get(Calendar.MINUTE)
-            val second = calendar.get(Calendar.SECOND)
+  companion object {
+    fun from(calendar: Calendar): WatchTime {
+      val hour = calendar.get(Calendar.HOUR)
+      val minute = calendar.get(Calendar.MINUTE)
+      val second = calendar.get(Calendar.SECOND)
 
-            return WatchTime(
-                hour = hour,
-                minute = minute,
-                second = second,
-                hourAngle = hour * 30f + minute * 0.5f,
-                minuteAngle = minute * 6f,
-                secondAngle = second * 6f
-            )
-        }
+      return WatchTime(
+        hour = hour,
+        minute = minute,
+        second = second,
+        hourAngle = hour * 30f + minute * 0.5f,
+        minuteAngle = minute * 6f,
+        secondAngle = second * 6f
+      )
     }
+  }
 }
 
-/**
- * Helper extension to extract WatchTime from Calendar.
- */
+/** Helper extension to extract WatchTime from Calendar. */
 fun Calendar.toWatchTime(): WatchTime = WatchTime.from(this)
