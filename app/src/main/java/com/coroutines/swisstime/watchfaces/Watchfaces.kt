@@ -7,8 +7,10 @@ import com.coroutines.swisstime.watchfaces.watches.ChronomagusWatchface
 import com.coroutines.swisstime.watchfaces.watches.ConstantinusAureusChronometerWatchface
 import com.coroutines.swisstime.watchfaces.watches.EdgeOfSecondWatchface
 import com.coroutines.swisstime.watchfaces.watches.HorologiaRomanumWatchface
-import com.coroutines.swisstime.watchfaces.watches.JurgsenZenithor
+import com.coroutines.swisstime.watchfaces.watches.JurgsenZenithorWatchface
 import com.coroutines.swisstime.watchfaces.watches.KandinskyEveningWatchface
+import com.coroutines.swisstime.watchfaces.watches.KnotUrushiRed
+import com.coroutines.swisstime.watchfaces.watches.KnotUrushiRedPreview
 import com.coroutines.swisstime.watchfaces.watches.KnotUrushiWatchface
 import com.coroutines.swisstime.watchfaces.watches.LeonardAutomaticWatchface
 import com.coroutines.swisstime.watchfaces.watches.LucernaRomaWatchface
@@ -232,7 +234,12 @@ public fun getWatches(): List<WatchInfo> {
             name = "Vostok Military",
             description = "Vostok Military pays tribute to the rugged Amphibia watches produced for the Soviet and Russian armed forces. Known for their durable cases, ingenious Amphibia waterproofing with a self‑sealing caseback, and bold utilitarian dials, these mechanical timepieces are built to withstand harsh conditions while delivering dependable everyday timekeeping.",
             composable = { modifier, timeZone -> VostokRussianMilitaryWatchface(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
-        )
+        ),
+         WatchInfo(
+                name = "Urushi Red",
+        description = "Vostok Military pays tribute to the rugged Amphibia watches produced for the Soviet and Russian armed forces. Known for their durable cases, ingenious Amphibia waterproofing with a self‑sealing caseback, and bold utilitarian dials, these mechanical timepieces are built to withstand harsh conditions while delivering dependable everyday timekeeping.",
+        composable = { modifier, timeZone -> KnotUrushiRed(modifier = modifier,  timeZone = TimeZone.getDefault() ) }
+    )
 
 
     )
