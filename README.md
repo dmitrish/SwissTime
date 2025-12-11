@@ -6,7 +6,7 @@
 World Clock with timezones is a mighty little app that adds fun to timekeeping. Ditch boring digital clock faces and instead use intricate mechanical watchfaces.
 <p><a href="https://play.google.com/store/apps/details?id=com.coroutines.clockwithtimezone">World Clock With Timezone on Google Play</a></p>
 <p></p>
-<p>Cool AGSL effects thanks to https://github.com/JumpingKeyCaps</p>
+
 
 <table style="width:100%">
   <tr>
@@ -28,6 +28,7 @@ World Clock with timezones is a mighty little app that adds fun to timekeeping. 
   <tr>
     <td><img src="https://github.com/dmitrish/SwissTime/blob/main/art/worldclock.gif"></td>
    <td><img src="https://github.com/dmitrish/SwissTime/blob/main/art/shader.gif"></td>
+     <td><img src="https://github.com/dmitrish/SwissTime/blob/main/art/wallpaper.gif"></td>
   </tr>
 </table>
 
@@ -35,6 +36,7 @@ World Clock with timezones is a mighty little app that adds fun to timekeeping. 
   <tr>
     <th>Live Wallpaper Home Screen</th>
     <th>Live Wallpaper Lock Screen</th>
+    <th>Watch Selection Welcome Screen</th>
   </tr>
   <tr>
     <td>
@@ -43,6 +45,22 @@ World Clock with timezones is a mighty little app that adds fun to timekeeping. 
     <td>
         <img src="https://github.com/dmitrish/SwissTime/blob/main/art/lockedscreen.gif" />
     </td>
+     <td>
+        <img src="https://github.com/dmitrish/SwissTime/blob/main/art/watchsel.gif" />
+    </td>
+  </tr>
+</table>
+
+<table style="width:100%">
+  <tr>
+    <th>Tablet Time Screen in Landscape</th>
+   
+  </tr>
+  <tr>
+    <td>
+      <img src="https://github.com/dmitrish/SwissTime/blob/main/art/landscapetimescreen.gif"/>
+    </td>
+   
   </tr>
 </table>
 
