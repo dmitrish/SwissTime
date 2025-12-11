@@ -18,27 +18,20 @@ import com.coroutines.swisstime.utils.darken
 
 // Composable for a single brand logo item in the horizontal row
 @Composable
-fun BrandLogoRowItem(
-    brandLogo: BrandLogo,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-
-            .background(MaterialTheme.colorScheme.background.darken(0.25f), MaterialTheme.shapes.medium)
-            .padding(horizontal = 8.dp)
-            .clickable(onClick = onClick),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        // Logo image
-        Image(
-            painter = painterResource(id = brandLogo.resourceId),
-            contentDescription = brandLogo.name,
-            modifier = Modifier
-                .width(175.dp)
-                .height(110.dp)
-                .padding(16.dp)
-        )
-    }
+fun BrandLogoRowItem(brandLogo: BrandLogo, onClick: () -> Unit, modifier: Modifier = Modifier) {
+  Column(
+    modifier =
+      modifier
+        .background(MaterialTheme.colorScheme.background.darken(0.25f), MaterialTheme.shapes.medium)
+        .padding(horizontal = 8.dp)
+        .clickable(onClick = onClick),
+    horizontalAlignment = Alignment.CenterHorizontally
+  ) {
+    // Logo image
+    Image(
+      painter = painterResource(id = brandLogo.resourceId),
+      contentDescription = brandLogo.name,
+      modifier = Modifier.width(175.dp).height(110.dp).padding(16.dp)
+    )
+  }
 }

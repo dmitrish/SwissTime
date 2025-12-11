@@ -17,14 +17,13 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.*
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import kotlinx.coroutines.delay
 import java.util.*
 import kotlin.math.*
+import kotlinx.coroutines.delay
 
 private val ClockFaceStartColor = Color(0xFF1E5631)
 private val ClockFaceEndColor = Color(0xFF0A2714)
@@ -37,288 +36,265 @@ private val LogoColor = Color(0xFFE0E0E0)
 
 @Composable
 fun CenturioLuminor(modifier: Modifier = Modifier, timeZone: TimeZone = TimeZone.getDefault()) {
-    var currentTime by remember { mutableStateOf(Calendar.getInstance(timeZone)) }
-    val timeZoneState by rememberUpdatedState(timeZone)
+  var currentTime by remember { mutableStateOf(Calendar.getInstance(timeZone)) }
+  val timeZoneState by rememberUpdatedState(timeZone)
 
-    // Track if we just resumed
-    var justResumed by remember { mutableStateOf(false) }
-    // Get the ACTIVITY lifecycle, not the NavBackStackEntry lifecycle
-    val context = LocalContext.current
-    val activityLifecycleOwner = remember(context) {
-        (context as? ComponentActivity)
-    }
+  // Track if we just resumed
+  var justResumed by remember { mutableStateOf(false) }
+  // Get the ACTIVITY lifecycle, not the NavBackStackEntry lifecycle
+  val context = LocalContext.current
+  val activityLifecycleOwner = remember(context) { (context as? ComponentActivity) }
 
+  DisposableEffect(activityLifecycleOwner) {
+    var wasNotResumed = false // Track if we were in a lower state
 
-    DisposableEffect(activityLifecycleOwner) {
-        var wasNotResumed = false // Track if we were in a lower state
-
-        val observer = LifecycleEventObserver { _, event ->
-            when (event) {
-                Lifecycle.Event.ON_PAUSE,
-                Lifecycle.Event.ON_STOP,
-                Lifecycle.Event.ON_DESTROY -> {
-                    // Activity went to a lower state
-                    wasNotResumed = true
-                }
-                Lifecycle.Event.ON_RESUME -> {
-                    // Only animate if we were previously in a lower state
-                    if (wasNotResumed) {
-                        justResumed = true
-                        wasNotResumed = false
-                    }
-                }
-                else -> { /* ignore other events */ }
-            }
+    val observer = LifecycleEventObserver { _, event ->
+      when (event) {
+        Lifecycle.Event.ON_PAUSE,
+        Lifecycle.Event.ON_STOP,
+        Lifecycle.Event.ON_DESTROY -> {
+          // Activity went to a lower state
+          wasNotResumed = true
         }
-        activityLifecycleOwner?.lifecycle?.addObserver(observer)
-
-        onDispose {
-            activityLifecycleOwner?.lifecycle?.removeObserver(observer)
+        Lifecycle.Event.ON_RESUME -> {
+          // Only animate if we were previously in a lower state
+          if (wasNotResumed) {
+            justResumed = true
+            wasNotResumed = false
+          }
         }
+        else -> {
+          /* ignore other events */
+        }
+      }
     }
+    activityLifecycleOwner?.lifecycle?.addObserver(observer)
 
+    onDispose { activityLifecycleOwner?.lifecycle?.removeObserver(observer) }
+  }
 
-
-    // Brief fade on resume
-    val alpha by animateFloatAsState(
-        targetValue = if (justResumed) 0.5f else 1f,
-        animationSpec = tween(durationMillis = 200),
-        finishedListener = { justResumed = false },
-        label = "resumeFade"
+  // Brief fade on resume
+  val alpha by
+    animateFloatAsState(
+      targetValue = if (justResumed) 0.5f else 1f,
+      animationSpec = tween(durationMillis = 200),
+      finishedListener = { justResumed = false },
+      label = "resumeFade"
     )
 
-    LaunchedEffect(Unit) {
-        while (true) {
-            currentTime = Calendar.getInstance(timeZoneState)
-            delay(1000)
-        }
+  LaunchedEffect(Unit) {
+    while (true) {
+      currentTime = Calendar.getInstance(timeZoneState)
+      delay(1000)
     }
+  }
 
-    Box(
-        modifier = modifier.size(300.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        StaticWatchElements()
-        HourHand(currentTime, alpha = alpha)
-        MinuteHand(currentTime, alpha = alpha)
-        SecondHand(currentTime, alpha = alpha)
-        CenterDot(alpha = alpha)
-    }
+  Box(modifier = modifier.size(300.dp), contentAlignment = Alignment.Center) {
+    StaticWatchElements()
+    HourHand(currentTime, alpha = alpha)
+    MinuteHand(currentTime, alpha = alpha)
+    SecondHand(currentTime, alpha = alpha)
+    CenterDot(alpha = alpha)
+  }
 }
 
 @Composable
 private fun StaticWatchElements() {
-    Canvas(
-        modifier = Modifier
-            .fillMaxSize()
-            .drawWithCache {
-                val center = Offset(size.width / 2, size.height / 2)
-                val radius = min(size.width, size.height) / 2 * 0.8f
+  Canvas(
+    modifier =
+      Modifier.fillMaxSize().drawWithCache {
+        val center = Offset(size.width / 2, size.height / 2)
+        val radius = min(size.width, size.height) / 2 * 0.8f
 
-                val cache = buildList {
-                    add(drawClockFace(center, radius))
-                    add(drawHourMarkers(center, radius))
-                    add(drawWatchLogo(center, radius))
-                }
+        val cache = buildList {
+          add(drawClockFace(center, radius))
+          add(drawHourMarkers(center, radius))
+          add(drawWatchLogo(center, radius))
+        }
 
-                onDrawBehind {
-                    cache.forEach { drawOperation ->
-                        drawOperation.invoke(this)
-                    }
-                }
-            }
-    ) {}
+        onDrawBehind { cache.forEach { drawOperation -> drawOperation.invoke(this) } }
+      }
+  ) {}
 }
 
 @Composable
 private fun HourHand(currentTime: Calendar, alpha: Float = 1f) {
-    Canvas(
-        modifier = Modifier
-            .fillMaxSize()
-            .graphicsLayer {
-                val hour = currentTime.get(Calendar.HOUR)
-                val minute = currentTime.get(Calendar.MINUTE)
-                rotationZ = (hour * 30 + minute * 0.5f)
-                this.alpha = alpha
-            }
-    ) {
-        drawHourHand(center, size.minDimension / 2 * 0.8f)
-    }
+  Canvas(
+    modifier =
+      Modifier.fillMaxSize().graphicsLayer {
+        val hour = currentTime.get(Calendar.HOUR)
+        val minute = currentTime.get(Calendar.MINUTE)
+        rotationZ = (hour * 30 + minute * 0.5f)
+        this.alpha = alpha
+      }
+  ) {
+    drawHourHand(center, size.minDimension / 2 * 0.8f)
+  }
 }
 
 @Composable
 private fun MinuteHand(currentTime: Calendar, alpha: Float = 1f) {
-    Canvas(
-        modifier = Modifier
-            .fillMaxSize()
-            .graphicsLayer {
-                rotationZ = currentTime.get(Calendar.MINUTE) * 6f
-                this.alpha = alpha
-            }
-    ) {
-        drawMinuteHand(center, size.minDimension / 2 * 0.8f)
-    }
+  Canvas(
+    modifier =
+      Modifier.fillMaxSize().graphicsLayer {
+        rotationZ = currentTime.get(Calendar.MINUTE) * 6f
+        this.alpha = alpha
+      }
+  ) {
+    drawMinuteHand(center, size.minDimension / 2 * 0.8f)
+  }
 }
 
 @Composable
 private fun SecondHand(currentTime: Calendar, alpha: Float = 1f) {
-    Canvas(
-        modifier = Modifier
-            .fillMaxSize()
-            .graphicsLayer {
-                rotationZ = currentTime.get(Calendar.SECOND) * 6f
-                this.alpha = alpha
-            }
-    ) {
-        drawSecondHand(center, size.minDimension / 2 * 0.8f)
-    }
+  Canvas(
+    modifier =
+      Modifier.fillMaxSize().graphicsLayer {
+        rotationZ = currentTime.get(Calendar.SECOND) * 6f
+        this.alpha = alpha
+      }
+  ) {
+    drawSecondHand(center, size.minDimension / 2 * 0.8f)
+  }
 }
 
 @Composable
 private fun CenterDot(alpha: Float = 1f) {
-    Canvas(
-        modifier = Modifier
-            .fillMaxSize()
-            .graphicsLayer { this.alpha = alpha }
-            .drawWithCache {
-                onDrawBehind {
-                    drawCircle(
-                        color = HourHandColor,
-                        radius = size.minDimension / 2 * 0.8f * 0.02f,
-                        center = center
-                    )
-                }
-            }
-    ) {}
+  Canvas(
+    modifier =
+      Modifier.fillMaxSize()
+        .graphicsLayer { this.alpha = alpha }
+        .drawWithCache {
+          onDrawBehind {
+            drawCircle(
+              color = HourHandColor,
+              radius = size.minDimension / 2 * 0.8f * 0.02f,
+              center = center
+            )
+          }
+        }
+  ) {}
 }
 
 private fun drawClockFace(center: Offset, radius: Float): DrawScope.() -> Unit = {
-    drawCircle(
-        brush = Brush.radialGradient(
-            colors = listOf(ClockFaceStartColor, ClockFaceEndColor),
-            center = center,
-            radius = radius * 0.95f
-        ),
-        radius = radius * 0.95f,
-        center = center
-    )
-
-    drawCircle(
-        color = ClockBorderColor,
-        radius = radius,
+  drawCircle(
+    brush =
+      Brush.radialGradient(
+        colors = listOf(ClockFaceStartColor, ClockFaceEndColor),
         center = center,
-        style = Stroke(width = 8f)
-    )
+        radius = radius * 0.95f
+      ),
+    radius = radius * 0.95f,
+    center = center
+  )
+
+  drawCircle(color = ClockBorderColor, radius = radius, center = center, style = Stroke(width = 8f))
 }
 
 private fun drawHourMarkers(center: Offset, radius: Float): DrawScope.() -> Unit = {
-    for (i in 0 until 12) {
-        val angle = Math.PI / 6 * i
-        val markerLength = radius * 0.1f
-        val startRadius = radius * 0.8f
+  for (i in 0 until 12) {
+    val angle = Math.PI / 6 * i
+    val markerLength = radius * 0.1f
+    val startRadius = radius * 0.8f
 
-        val startX = center.x + cos(angle).toFloat() * startRadius
-        val startY = center.y + sin(angle).toFloat() * startRadius
-        val endX = center.x + cos(angle).toFloat() * (startRadius - markerLength)
-        val endY = center.y + sin(angle).toFloat() * (startRadius - markerLength)
+    val startX = center.x + cos(angle).toFloat() * startRadius
+    val startY = center.y + sin(angle).toFloat() * startRadius
+    val endX = center.x + cos(angle).toFloat() * (startRadius - markerLength)
+    val endY = center.y + sin(angle).toFloat() * (startRadius - markerLength)
 
-        drawLine(
-            color = MarkersColor,
-            start = Offset(startX, startY),
-            end = Offset(endX, endY),
-            strokeWidth = if (i % 3 == 0) 3f else 1.5f,
-            cap = StrokeCap.Round
-        )
-    }
+    drawLine(
+      color = MarkersColor,
+      start = Offset(startX, startY),
+      end = Offset(endX, endY),
+      strokeWidth = if (i % 3 == 0) 3f else 1.5f,
+      cap = StrokeCap.Round
+    )
+  }
 }
 
 private fun drawWatchLogo(center: Offset, radius: Float): DrawScope.() -> Unit = {
-    val logoPaint = Paint().apply {
-        color = LogoColor.hashCode()
-        textSize = radius * 0.1f
-        textAlign = Paint.Align.CENTER
-        isAntiAlias = true
+  val logoPaint =
+    Paint().apply {
+      color = LogoColor.hashCode()
+      textSize = radius * 0.1f
+      textAlign = Paint.Align.CENTER
+      isAntiAlias = true
     }
 
-    drawContext.canvas.nativeCanvas.drawText(
-        "Centurio Luminor",
-        center.x,
-        center.y - radius * 0.3f,
-        logoPaint
-    )
+  drawContext.canvas.nativeCanvas.drawText(
+    "Centurio Luminor",
+    center.x,
+    center.y - radius * 0.3f,
+    logoPaint
+  )
 
-    val yearPaint = Paint().apply {
-        color = LogoColor.hashCode()
-        textSize = radius * 0.06f
-        textAlign = Paint.Align.CENTER
-        isAntiAlias = true
+  val yearPaint =
+    Paint().apply {
+      color = LogoColor.hashCode()
+      textSize = radius * 0.06f
+      textAlign = Paint.Align.CENTER
+      isAntiAlias = true
     }
 
-    drawContext.canvas.nativeCanvas.drawText(
-        "1728",
-        center.x,
-        center.y + radius * 0.4f,
-        yearPaint
-    )
+  drawContext.canvas.nativeCanvas.drawText("1728", center.x, center.y + radius * 0.4f, yearPaint)
 }
 
 private fun DrawScope.drawHourHand(center: Offset, radius: Float) {
-    val path = Path().apply {
-        moveTo(center.x, center.y - radius * 0.5f)
-        quadraticBezierTo(
-            center.x + radius * 0.03f, center.y - radius * 0.25f,
-            center.x + radius * 0.015f, center.y
-        )
-        quadraticBezierTo(
-            center.x, center.y + radius * 0.05f,
-            center.x - radius * 0.015f, center.y
-        )
-        quadraticBezierTo(
-            center.x - radius * 0.03f, center.y - radius * 0.25f,
-            center.x, center.y - radius * 0.5f
-        )
-        close()
+  val path =
+    Path().apply {
+      moveTo(center.x, center.y - radius * 0.5f)
+      quadraticBezierTo(
+        center.x + radius * 0.03f,
+        center.y - radius * 0.25f,
+        center.x + radius * 0.015f,
+        center.y
+      )
+      quadraticBezierTo(center.x, center.y + radius * 0.05f, center.x - radius * 0.015f, center.y)
+      quadraticBezierTo(
+        center.x - radius * 0.03f,
+        center.y - radius * 0.25f,
+        center.x,
+        center.y - radius * 0.5f
+      )
+      close()
     }
-    drawPath(path, HourHandColor)
+  drawPath(path, HourHandColor)
 }
 
 private fun DrawScope.drawMinuteHand(center: Offset, radius: Float) {
-    val path = Path().apply {
-        moveTo(center.x, center.y - radius * 0.7f)
-        quadraticBezierTo(
-            center.x + radius * 0.025f, center.y - radius * 0.35f,
-            center.x + radius * 0.01f, center.y
-        )
-        quadraticBezierTo(
-            center.x, center.y + radius * 0.05f,
-            center.x - radius * 0.01f, center.y
-        )
-        quadraticBezierTo(
-            center.x - radius * 0.025f, center.y - radius * 0.35f,
-            center.x, center.y - radius * 0.7f
-        )
-        close()
+  val path =
+    Path().apply {
+      moveTo(center.x, center.y - radius * 0.7f)
+      quadraticBezierTo(
+        center.x + radius * 0.025f,
+        center.y - radius * 0.35f,
+        center.x + radius * 0.01f,
+        center.y
+      )
+      quadraticBezierTo(center.x, center.y + radius * 0.05f, center.x - radius * 0.01f, center.y)
+      quadraticBezierTo(
+        center.x - radius * 0.025f,
+        center.y - radius * 0.35f,
+        center.x,
+        center.y - radius * 0.7f
+      )
+      close()
     }
-    drawPath(path, MinuteHandColor)
+  drawPath(path, MinuteHandColor)
 }
 
 private fun DrawScope.drawSecondHand(center: Offset, radius: Float) {
-    drawLine(
-        color = SecondHandColor,
-        start = Offset(center.x, center.y + radius * 0.2f),
-        end = Offset(center.x, center.y - radius * 0.8f),
-        strokeWidth = 1f,
-        cap = StrokeCap.Round
-    )
+  drawLine(
+    color = SecondHandColor,
+    start = Offset(center.x, center.y + radius * 0.2f),
+    end = Offset(center.x, center.y - radius * 0.8f),
+    strokeWidth = 1f,
+    cap = StrokeCap.Round
+  )
 }
 
 @Preview(showBackground = true)
 @Composable
 fun CenturioPreview() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        CenturioLuminor()
-    }
+  Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CenturioLuminor() }
 }

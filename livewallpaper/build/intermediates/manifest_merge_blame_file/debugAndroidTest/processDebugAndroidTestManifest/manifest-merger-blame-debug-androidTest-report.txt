@@ -1,0 +1,297 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.coroutines.livewallpaper.test" >
+4
+5    <uses-sdk
+5-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest16463405076549540994.xml:5:5-74
+6        android:minSdkVersion="24"
+6-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest16463405076549540994.xml:5:15-41
+7        android:targetSdkVersion="24" />
+7-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest16463405076549540994.xml:5:42-71
+8
+9    <instrumentation
+9-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest16463405076549540994.xml:11:5-15:83
+10        android:name="androidx.test.runner.AndroidJUnitRunner"
+10-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest16463405076549540994.xml:11:22-76
+11        android:functionalTest="false"
+11-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest16463405076549540994.xml:14:22-52
+12        android:handleProfiling="false"
+12-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest16463405076549540994.xml:13:22-53
+13        android:label="Tests for com.coroutines.livewallpaper.test"
+13-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest16463405076549540994.xml:15:22-81
+14        android:targetPackage="com.coroutines.livewallpaper.test" />
+14-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest16463405076549540994.xml:12:22-79
+15
+16    <uses-feature
+16-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:7:5-9:35
+17        android:name="android.software.live_wallpaper"
+17-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:8:9-55
+18        android:required="true" />
+18-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:9:9-32
+19
+20    <queries>
+20-->[androidx.test:runner:1.5.2] /Users/shpinardmitri/.gradle/caches/8.13/transforms/61e6067ed3ba30a7c24ee0d442571b57/transformed/runner-1.5.2/AndroidManifest.xml:24:5-28:15
+21        <package android:name="androidx.test.orchestrator" />
+21-->[androidx.test:runner:1.5.2] /Users/shpinardmitri/.gradle/caches/8.13/transforms/61e6067ed3ba30a7c24ee0d442571b57/transformed/runner-1.5.2/AndroidManifest.xml:25:9-62
+21-->[androidx.test:runner:1.5.2] /Users/shpinardmitri/.gradle/caches/8.13/transforms/61e6067ed3ba30a7c24ee0d442571b57/transformed/runner-1.5.2/AndroidManifest.xml:25:18-59
+22        <package android:name="androidx.test.services" />
+22-->[androidx.test:runner:1.5.2] /Users/shpinardmitri/.gradle/caches/8.13/transforms/61e6067ed3ba30a7c24ee0d442571b57/transformed/runner-1.5.2/AndroidManifest.xml:26:9-58
+22-->[androidx.test:runner:1.5.2] /Users/shpinardmitri/.gradle/caches/8.13/transforms/61e6067ed3ba30a7c24ee0d442571b57/transformed/runner-1.5.2/AndroidManifest.xml:26:18-55
+23        <package android:name="com.google.android.apps.common.testing.services" />
+23-->[androidx.test:runner:1.5.2] /Users/shpinardmitri/.gradle/caches/8.13/transforms/61e6067ed3ba30a7c24ee0d442571b57/transformed/runner-1.5.2/AndroidManifest.xml:27:9-83
+23-->[androidx.test:runner:1.5.2] /Users/shpinardmitri/.gradle/caches/8.13/transforms/61e6067ed3ba30a7c24ee0d442571b57/transformed/runner-1.5.2/AndroidManifest.xml:27:18-80
+24    </queries>
+25
+26    <uses-permission android:name="android.permission.REORDER_TASKS" />
+26-->[androidx.test:core:1.5.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/5fb26f68dadda07ce381045b37a5c9b7/transformed/core-1.5.0/AndroidManifest.xml:24:5-72
+26-->[androidx.test:core:1.5.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/5fb26f68dadda07ce381045b37a5c9b7/transformed/core-1.5.0/AndroidManifest.xml:24:22-69
+27
+28    <permission
+28-->[androidx.core:core:1.17.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/c61f1f230b67519fd3fb87aaa5a9e9d6/transformed/core-1.17.0/AndroidManifest.xml:22:5-24:47
+29        android:name="com.coroutines.livewallpaper.test.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+29-->[androidx.core:core:1.17.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/c61f1f230b67519fd3fb87aaa5a9e9d6/transformed/core-1.17.0/AndroidManifest.xml:23:9-81
+30        android:protectionLevel="signature" />
+30-->[androidx.core:core:1.17.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/c61f1f230b67519fd3fb87aaa5a9e9d6/transformed/core-1.17.0/AndroidManifest.xml:24:9-44
+31
+32    <uses-permission android:name="com.coroutines.livewallpaper.test.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+32-->[androidx.core:core:1.17.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/c61f1f230b67519fd3fb87aaa5a9e9d6/transformed/core-1.17.0/AndroidManifest.xml:26:5-97
+32-->[androidx.core:core:1.17.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/c61f1f230b67519fd3fb87aaa5a9e9d6/transformed/core-1.17.0/AndroidManifest.xml:26:22-94
+33
+34    <application
+34-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest16463405076549540994.xml:7:5-9:19
+35        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+35-->[androidx.core:core:1.17.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/c61f1f230b67519fd3fb87aaa5a9e9d6/transformed/core-1.17.0/AndroidManifest.xml:28:18-86
+36        android:debuggable="true"
+37        android:extractNativeLibs="false" >
+38        <uses-library android:name="android.test.runner" />
+38-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest16463405076549540994.xml:8:9-60
+38-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/tmp/manifest/androidTest/debug/tempFile1ProcessTestManifest16463405076549540994.xml:8:23-57
+39
+40        <service
+40-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:12:9-23:19
+41            android:name="com.coroutines.livewallpaper.DigitalClockWallpaperService"
+41-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:13:13-85
+42            android:exported="true"
+42-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:14:13-36
+43            android:label="@string/digital_clock_wallpaper_name" >
+43-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:15:13-65
+44            <intent-filter>
+44-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:16:13-18:29
+45                <action android:name="android.service.wallpaper.WallpaperService" />
+45-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:17:17-85
+45-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:17:25-82
+46            </intent-filter>
+47
+48            <meta-data
+48-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:20:13-22:67
+49                android:name="android.service.wallpaper"
+49-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:21:17-57
+50                android:resource="@xml/digital_clock_wallpaper" />
+50-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:22:17-64
+51        </service>
+52        <service
+52-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:24:9-35:19
+53            android:name="com.coroutines.livewallpaper.service.PagerWallpaperService"
+53-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:25:13-86
+54            android:exported="true"
+54-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:26:13-36
+55            android:label="@string/digital_clock_wallpaper_name" >
+55-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:27:13-65
+56            <intent-filter>
+56-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:28:13-30:29
+57                <action android:name="android.service.wallpaper.service.PagerWallpaperService" />
+57-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:29:17-98
+57-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:29:25-95
+58            </intent-filter>
+59
+60            <meta-data
+60-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:20:13-22:67
+61                android:name="android.service.wallpaper"
+61-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:21:17-57
+62                android:resource="@xml/digital_clock_wallpaper" />
+62-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:22:17-64
+63        </service>
+64        <service
+64-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:36:9-47:19
+65            android:name="com.coroutines.livewallpaper.service.RomaMarinaWallpaperService"
+65-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:37:13-91
+66            android:exported="true"
+66-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:38:13-36
+67            android:label="@string/roma_marina_wallpaper_name" >
+67-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:39:13-63
+68            <intent-filter>
+68-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:16:13-18:29
+69                <action android:name="android.service.wallpaper.WallpaperService" />
+69-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:17:17-85
+69-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:17:25-82
+70            </intent-filter>
+71
+72            <meta-data
+72-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:20:13-22:67
+73                android:name="android.service.wallpaper"
+73-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:21:17-57
+74                android:resource="@xml/roma_marina_wallpaper" />
+74-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:22:17-64
+75        </service>
+76        <service
+76-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:48:9-59:19
+77            android:name="com.coroutines.livewallpaper.service.ChronomagusRegumWallpaperService"
+77-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:49:13-97
+78            android:exported="true"
+78-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:50:13-36
+79            android:label="@string/chronomagus_regum_wallpaper_name" >
+79-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:51:13-69
+80            <intent-filter>
+80-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:16:13-18:29
+81                <action android:name="android.service.wallpaper.WallpaperService" />
+81-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:17:17-85
+81-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:17:25-82
+82            </intent-filter>
+83
+84            <meta-data
+84-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:20:13-22:67
+85                android:name="android.service.wallpaper"
+85-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:21:17-57
+86                android:resource="@xml/chronomagus_regum_wallpaper" />
+86-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:22:17-64
+87        </service>
+88        <service
+88-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:60:9-71:19
+89            android:name="com.coroutines.livewallpaper.service.ZeitwerkWallpaperService"
+89-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:61:13-89
+90            android:exported="true"
+90-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:62:13-36
+91            android:label="@string/zeitwerk_wallpaper_name" >
+91-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:63:13-60
+92            <intent-filter>
+92-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:16:13-18:29
+93                <action android:name="android.service.wallpaper.WallpaperService" />
+93-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:17:17-85
+93-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:17:25-82
+94            </intent-filter>
+95
+96            <meta-data
+96-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:20:13-22:67
+97                android:name="android.service.wallpaper"
+97-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:21:17-57
+98                android:resource="@xml/zeitwerk_wallpaper" />
+98-->[:livewallpaper] /Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:22:17-64
+99        </service>
+100
+101        <activity
+101-->[androidx.test:core:1.5.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/5fb26f68dadda07ce381045b37a5c9b7/transformed/core-1.5.0/AndroidManifest.xml:27:9-34:20
+102            android:name="androidx.test.core.app.InstrumentationActivityInvoker$BootstrapActivity"
+102-->[androidx.test:core:1.5.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/5fb26f68dadda07ce381045b37a5c9b7/transformed/core-1.5.0/AndroidManifest.xml:28:13-99
+103            android:exported="true"
+103-->[androidx.test:core:1.5.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/5fb26f68dadda07ce381045b37a5c9b7/transformed/core-1.5.0/AndroidManifest.xml:29:13-36
+104            android:theme="@style/WhiteBackgroundTheme" >
+104-->[androidx.test:core:1.5.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/5fb26f68dadda07ce381045b37a5c9b7/transformed/core-1.5.0/AndroidManifest.xml:30:13-56
+105            <intent-filter android:priority="-100" >
+105-->[androidx.test:core:1.5.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/5fb26f68dadda07ce381045b37a5c9b7/transformed/core-1.5.0/AndroidManifest.xml:31:13-33:29
+105-->[androidx.test:core:1.5.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/5fb26f68dadda07ce381045b37a5c9b7/transformed/core-1.5.0/AndroidManifest.xml:31:28-51
+106                <category android:name="android.intent.category.LAUNCHER" />
+106-->[androidx.test:core:1.5.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/5fb26f68dadda07ce381045b37a5c9b7/transformed/core-1.5.0/AndroidManifest.xml:32:17-77
+106-->[androidx.test:core:1.5.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/5fb26f68dadda07ce381045b37a5c9b7/transformed/core-1.5.0/AndroidManifest.xml:32:27-74
+107            </intent-filter>
+108        </activity>
+109        <activity
+109-->[androidx.test:core:1.5.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/5fb26f68dadda07ce381045b37a5c9b7/transformed/core-1.5.0/AndroidManifest.xml:35:9-42:20
+110            android:name="androidx.test.core.app.InstrumentationActivityInvoker$EmptyActivity"
+110-->[androidx.test:core:1.5.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/5fb26f68dadda07ce381045b37a5c9b7/transformed/core-1.5.0/AndroidManifest.xml:36:13-95
+111            android:exported="true"
+111-->[androidx.test:core:1.5.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/5fb26f68dadda07ce381045b37a5c9b7/transformed/core-1.5.0/AndroidManifest.xml:37:13-36
+112            android:theme="@style/WhiteBackgroundTheme" >
+112-->[androidx.test:core:1.5.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/5fb26f68dadda07ce381045b37a5c9b7/transformed/core-1.5.0/AndroidManifest.xml:38:13-56
+113            <intent-filter android:priority="-100" >
+113-->[androidx.test:core:1.5.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/5fb26f68dadda07ce381045b37a5c9b7/transformed/core-1.5.0/AndroidManifest.xml:31:13-33:29
+113-->[androidx.test:core:1.5.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/5fb26f68dadda07ce381045b37a5c9b7/transformed/core-1.5.0/AndroidManifest.xml:31:28-51
+114                <category android:name="android.intent.category.LAUNCHER" />
+114-->[androidx.test:core:1.5.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/5fb26f68dadda07ce381045b37a5c9b7/transformed/core-1.5.0/AndroidManifest.xml:32:17-77
+114-->[androidx.test:core:1.5.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/5fb26f68dadda07ce381045b37a5c9b7/transformed/core-1.5.0/AndroidManifest.xml:32:27-74
+115            </intent-filter>
+116        </activity>
+117        <activity
+117-->[androidx.test:core:1.5.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/5fb26f68dadda07ce381045b37a5c9b7/transformed/core-1.5.0/AndroidManifest.xml:43:9-50:20
+118            android:name="androidx.test.core.app.InstrumentationActivityInvoker$EmptyFloatingActivity"
+118-->[androidx.test:core:1.5.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/5fb26f68dadda07ce381045b37a5c9b7/transformed/core-1.5.0/AndroidManifest.xml:44:13-103
+119            android:exported="true"
+119-->[androidx.test:core:1.5.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/5fb26f68dadda07ce381045b37a5c9b7/transformed/core-1.5.0/AndroidManifest.xml:45:13-36
+120            android:theme="@style/WhiteBackgroundDialogTheme" >
+120-->[androidx.test:core:1.5.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/5fb26f68dadda07ce381045b37a5c9b7/transformed/core-1.5.0/AndroidManifest.xml:46:13-62
+121            <intent-filter android:priority="-100" >
+121-->[androidx.test:core:1.5.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/5fb26f68dadda07ce381045b37a5c9b7/transformed/core-1.5.0/AndroidManifest.xml:31:13-33:29
+121-->[androidx.test:core:1.5.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/5fb26f68dadda07ce381045b37a5c9b7/transformed/core-1.5.0/AndroidManifest.xml:31:28-51
+122                <category android:name="android.intent.category.LAUNCHER" />
+122-->[androidx.test:core:1.5.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/5fb26f68dadda07ce381045b37a5c9b7/transformed/core-1.5.0/AndroidManifest.xml:32:17-77
+122-->[androidx.test:core:1.5.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/5fb26f68dadda07ce381045b37a5c9b7/transformed/core-1.5.0/AndroidManifest.xml:32:27-74
+123            </intent-filter>
+124        </activity>
+125
+126        <provider
+126-->[androidx.emoji2:emoji2:1.4.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/ad8893766cc6dbb0ad28e96f5c1ff771/transformed/emoji2-1.4.0/AndroidManifest.xml:24:9-32:20
+127            android:name="androidx.startup.InitializationProvider"
+127-->[androidx.emoji2:emoji2:1.4.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/ad8893766cc6dbb0ad28e96f5c1ff771/transformed/emoji2-1.4.0/AndroidManifest.xml:25:13-67
+128            android:authorities="com.coroutines.livewallpaper.test.androidx-startup"
+128-->[androidx.emoji2:emoji2:1.4.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/ad8893766cc6dbb0ad28e96f5c1ff771/transformed/emoji2-1.4.0/AndroidManifest.xml:26:13-68
+129            android:exported="false" >
+129-->[androidx.emoji2:emoji2:1.4.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/ad8893766cc6dbb0ad28e96f5c1ff771/transformed/emoji2-1.4.0/AndroidManifest.xml:27:13-37
+130            <meta-data
+130-->[androidx.emoji2:emoji2:1.4.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/ad8893766cc6dbb0ad28e96f5c1ff771/transformed/emoji2-1.4.0/AndroidManifest.xml:29:13-31:52
+131                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+131-->[androidx.emoji2:emoji2:1.4.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/ad8893766cc6dbb0ad28e96f5c1ff771/transformed/emoji2-1.4.0/AndroidManifest.xml:30:17-75
+132                android:value="androidx.startup" />
+132-->[androidx.emoji2:emoji2:1.4.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/ad8893766cc6dbb0ad28e96f5c1ff771/transformed/emoji2-1.4.0/AndroidManifest.xml:31:17-49
+133            <meta-data
+133-->[androidx.lifecycle:lifecycle-process:2.9.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/694a4e6526afc87de5014d72311dcc98/transformed/lifecycle-process-2.9.0/AndroidManifest.xml:29:13-31:52
+134                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+134-->[androidx.lifecycle:lifecycle-process:2.9.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/694a4e6526afc87de5014d72311dcc98/transformed/lifecycle-process-2.9.0/AndroidManifest.xml:30:17-78
+135                android:value="androidx.startup" />
+135-->[androidx.lifecycle:lifecycle-process:2.9.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/694a4e6526afc87de5014d72311dcc98/transformed/lifecycle-process-2.9.0/AndroidManifest.xml:31:17-49
+136            <meta-data
+136-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/966984348644e1b8de47fe910fd0eaef/transformed/profileinstaller-1.4.0/AndroidManifest.xml:29:13-31:52
+137                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+137-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/966984348644e1b8de47fe910fd0eaef/transformed/profileinstaller-1.4.0/AndroidManifest.xml:30:17-85
+138                android:value="androidx.startup" />
+138-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/966984348644e1b8de47fe910fd0eaef/transformed/profileinstaller-1.4.0/AndroidManifest.xml:31:17-49
+139        </provider>
+140
+141        <receiver
+141-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/966984348644e1b8de47fe910fd0eaef/transformed/profileinstaller-1.4.0/AndroidManifest.xml:34:9-52:20
+142            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+142-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/966984348644e1b8de47fe910fd0eaef/transformed/profileinstaller-1.4.0/AndroidManifest.xml:35:13-76
+143            android:directBootAware="false"
+143-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/966984348644e1b8de47fe910fd0eaef/transformed/profileinstaller-1.4.0/AndroidManifest.xml:36:13-44
+144            android:enabled="true"
+144-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/966984348644e1b8de47fe910fd0eaef/transformed/profileinstaller-1.4.0/AndroidManifest.xml:37:13-35
+145            android:exported="true"
+145-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/966984348644e1b8de47fe910fd0eaef/transformed/profileinstaller-1.4.0/AndroidManifest.xml:38:13-36
+146            android:permission="android.permission.DUMP" >
+146-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/966984348644e1b8de47fe910fd0eaef/transformed/profileinstaller-1.4.0/AndroidManifest.xml:39:13-57
+147            <intent-filter>
+147-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/966984348644e1b8de47fe910fd0eaef/transformed/profileinstaller-1.4.0/AndroidManifest.xml:40:13-42:29
+148                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+148-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/966984348644e1b8de47fe910fd0eaef/transformed/profileinstaller-1.4.0/AndroidManifest.xml:41:17-91
+148-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/966984348644e1b8de47fe910fd0eaef/transformed/profileinstaller-1.4.0/AndroidManifest.xml:41:25-88
+149            </intent-filter>
+150            <intent-filter>
+150-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/966984348644e1b8de47fe910fd0eaef/transformed/profileinstaller-1.4.0/AndroidManifest.xml:43:13-45:29
+151                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+151-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/966984348644e1b8de47fe910fd0eaef/transformed/profileinstaller-1.4.0/AndroidManifest.xml:44:17-85
+151-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/966984348644e1b8de47fe910fd0eaef/transformed/profileinstaller-1.4.0/AndroidManifest.xml:44:25-82
+152            </intent-filter>
+153            <intent-filter>
+153-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/966984348644e1b8de47fe910fd0eaef/transformed/profileinstaller-1.4.0/AndroidManifest.xml:46:13-48:29
+154                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+154-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/966984348644e1b8de47fe910fd0eaef/transformed/profileinstaller-1.4.0/AndroidManifest.xml:47:17-88
+154-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/966984348644e1b8de47fe910fd0eaef/transformed/profileinstaller-1.4.0/AndroidManifest.xml:47:25-85
+155            </intent-filter>
+156            <intent-filter>
+156-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/966984348644e1b8de47fe910fd0eaef/transformed/profileinstaller-1.4.0/AndroidManifest.xml:49:13-51:29
+157                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+157-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/966984348644e1b8de47fe910fd0eaef/transformed/profileinstaller-1.4.0/AndroidManifest.xml:50:17-95
+157-->[androidx.profileinstaller:profileinstaller:1.4.0] /Users/shpinardmitri/.gradle/caches/8.13/transforms/966984348644e1b8de47fe910fd0eaef/transformed/profileinstaller-1.4.0/AndroidManifest.xml:50:25-92
+158            </intent-filter>
+159        </receiver>
+160    </application>
+161
+162</manifest>

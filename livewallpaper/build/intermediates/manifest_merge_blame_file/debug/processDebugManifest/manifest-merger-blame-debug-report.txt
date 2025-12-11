@@ -1,0 +1,128 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.coroutines.livewallpaper" >
+4
+5    <uses-sdk android:minSdkVersion="24" />
+6
+7    <uses-feature
+7-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:4:5-6:35
+8        android:name="android.software.live_wallpaper"
+8-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:5:9-55
+9        android:required="true" />
+9-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:6:9-32
+10
+11    <application>
+11-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:8:5-68:19
+12        <service
+12-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:9:9-19:19
+13            android:name="com.coroutines.livewallpaper.DigitalClockWallpaperService"
+13-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:10:13-57
+14            android:exported="true"
+14-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:12:13-36
+15            android:label="@string/digital_clock_wallpaper_name" >
+15-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:11:13-65
+16            <intent-filter>
+16-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:13:13-15:29
+17                <action android:name="android.service.wallpaper.WallpaperService" />
+17-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:14:17-85
+17-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:14:25-82
+18            </intent-filter>
+19
+20            <meta-data
+20-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:16:13-18:67
+21                android:name="android.service.wallpaper"
+21-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:17:17-57
+22                android:resource="@xml/digital_clock_wallpaper" />
+22-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:18:17-64
+23        </service>
+24        <service
+24-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:21:9-31:19
+25            android:name="com.coroutines.livewallpaper.service.PagerWallpaperService"
+25-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:22:17-62
+26            android:exported="true"
+26-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:24:17-40
+27            android:label="@string/digital_clock_wallpaper_name" >
+27-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:23:17-69
+28            <intent-filter>
+28-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:25:13-27:29
+29                <action android:name="android.service.wallpaper.service.PagerWallpaperService" />
+29-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:26:17-98
+29-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:26:25-95
+30            </intent-filter>
+31
+32            <meta-data
+32-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:16:13-18:67
+33                android:name="android.service.wallpaper"
+33-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:17:17-57
+34                android:resource="@xml/digital_clock_wallpaper" />
+34-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:18:17-64
+35        </service>
+36        <service
+36-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:33:9-43:19
+37            android:name="com.coroutines.livewallpaper.service.RomaMarinaWallpaperService"
+37-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:34:13-63
+38            android:exported="true"
+38-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:36:13-36
+39            android:label="@string/roma_marina_wallpaper_name" >
+39-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:35:13-63
+40            <intent-filter>
+40-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:13:13-15:29
+41                <action android:name="android.service.wallpaper.WallpaperService" />
+41-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:14:17-85
+41-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:14:25-82
+42            </intent-filter>
+43
+44            <meta-data
+44-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:16:13-18:67
+45                android:name="android.service.wallpaper"
+45-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:17:17-57
+46                android:resource="@xml/roma_marina_wallpaper" />
+46-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:18:17-64
+47        </service>
+48        <service
+48-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:45:9-55:19
+49            android:name="com.coroutines.livewallpaper.service.ChronomagusRegumWallpaperService"
+49-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:46:13-69
+50            android:exported="true"
+50-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:48:13-36
+51            android:label="@string/chronomagus_regum_wallpaper_name" >
+51-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:47:13-69
+52            <intent-filter>
+52-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:13:13-15:29
+53                <action android:name="android.service.wallpaper.WallpaperService" />
+53-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:14:17-85
+53-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:14:25-82
+54            </intent-filter>
+55
+56            <meta-data
+56-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:16:13-18:67
+57                android:name="android.service.wallpaper"
+57-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:17:17-57
+58                android:resource="@xml/chronomagus_regum_wallpaper" />
+58-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:18:17-64
+59        </service>
+60        <service
+60-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:57:9-67:19
+61            android:name="com.coroutines.livewallpaper.service.ZeitwerkWallpaperService"
+61-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:58:13-61
+62            android:exported="true"
+62-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:60:13-36
+63            android:label="@string/zeitwerk_wallpaper_name" >
+63-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:59:13-60
+64            <intent-filter>
+64-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:13:13-15:29
+65                <action android:name="android.service.wallpaper.WallpaperService" />
+65-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:14:17-85
+65-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:14:25-82
+66            </intent-filter>
+67
+68            <meta-data
+68-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:16:13-18:67
+69                android:name="android.service.wallpaper"
+69-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:17:17-57
+70                android:resource="@xml/zeitwerk_wallpaper" />
+70-->/Users/shpinardmitri/Documents/Projects/Android/swisstime/livewallpaper/src/main/AndroidManifest.xml:18:17-64
+71        </service>
+72    </application>
+73
+74</manifest>
