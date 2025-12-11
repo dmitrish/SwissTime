@@ -1,17 +1,14 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
+    id("swisstime.android.application")
+    id("swisstime.android.application.compose")
 }
 
 android {
     namespace = "com.coroutines.swisstime.wearos"
-    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.coroutines.clockwithtimezone.wearos"
         minSdk = 30 // WearOS minimum SDK
-        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -34,19 +31,6 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName("release")
         }
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-
-    kotlinOptions {
-        jvmTarget = "11"
-    }
-
-    buildFeatures {
-        compose = true
     }
 }
 
