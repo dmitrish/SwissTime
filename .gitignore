@@ -18,6 +18,3 @@ local.properties
 
 # HTML reports and documentation files
 *.html
-
-# Markdown documentation files
-*.md
