@@ -19,6 +19,5 @@ local.properties
 # HTML reports and documentation files
 *.html
 
-# Markdown documentation files (excluding README.md)
+# Markdown documentation files
 *.md
-!README.md
