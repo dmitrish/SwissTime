@@ -15,6 +15,5 @@
 local.properties
 /cpu-perfetto-20250703T105242.trace
 /cpu-perfetto-20250703T105310.trace
-
-# HTML reports and documentation files
-*.html
+/mock.html
+/layoutlib_summary.html
