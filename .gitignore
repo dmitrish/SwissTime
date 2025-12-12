@@ -19,5 +19,6 @@ local.properties
 # HTML files
 *.html
 
-# Markdown files  
+# Markdown files (excluding README.md)
 *.md
+!README.md
