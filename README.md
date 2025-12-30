@@ -10,7 +10,7 @@ World Clock with timezones is a mighty little app that adds fun to timekeeping. 
        alt="Get it on Google Play" 
        style="height: 60px;">
 </a></p>
-<p><a href="https://github.com/dmitrish/SwissTimeSwift"</a>Also, here Swift port of this Android project</p>
+<p><a href="https://github.com/dmitrish/SwissTimeSwift"</a>And here is a Swift port of this Android project</p>
 
 <table style="width:100%">
   <tr>
