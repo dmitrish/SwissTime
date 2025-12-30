@@ -4,12 +4,12 @@
 
 
 World Clock with timezones is a mighty little app that adds fun to timekeeping. Ditch boring digital clock faces and instead use intricate mechanical watchfaces.
-<a href="https://play.google.com/store/apps/details?id=com.coroutines.clockwithtimezone" target="_blank">
+
+<p><a href="https://play.google.com/store/apps/details?id=com.coroutines.clockwithtimezone" target="_blank">
   <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" 
        alt="Get it on Google Play" 
        style="height: 60px;">
-</a>
-<p></p>
+</a></p>
 <p><a href="https://github.com/dmitrish/SwissTimeSwift"</a>Also, here Swift port of this Android project</p>
 
 <table style="width:100%">
